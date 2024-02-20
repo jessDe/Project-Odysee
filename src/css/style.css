@@ -1,3 +1,9 @@
+@font-face {
+    font-family: "PixelFont";
+    src: url("./../../Minecraft.ttf") format("truetype");
+
+}
+
 body, html {
     margin: 0;
     padding: 0;
@@ -5,7 +11,55 @@ body, html {
     height: 100%;
 }
 
+#GameBox {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1100px;
+}
+#Shop{
+    display: inline-block;
+    width: 130px;
+    background-color: grey;
+    height: 540px;
+    float: right;
+    font-family: "PixelFont", serif;
+    padding: 3px;
+}
+#Shop h2{
+    text-align: center;
+    width: 100%;
+    font-size: 20px;
+    user-select: none;
+
+}
+#Shop img{
+    display: block;
+    margin: 0 auto;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+}
+.TowerName {
+    width: 50%;
+    margin: 0 auto;
+    text-align: center;
+    user-select: none;
+}
+.TowerPrice {
+    width: 50%;
+    margin: 0 auto;
+    text-align: center;
+    user-select: none;
+}
+
 canvas {
+    display: inline-block;
     image-rendering: pixelated;                 /* Awesome future-browsers       */
     -ms-interpolation-mode: nearest-neighbor;   /* IE                            */
+    width: 960px;
+    height: 540px;
 }

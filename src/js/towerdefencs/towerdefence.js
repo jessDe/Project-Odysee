@@ -1,8 +1,10 @@
 class tower {
     constructor(x, y){
         this.position = new transform(x, y);
+        this.projectileImage = projectile1Image;
+        this.timeSinceLastShot = 0;
         this.projectiles = [
-            new projectile(this.position.x, this.position.y)
+            new projectile(this.position.x, this.position.y,this.projectileImage)
         ];
     }
     draw(ctx){
@@ -12,8 +14,38 @@ class tower {
 }
 
 
+// Load map
+const mapImage = new Image();
+mapImage.src = "src/img/td_desert_bg.png";
+
+// Load tower1
+const tower1Image = new Image();
+tower1Image.src = "src/img/Tower1.png";
+
+//Load Projectile1
+const projectile1Image = new Image();
+projectile1Image.src = "src/img/Projectile1.png";
+
+class ShopTower {
+    constructor(name, price, image){
+        this.name = name;
+        this.price = price;
+        this.image = image;
+    }
+}
+
+const Shop = [
+    new ShopTower("Sabu Tower", 100, tower1Image),
+    new ShopTower("Sabu Tower", 100, tower1Image),
+];
+const HTMLShop = document.getElementById("Shop");
+Shop.forEach((shopTower, index) => {
+    HTMLShop.innerHTML += "<img src='"+shopTower.image.src+"' width='40' height='80' onclick='buyTower("+index+")'><p class='TowerName'>"+shopTower.name+"</p><p class='TowerPrice'>"+shopTower.price+"$ </p>";
+});
+
 let BlockGrid = [];
 let showGrid = false;
+//Generates the grid
 for (let i = 0; i < 65; i++) {
     BlockGrid[i] = [];
     for (let j = 0; j < 37; j++) {
@@ -22,28 +54,40 @@ for (let i = 0; i < 65; i++) {
 }
 
 
+let money = 100;
 
+
+//Apply blocked grid
 blockCords.forEach(cord => {
     BlockGrid[cord.x][cord.y] = true;
 });
 
-
+//Mouse Position
 let MousePos = {
     x: 0,
     y: 0
 };
-let MouseMode = "placing";
+
+//Mouse Mode
+let MouseMode = "none";
+
+//Tower Type ID
 let CurrentPlacingTowerID = 0;
 
-
+//Canvas
 let canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
+//Debug Texts
 let gridCordsText = document.getElementById("GridCords");
 let debugText = document.getElementById("debugOutput");
 
 canvas.style.imageRendering = "pixelated";
+
+//Time
 let time = 0;
+
+//Enemy Waypoints
 let waypoints = [
     {x: -100, y: 643, to: "right"},
     {x: 375, y: 643, to: "right"},
@@ -63,22 +107,17 @@ let waypoints = [
     {x: 1360, y: 635, to: "right"},
 
 ];
+
+//Current Towers
 let towers = [];
+
+//Current Enemies
 let enemies = [new Enemy(1000,3)];
 
 
-// Load map
-const mapImage = new Image();
-mapImage.src = "src/img/td_desert_bg.png";
 
-const portalImage = new Image();
-portalImage.src = "src/img/PortalSpritesheet_261x469.png";
-
-const tower1Image = new Image();
-tower1Image.src = "src/img/Tower1.png";
 
 // Load font
-
 var customFont = new FontFace('PixelFont', 'url(Minecraft.ttf)');
 customFont.load().then(function(font) {
     document.fonts.add(font);
@@ -93,54 +132,74 @@ function Clock() {
     time++;
     setTimeout(Clock, 1000);
 }
+
 //Updates the Game Screen
 function animate() {
     drawMap();
     if(showGrid){
         drawGrid();
     }
+    let i = 0;
     enemies.forEach(enemy => {
-        if(enemy.currentHealth <= 0){
+        if(enemy.currentHealth <= 0 || enemy.waypointIndex >= waypoints.length){
             enemies.splice(enemies.indexOf(enemy), 1);
         }
         enemy.update();
-        enemy.draw(ctx);
+        i++;
     });
 
     //Draw from smallest y position to largest
-
+    debugText.innerHTML = "Projectiles: ";
+    let j = 0;
     towers.forEach(tower => {
         tower.draw(ctx);
-        if(tower.projectiles.length < 1){
-            tower.projectiles.push(new projectile(tower.position.x, tower.position.y));
-        }
+        let everyProjectileHasTarget = true;
         tower.projectiles.forEach((projectile, index) => {
+
             projectile.update();
             if(projectile.target !== null){
-                if(projectile.distance< 30){
-                    projectile.target.currentHealth -= projectile.damage;
+
+                if(projectile.OutOfBounds === true){
                     tower.projectiles.splice(index, 1);
                 }
+
+            }else{
+                everyProjectileHasTarget = false;
             }
 
+
         });
+        if(everyProjectileHasTarget && tower.timeSinceLastShot > 5){
+            tower.projectiles.push(new projectile(tower.position.x, tower.position.y));
+            tower.timeSinceLastShot = 0;
+        }
+        tower.timeSinceLastShot++;
+        j++;
     });
     //draw Blocked
 
 
     if(MouseMode === "placing"){
         //check if Tower is in the way
-
+        let image = Shop[CurrentPlacingTowerID].image;
         if (checkTowerCollision() === false){
             ctx.filter = "opacity(0.8)";
-            ctx.drawImage(tower1Image, 0, 0, 40, 80, MousePos.x*20, (MousePos.y-3)*20, 40, 80);
+
+            ctx.drawImage(image, 0, 0, 40, 80, MousePos.x*20, (MousePos.y-3)*20, 40, 80);
         }else{
             ctx.filter = "opacity(0.2) sepia(10%)";
-            ctx.drawImage(tower1Image, 0, 0, 40, 80, MousePos.x*20, (MousePos.y-3)*20, 40, 80);
+            ctx.drawImage(image, 0, 0, 40, 80, MousePos.x*20, (MousePos.y-3)*20, 40, 80);
         }
         ctx.filter = "none";
 
     }
+
+    ctx.font = "25px PixelFont";
+    ctx.fillStyle = "black";
+    ctx.fillText("Money: " + money + "$", 12, 22);
+    ctx.fillStyle = "white";
+    ctx.fillText("Money: " + money + "$", 10, 20);
+
     requestAnimationFrame(animate);
 
 }
@@ -179,12 +238,12 @@ function placeTower(){
     if(checkTowerCollision() === false){
         towers.push(new tower(MousePos.x, MousePos.y-3));
         towers.sort((a, b) => a.position.y - b.position.y);
+        MouseMode = "none";
     }
 }
 function calculateMouseGridCord(x, y){
     let gridX = Math.floor(x/20);
     let gridY = Math.floor(y/20);
-    //console.log("Grid X: " + gridX + " Grid Y: " + gridY);
     MousePos.x = gridX;
     MousePos.y = gridY;
     gridCordsText.innerHTML = "Grid X: " + gridX + " Grid Y: " + gridY;
@@ -225,7 +284,6 @@ checkbox.addEventListener("change", function() {
 canvas.addEventListener('mousemove', function(event) {
     const mousePos = getMousePos(canvas, event);
     calculateMouseGridCord(mousePos.x, mousePos.y);
-    //console.log('Mouse position on canvas: ' + mousePos.x + ',' + mousePos.y);
 });
 canvas.addEventListener('click', function(event) {
     if(MouseMode === "placing"){
@@ -236,5 +294,12 @@ canvas.addEventListener('click', function(event) {
         blockCords.push(new transform(MousePos.x, MousePos.y));
     }
 
-    console.log('Mouse position on canvas: ' + MousePos.x + ',' + MousePos.y);
 });
+
+function buyTower(id){
+    if(money >= Shop[id].price){
+        money -= Shop[id].price;
+        CurrentPlacingTowerID = id;
+        MouseMode = "placing";
+    }
+}

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Draggable Objects on Canvas</title>
+    <title>Tower Defence Prototype</title>
     <link rel="stylesheet" href="src/css/style.css">
     <script src="src/js/towerdefencs/blockedCodes.js"></script>
     <script src="src/js/towerdefencs/classes/enimes.js"></script>
@@ -12,12 +12,17 @@
 </head>
 <body>
 
+<div id="GameBox">
 <canvas id="myCanvas" width="1280" height="720"></canvas>
-
+    <div id="Shop">
+        <h2> Shop</h2>
+    </div>
+</div>
 <label>
     Grid
     <input type="checkbox" id="gridToggle">
 </label>
+<button id="SpawnEnime" onclick="enemies.push(new Enemy(100, 10))">Spawn Enime</button>
 <p id="GridCords"></p>
 <p id="debugOutput"></p>
 

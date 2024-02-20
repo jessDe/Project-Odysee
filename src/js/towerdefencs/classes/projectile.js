@@ -5,33 +5,39 @@ class projectile {
         this.distance = 0
         this.damage = 10
         this.target = null
+        this.OutOfBounds = false
     }
     draw() {
-        ctx.beginPath();
-        ctx.arc((this.position.x+1)*20, (this.position.y+1)*20, 20, 0, 2 * Math.PI);
-        ctx.fillStyle = "blue";
-        ctx.fill();
-        ctx.closePath();
+        ctx.drawImage(projectile1Image, (this.position.x)*20, (this.position.y)*20, 30, 30)
+
     }
     update() {
         this.draw()
         const enemiesInRange = enemies.filter(enemy => {
             const distance = calculateDistance(enemy.position.x, enemy.position.y, this.position.x*20, this.position.y*20)
-            this.distance = distance
             return distance < 300
         });
+
+
         if(enemiesInRange.length === 0) {
-            this.position.x += this.velocity.x
-            this.position.y += this.velocity.y
+            this.OutOfBounds = true;
             return
         }
-        console.log("ENEMY IN RANGE")
-        const angle = Math.atan2(
-            enemiesInRange[0].position.y - this.position.y*20,
-            enemiesInRange[0].position.x - this.position.x*20
-        );
         this.target = enemiesInRange[0];
-        console.log(angle)
+        this.distance = calculateDistance(this.target.position.x, this.target.position.y, this.position.x * 20, this.position.y * 20)
+        const angle = Math.atan2(
+            this.target.position.y - this.position.y*20,
+            this.target.position.x - this.position.x*20
+        );
+        if(this.distance< 30){
+            this.target.currentHealth -= this.damage;
+            this.OutOfBounds = true;
+        }
+        if(this.position.x > 64 || this.position.x < 0 || this.position.y > 36 || this.position.y < 0) {
+            this.OutOfBounds = true;
+            return
+        }
+
         this.velocity.x = Math.cos(angle)
         this.velocity.y = Math.sin(angle)
 

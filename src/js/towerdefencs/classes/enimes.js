@@ -1,83 +1,59 @@
 class Enemy {
     constructor(maxHealth, speed) {
-        this.position = waypoints[0];
+        this.position = {};
+        this.position.x = waypoints[0].x;
+        this.position.y = waypoints[0].y;
         this.maxHealth = maxHealth;
         this.currentHealth = maxHealth;
         this.speed = speed;
         this.waypointIndex = 0;
     }
-    draw(ctx) {
+    draw() {
         ctx.fillStyle = "#ff0000";
         ctx.fillRect(this.position.x-10, this.position.y -10, 20, 20);
     }
     update() {
 
         if(this.waypointIndex < waypoints.length){
-            let targetX = waypoints[this.waypointIndex].x;
-            let targetY = waypoints[this.waypointIndex].y;
-
+            this.targetX = waypoints[this.waypointIndex].x;
+            this.targetY = waypoints[this.waypointIndex].y;
             switch (waypoints[this.waypointIndex].to) {
                 case "right":
-                    this.moveRight(targetX, targetY);
+                    if(this.position.x < this.targetX){
+                        this.position.x += this.speed;
+                    }
+                    if(this.position.x >= this.targetX){
+                        this.waypointIndex++;
+                    }
                     break
                 case "left":
-                    this.moveLeft(targetX, targetY);
+                    if(this.position.x > this.targetX){
+                        this.position.x -= this.speed;
+                    }
+                    if(this.position.x <= this.targetX){
+                        this.waypointIndex++;
+                    }
                     break
                 case "up":
-                    this.moveUp(targetX, targetY);
+                    if(this.position.y > this.targetY){
+                        this.position.y -= this.speed;
+                    }
+                    if(this.position.y <= this.targetY){
+                        this.waypointIndex++;
+                    }
                     break
                 case "down":
-                    this.moveDown(targetX, targetY);
+                    if(this.position.y < this.targetY){
+                        this.position.y += this.speed;
+                    }
+                    if(this.position.y >= this.targetY){
+                        this.waypointIndex++;
+                    }
+
                     break;
             }
         }
-    }
-    moveRight(targetX, targetY){
-        if(this.position.x < targetX){
-            this.position.x += this.speed;
-        }
-        if(this.position.y < targetY){
-            this.position.y += this.speed;
-        }
-        if(this.position.x >= targetX && this.position.y >= targetY){
-            this.waypointIndex++;
-        }
+        this.draw();
     }
 
-    moveLeft(targetX, targetY){
-        if(this.position.x > targetX){
-            this.position.x -= this.speed;
-        }
-        if(this.position.y < targetY){
-            this.position.y += this.speed;
-        }
-        if(this.position.x <= targetX){
-            this.waypointIndex++;
-        }
-    }
-
-    moveUp(targetX, targetY){
-        if(this.position.x < targetX){
-            this.position.x += this.speed;
-        }
-        if(this.position.y > targetY){
-            this.position.y -= this.speed;
-        }
-        if(this.position.x >= targetX && this.position.y <= targetY){
-            this.waypointIndex++;
-        }
-    }
-
-    moveDown(targetX, targetY){
-        if(this.position.x < targetX){
-            this.position.x += this.speed;
-        }
-        if(this.position.y < targetY){
-            this.position.y += this.speed;
-        }
-        if(this.position.x >= targetX && this.position.y >= targetY){
-            this.waypointIndex++;
-        }
-
-    }
 }
