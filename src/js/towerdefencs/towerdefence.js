@@ -12,6 +12,59 @@ class tower {
         ctx.drawImage(tower1Image, 0, 0, 40, 80, this.position.x*20, this.position.y*20, 40, 80);
     }
 }
+//Enemy Waypoints
+let waypoints = [
+    {x: -100, y: 643, to: "right"},
+    {x: 375, y: 643, to: "right"},
+    {x: 375, y: 535, to: "up"},
+    {x: 125, y: 535, to: "left"},
+    {x: 125, y: 115, to: "up"},
+    {x: 625, y: 115, to: "right"},
+    {x: 625, y: 640, to: "down"},
+    {x: 990, y: 640, to: "right"},
+    {x: 990, y: 535, to: "up"},
+    {x: 825, y: 535, to: "left"},
+    {x: 825, y: 270, to: "up"},
+    {x: 925, y: 270, to: "right"},
+    {x: 925, y: 110, to: "up"},
+    {x: 1095, y: 110, to: "right"},
+    {x: 1095, y: 635, to: "down"},
+    {x: 1360, y: 635, to: "right"},
+
+];
+
+class RoundEnemy {
+    constructor(enemy, delay){
+        this.enemy = enemy;
+        this.delay = delay;
+    }
+}
+
+class Round {
+    constructor(enemies, endReward){
+        this.enemies = enemies;
+        this.endReward = endReward;
+    }
+}
+
+let Rounds = [
+    new Round(
+        [
+            new RoundEnemy(new Enemy(100,3, 100), 0),
+            new RoundEnemy(new Enemy(100,3, 100), 2),
+            new RoundEnemy(new Enemy(100,3, 100), 5),
+            new RoundEnemy(new Enemy(100,3, 100), 7),
+            new RoundEnemy(new Enemy(100,3, 100), 10),
+            new RoundEnemy(new Enemy(100,3, 100), 12),
+            new RoundEnemy(new Enemy(100,3, 100), 15),
+        ],
+        100),
+    new Round(
+        [
+            new RoundEnemy(new Enemy(100,3, 100), 0)
+        ],
+        100),
+];
 
 
 // Load map
@@ -53,8 +106,11 @@ for (let i = 0; i < 65; i++) {
     }
 }
 
-
+//Game Data
 let money = 100;
+let Lives = 100;
+let CurrentRound = 0;
+
 
 
 //Apply blocked grid
@@ -87,32 +143,13 @@ canvas.style.imageRendering = "pixelated";
 //Time
 let time = 0;
 
-//Enemy Waypoints
-let waypoints = [
-    {x: -100, y: 643, to: "right"},
-    {x: 375, y: 643, to: "right"},
-    {x: 375, y: 535, to: "up"},
-    {x: 125, y: 535, to: "left"},
-    {x: 125, y: 115, to: "up"},
-    {x: 625, y: 115, to: "right"},
-    {x: 625, y: 640, to: "down"},
-    {x: 990, y: 640, to: "right"},
-    {x: 990, y: 535, to: "up"},
-    {x: 825, y: 535, to: "left"},
-    {x: 825, y: 270, to: "up"},
-    {x: 925, y: 270, to: "right"},
-    {x: 925, y: 110, to: "up"},
-    {x: 1095, y: 110, to: "right"},
-    {x: 1095, y: 635, to: "down"},
-    {x: 1360, y: 635, to: "right"},
 
-];
 
 //Current Towers
 let towers = [];
 
 //Current Enemies
-let enemies = [new Enemy(1000,3)];
+let enemies = [];
 
 
 
@@ -140,16 +177,39 @@ function animate() {
         drawGrid();
     }
     let i = 0;
+    //Round Logic
+    if(CurrentRound < Rounds.length){
+        if(Rounds[CurrentRound].enemies.length === 0 && enemies.length === 0){
+            money += Rounds[CurrentRound].endReward;
+            CurrentRound++;
+        }
+        if(CurrentRound < Rounds.length){
+            Rounds[CurrentRound].enemies.forEach((enemy, index) => {
+                if(enemy.delay <= time){
+                    enemies.push(enemy.enemy);
+                    Rounds[CurrentRound].enemies.splice(index, 1);
+                }
+            });
+        }
+
+    }
+
+
+    //Enemy Logic
     enemies.forEach(enemy => {
         if(enemy.currentHealth <= 0 || enemy.waypointIndex >= waypoints.length){
+
+            if(enemy.currentHealth <= 0){
+                money += enemy.reward;
+            }else{
+                Lives -= 1;
+            }
             enemies.splice(enemies.indexOf(enemy), 1);
         }
         enemy.update();
         i++;
     });
 
-    //Draw from smallest y position to largest
-    debugText.innerHTML = "Projectiles: ";
     let j = 0;
     towers.forEach(tower => {
         tower.draw(ctx);
@@ -193,13 +253,31 @@ function animate() {
         ctx.filter = "none";
 
     }
-
+    //Draw Current Money
     ctx.font = "25px PixelFont";
     ctx.fillStyle = "black";
     ctx.fillText("Money: " + money + "$", 12, 22);
     ctx.fillStyle = "white";
     ctx.fillText("Money: " + money + "$", 10, 20);
+    if(Lives > 0){
+        //Draw Lives
+        ctx.fillStyle = "black";
+        ctx.fillText("Lives: " + Lives, 12, 52);
+        ctx.fillStyle = "white";
+        ctx.fillText("Lives: " + Lives, 10, 50);
+    }else{
+        //TODO: Game Over Screen
+        ctx.fillStyle = "black";
+        ctx.fillText("Game Over", 12, 52);
+        ctx.fillStyle = "white";
+        ctx.fillText("Game Over", 10, 50);
+    }
 
+    //Draw Current Round
+    ctx.fillStyle = "black";
+    ctx.fillText("Round: " + (CurrentRound+1), 12, 82);
+    ctx.fillStyle = "white";
+    ctx.fillText("Round: " + (CurrentRound+1), 10, 80);
     requestAnimationFrame(animate);
 
 }

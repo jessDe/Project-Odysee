@@ -45,7 +45,7 @@ class projectile {
         this.position.y += this.velocity.y
     }
 }
-
+// Funktion zur Bestimmung des Abstands zwischen zwei Objekten (basierend auf S.d.Phythagoras)
 function calculateDistance(x1, y1, x2, y2) {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 }

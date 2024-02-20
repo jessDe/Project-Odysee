@@ -1,5 +1,5 @@
 class Enemy {
-    constructor(maxHealth, speed) {
+    constructor(maxHealth, speed, reward) {
         this.position = {};
         this.position.x = waypoints[0].x;
         this.position.y = waypoints[0].y;
@@ -7,6 +7,8 @@ class Enemy {
         this.currentHealth = maxHealth;
         this.speed = speed;
         this.waypointIndex = 0;
+        this.reward = reward;
+        this.frame = 0;
     }
     draw() {
         ctx.fillStyle = "#ff0000";
@@ -17,6 +19,9 @@ class Enemy {
         if(this.waypointIndex < waypoints.length){
             this.targetX = waypoints[this.waypointIndex].x;
             this.targetY = waypoints[this.waypointIndex].y;
+
+
+
             switch (waypoints[this.waypointIndex].to) {
                 case "right":
                     if(this.position.x < this.targetX){
@@ -53,6 +58,7 @@ class Enemy {
                     break;
             }
         }
+
         this.draw();
     }
 
