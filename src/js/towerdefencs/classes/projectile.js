@@ -13,7 +13,7 @@ class projectile {
     }
     update() {
         this.draw()
-        const enemiesInRange = enemies.filter(enemy => {
+        const enemiesInRange = TD.enemies.filter(enemy => {
             const distance = calculateDistance(enemy.position.x, enemy.position.y, this.position.x*20, this.position.y*20)
             return distance < 300
         });

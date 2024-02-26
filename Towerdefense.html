@@ -9,11 +9,12 @@
     <script src="src/js/towerdefencs/classes/enimes.js"></script>
     <script src="src/js/towerdefencs/classes/projectile.js"></script>
     <script src="src/js/towerdefencs/events.js"></script>
+
 </head>
 <body>
 
 <div id="GameBox">
-<canvas id="myCanvas" width="1280" height="720"></canvas>
+    <canvas id="myCanvas" width="1280" height="720"></canvas> <!-- Tower Defence -->
     <div id="Shop">
         <h2> Shop</h2>
     </div>
@@ -22,11 +23,9 @@
     Grid
     <input type="checkbox" id="gridToggle">
 </label>
-<button id="SpawnEnime" onclick="enemies.push(new Enemy(100, 10,100))">Spawn Enime</button>
 <p id="GridCords"></p>
 <p id="debugOutput"></p>
-
 <script src="src/js/towerdefencs/towerdefence.js"></script>
-
+<script src="src/js/GameManager.js"></script>
 </body>
 </html>
