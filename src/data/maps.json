@@ -1,0 +1,33 @@
+[
+  {
+    "mapTitle": "Egypt 1",
+    "world": "Egypt",
+    "UnlockCondition": {
+      "chapter": 1,
+      "mission": 0
+    },
+    "map": {
+      "width": 20,
+      "height": 3,
+      "map": [
+        "####################",
+        "####################",
+        "####################"
+      ],
+      "SpawnPositions": {
+        "player": {
+          "x": 1,
+          "y": 1
+        },
+        "enemy": [
+          {
+            "type": "enemy1",
+            "ai": 1,
+            "x": 18,
+            "y": 18
+          }
+        ]
+      }
+    }
+  }
+]

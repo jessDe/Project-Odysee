@@ -8,7 +8,7 @@ class projectile {
         this.OutOfBounds = false
     }
     draw() {
-        ctx.drawImage(projectile1Image, (this.position.x)*20, (this.position.y)*20, 30, 30)
+        ctx.drawImage(projectile1Image, (this.position.x)*20+8, (this.position.y)*20, 30, 30)
 
     }
     update() {
@@ -23,7 +23,10 @@ class projectile {
             this.OutOfBounds = true;
             return
         }
-        this.target = enemiesInRange[0];
+        if(this.target === null) {
+            this.target = enemiesInRange[0];
+        }
+
         this.distance = calculateDistance(this.target.position.x, this.target.position.y, this.position.x * 20, this.position.y * 20)
         const angle = Math.atan2(
             this.target.position.y - this.position.y*20,
