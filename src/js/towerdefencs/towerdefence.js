@@ -57,22 +57,25 @@ class Round {
 
 // Load map
 const mapImage = new Image();
-mapImage.src = "src/img/td_desert_bg.png";
+mapImage.src = "./src/img/td_desert_bg.png";
 
 // Load tower1
 const tower1Image = new Image();
-tower1Image.src = "src/img/Tower1.png";
+tower1Image.src = "./src/img/Tower1.png";
 
 const SunImage = new Image();
-SunImage.src = "src/img/Sun_365x329.png";
+SunImage.src = "./src/img/Sun_365x329.png";
 
 //Load Projectile1
 const projectile1Image = new Image();
-projectile1Image.src = "src/img/Projectile1.png";
+projectile1Image.src = "./src/img/Projectile1.png";
 
 
 const Enemy1Image = new Image();
-Enemy1Image.src = "src/img/greif_run.png";
+Enemy1Image.src = "./src/img/greif_run.png";
+
+const AnimatedLakeImage = new Image();
+AnimatedLakeImage.src = "./src/img/new_dessert_lake.png";
 
 const HTMLShop = document.getElementById("Shop");
 
@@ -160,6 +163,7 @@ class TowerDefence{
         this.GameRunning = true;
         this.SunTimer = 0;
         this.SunFrameTime = 0;
+        this.LakeFrame = 0;
     }
 
     LoadBlockCords(){
@@ -194,6 +198,18 @@ class TowerDefence{
         }
 
         TD.drawMap();
+
+
+        if(SunFrame){
+            TD.LakeFrame++;
+            if(TD.LakeFrame > 9){
+                TD.LakeFrame = 0;
+            }
+        }
+        //Draw Lake
+        ctx.drawImage(AnimatedLakeImage, 224*TD.LakeFrame, 0, 224, 160, 800, 280, 280, 200);
+
+
         if (TD.showGrid) {
             TD.drawGrid();
         }
