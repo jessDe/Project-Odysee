@@ -21,13 +21,19 @@
         <h2> Shop</h2>
     </div>
 </div>
-<label>
-    Grid
-    <input type="checkbox" id="gridToggle">
-</label>
-<button onclick=' new function (){ blockCords.forEach((blockcord) => { debugText.innerHTML += "new transform(" + blockcord.x + "," + blockcord.y + "), ";})}'>SaveBlock</button>
-<p id="GridCords"></p>
-<p id="debugOutput"></p>
+<div id="debugText">
+    <label>
+        Grid
+        <input type="checkbox" id="gridToggle">
+    </label>
+    <button onclick=' new function (){ blockCords.forEach((blockcord) => { debugText.innerHTML += "new transform(" + blockcord.x + "," + blockcord.y + "), ";})}'>SaveBlock</button>
+    <p id="GridCords"></p>
+    <p id="debugOutput"></p>
+</div>
+<div id="CreditBox">
+    Sound Effect from <a href="https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=100277">Pixabay</a>
+</div>
+
 <script src="src/js/towerdefencs/towerdefence.js"></script>
 <script src="src/js/GameManager.js"></script>
 </body>

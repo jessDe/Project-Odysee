@@ -22,6 +22,14 @@ body, html {
     transform: translate(-50%, -50%);
     width: 1100px;
 }
+
+#CreditBox {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-family: "PixelFont", serif;
+    font-size: 10px;
+}
 #Shop{
     display: inline-block;
     width: 130px;
@@ -66,4 +74,7 @@ canvas {
     -ms-interpolation-mode: nearest-neighbor;   /* IE                            */
     width: 960px;
     height: 540px;
+}
+#CreditBox{
+    display: none;
 }
