@@ -127,8 +127,12 @@ window.onload = function(){
         document.getElementById("myCanvas").style.background = "#000000"
         Update();
     }else if(GameMode === 1){
+        document.getElementById("GameBox").style.width = "960px";
+        document.getElementById("GameBox").style.height = "540px";
+        document.getElementById("Shop").style.display = "none";
+        document.body.style.background = "#1c001f";
         JumpAndRun.Start();
-        document.getElementById("myCanvas").style.background = "#45008a"
+
     }else if(GameMode === 2){
         document.body.style.backgroundImage = "url('src/img/bg_egypt01.png')";
         document.getElementById("debugText").style.display = "block";
@@ -161,7 +165,10 @@ function Update(){
             document.getElementById("debugText").style.display = "none";
             document.getElementById("myCanvas").style.background = "#000000"
         }else if(GameMode === 1){
-            document.getElementById("myCanvas").style.background = "#45008a"
+            document.body.style.background = "#65006e";
+            document.getElementById("GameBox").style.width = "960px";
+            document.getElementById("GameBox").style.height = "540px";
+            document.getElementById("Shop").style.display = "none";
             JumpAndRun.Start();
 
         }else if(GameMode === 2){
