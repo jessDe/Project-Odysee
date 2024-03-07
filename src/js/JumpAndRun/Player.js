@@ -1,7 +1,7 @@
 // Klasse für den Spieler (Jump'n'Run)
 // geschrieben von: AZ
 class Player {
-  constructor(x, y, w, h) {
+  constructor(x, y, w, h, map) {
     // Position und Größe des Spielers
     this.x = x;
     this.y = y;
@@ -21,19 +21,21 @@ class Player {
     this.magPow = 50;
     this.mag2nd = 20;
     this.hasDeflect = false;
+
+    this.Karte = map
   }
   // Methode zum Bewegen des Spielers
   puppeteer( dauer ){
     // PC nach links bewegen
     if (steuerung.links) {
       this.x -= this.speed;
-      let blockiert = this.blockade( this.x, this.y, KARTE ) ;
+      let blockiert = this.blockade( this.x, this.y, this.Karte ) ;
       if( blockiert.links ) this.x = TILESIZE * blockiert.spalteLinks + TILESIZE;
     }
     // PC nach rechts bewegen
     if (steuerung.rechts) {
       this.x += this.speed;
-      let blockiert = this.blockade( this.x, this.y, KARTE ) ;
+      let blockiert = this.blockade( this.x, this.y, this.Karte ) ;
       if( blockiert.rechts ) this.x = TILESIZE * blockiert.spalteRechts - this.w - 1 ;
     }
     // PC springen lassen
@@ -82,16 +84,16 @@ class Player {
     b.zeileUnten = Math.floor( ( pixelY + this.h ) / TILESIZE ) ;
     // Blockade-Information: true, falls in der Map an der Zeile / Spalte ein blockierendes Tile steht
     // Nimm das Zeichen aus der angegebenen Zeile und Spalte
-    zeichenLO = map[ b.zeileOben ].charAt( b.spalteLinks ) ;
-    zeichenLU = map[ b.zeileUnten ].charAt( b.spalteLinks ) ;
-    zeichenRO = map[ b.zeileOben ].charAt( b.spalteRechts ) ;
-    zeichenRU = map[ b.zeileUnten ].charAt( b.spalteRechts ) ;
+    zeichenLO = map.pattern[ b.zeileOben ].charAt( b.spalteLinks ) ;
+    zeichenLU = map.pattern[ b.zeileUnten ].charAt( b.spalteLinks ) ;
+    zeichenRO = map.pattern[ b.zeileOben ].charAt( b.spalteRechts ) ;
+    zeichenRU = map.pattern[ b.zeileUnten ].charAt( b.spalteRechts ) ;
     // Falls es in SOLID vorkommt, ist diese Richtung blockiert (true);
     // if( SOLID.indexOf( zeichenLO ) >= 0 || SOLID.indexOf( zeichenLU ) >= 0 ) { b.links = true } else { b.links = false } ;
-    b.links = ( SOLID.indexOf( zeichenLO ) >= 0 || SOLID.indexOf( zeichenLU ) >= 0 ) ;
-    b.rechts = ( SOLID.indexOf( zeichenRO ) >= 0 || SOLID.indexOf( zeichenRU ) >= 0 ) ;
-    b.oben = ( SOLID.indexOf( zeichenLO ) >= 0 || SOLID.indexOf( zeichenRO ) >= 0 ) ;
-    b.unten = ( SOLID.indexOf( zeichenLU ) >= 0 || SOLID.indexOf( zeichenRU ) >= 0 ) ;
+    b.links = ( map.solid.indexOf( zeichenLO ) >= 0 || map.solid.indexOf( zeichenLU ) >= 0 ) ;
+    b.rechts = ( map.solid.indexOf( zeichenRO ) >= 0 || map.solid.indexOf( zeichenRU ) >= 0 ) ;
+    b.oben = ( map.solid.indexOf( zeichenLO ) >= 0 || map.solid.indexOf( zeichenRO ) >= 0 ) ;
+    b.unten = ( map.solid.indexOf( zeichenLU ) >= 0 || map.solid.indexOf( zeichenRU ) >= 0 ) ;
     return b;
   }
 
@@ -100,7 +102,7 @@ class Player {
   anzeigen() {
     let levelStift = level.getContext('2d');		// Stift zum Zeichnen des Level
     // Nimm aus dem Level den Ausschnitt, der sich um die aktuelle Spielerposition befindet
-    let ausschnittX = ( this.x + this.width/2 - ausschnitt.width/2 );
+    let ausschnittX = ( this.x + this.w/2 - ausschnitt.width/2 );
     let bereich = levelStift.getImageData( ausschnittX,0, ausschnitt.width,ausschnitt.height );
     //
     let ausschnittStift = ausschnitt.getContext('2d');

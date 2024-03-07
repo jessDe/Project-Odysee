@@ -4,8 +4,8 @@ const LEVELS = [
     {
         name: "void00",
         theme: "void",
-        tileset: "./img/tileset/ts_void00.png",
-        bgimg: "./img/bgimg/bgimg_void00.jpg",
+        tileset: "./src/img/tileset/ts_void00.png",
+        bgimg: "./src/img/bgimg/bgimg_void00.jpg",
         map: {
             width: 200,
             height: 15,
@@ -28,9 +28,9 @@ const LEVELS = [
             ],
             mask: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
             solid: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'H'],
-            spawn: [
-                player = { x: 120, y: 360 }
-            ]
+            spawn: {
+                player: { x: 120, y: 360 }
+            }
         }
     },
     {

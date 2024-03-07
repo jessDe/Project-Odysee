@@ -1,6 +1,6 @@
 let TD = new TowerDefence();
-let JumpAndRun = new JumpAndRunEngine();
-let GameMode = 2;
+let JumpAndRun = new JumpAndRunClass(0);
+let GameMode = 1;
 
 let MenuButton = new Image();
 MenuButton.src = "src/img/MenuButton.png";
@@ -80,6 +80,16 @@ class MainMenu{
             ctx.drawImage(EyeImage2, ctx.canvas.width/2 - 52,ctx.canvas.height/2 -75,70,70);
             ctx.drawImage(GateImage, ctx.canvas.width/2 - 290,ctx.canvas.height/2 -300,580,600);
 
+            //Draws Arrow
+            ctx.drawImage(ArrowImage, ctx.canvas.width/2 +300,ctx.canvas.height/2 - 50,50,100);
+
+            //Draw fliped Arrow
+            ctx.translate(ctx.canvas.width/2 - 250, ctx.canvas.height/2 + 50);
+            ctx.rotate(Math.PI);
+            ctx.drawImage(ArrowImage, 0,0,50,100);
+            ctx.rotate(-Math.PI);
+            ctx.translate(-(ctx.canvas.width/2 + -250), -(ctx.canvas.height/2 + 50));
+
         }
 
     }
@@ -90,6 +100,14 @@ class MainMenu{
                 if(MousePos.x >= 26 && MousePos.x <= 36){
                     if(MousePos.y >= 25 && MousePos.y <= 35){
                         MainMenuObj.MainMenuMode = 2;
+                    }
+                }
+            }else if(MainMenuObj.MainMenuMode === 2){
+                if(MousePos.x >= 23 && MousePos.x <= 37){
+                    if(MousePos.y >= 3 && MousePos.y <= 28){
+                        //Door Clicked
+                        GameMode = 1;
+                        console.log("GameMode: "+GameMode);
                     }
                 }
             }
@@ -105,12 +123,12 @@ window.onload = function(){
         document.getElementById("GameBox").style.width = "960px";
         document.getElementById("GameBox").style.height = "540px";
         document.getElementById("Shop").style.display = "none";
-        document.getElementById("debugText").style.display = "none";
+        //document.getElementById("debugText").style.display = "none";
         document.getElementById("myCanvas").style.background = "#000000"
         Update();
     }else if(GameMode === 1){
-        JumpAndRun.StartGame();
-
+        JumpAndRun.Start();
+        document.getElementById("myCanvas").style.background = "#45008a"
     }else if(GameMode === 2){
         document.body.style.backgroundImage = "url('src/img/bg_egypt01.png')";
         document.getElementById("debugText").style.display = "block";
@@ -119,7 +137,7 @@ window.onload = function(){
 
 }
 
-
+let LastGameMode = 0;
 
 
 
@@ -132,6 +150,30 @@ function Update(){
 
     }else if(GameMode === 2){
 
+    }
+
+    if(LastGameMode !== GameMode){
+        if(GameMode === 0){
+            document.body.style.background = "#212121";
+            document.getElementById("GameBox").style.width = "960px";
+            document.getElementById("GameBox").style.height = "540px";
+            document.getElementById("Shop").style.display = "none";
+            document.getElementById("debugText").style.display = "none";
+            document.getElementById("myCanvas").style.background = "#000000"
+        }else if(GameMode === 1){
+            document.getElementById("myCanvas").style.background = "#45008a"
+            JumpAndRun.Start();
+
+        }else if(GameMode === 2){
+            document.body.style.backgroundImage = "url('src/img/bg_egypt01.jpg')";
+            document.getElementById("debugText").style.display = "block";
+            document.getElementById("Shop").style.display = "block";
+            document.getElementById("GameBox").style.width = "1100px";
+
+
+            TD.StartGame();
+        }
+        LastGameMode = GameMode;
     }
     window.requestAnimationFrame(Update)
 }

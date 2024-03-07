@@ -160,7 +160,7 @@ class TowerDefence{
         this.CurrentPlacingTowerID = 0;
         this.LoadBlockCords();
         this.timeDelta = new Date().getTime();
-        this.GameRunning = true;
+        this.GameRunning = false;
         this.SunTimer = 0;
         this.SunFrameTime = 0;
         this.LakeFrame = 0;
@@ -184,7 +184,6 @@ class TowerDefence{
         ctx.drawImage(mapImage, 0, 0, 1280, 720);
     }
     animate() {
-
         let SunFrame = false;
 
         if (new Date().getTime() - TD.timeDelta > 1000) {
@@ -248,6 +247,11 @@ class TowerDefence{
             enemy.update();
             i++;
         });
+
+
+
+
+
 
         let j = 0;
         TD.towers.forEach(tower => {
@@ -344,7 +348,6 @@ class TowerDefence{
         ctx.fillText("Round: " + (TD.CurrentRound+1), 10, ctx.canvas.height-10);
 
 
-
         if(TD.GameRunning){
             requestAnimationFrame(TD.animate);
         }
@@ -355,6 +358,7 @@ class TowerDefence{
                 ctx.fillRect(cord.x*20, cord.y*20, 20, 20);
             });
         }
+
 
     }
     checkTowerCollision(){
@@ -442,11 +446,15 @@ class TowerDefence{
         });
     }
     StartGame(){
-        Shop.forEach((shopTower, index) => {
-            HTMLShop.innerHTML += "<img src='"+shopTower.image.src+"' width='40' height='80' onclick='TD.buyTower("+index+")' alt='Tower'><p class='TowerName'>"+shopTower.name+"</p><p class='TowerPrice'>"+shopTower.price+"$ </p>";
-        });
-        this.animate();
-        this.registerEvents();
+        if(TD.GameRunning === false){
+            Shop.forEach((shopTower, index) => {
+                HTMLShop.innerHTML += "<img src='"+shopTower.image.src+"' width='40' height='80' onclick='TD.buyTower("+index+")' alt='Tower'><p class='TowerName'>"+shopTower.name+"</p><p class='TowerPrice'>"+shopTower.price+"$ </p>";
+            });
+            TD.GameRunning = true;
+            this.animate();
+            this.registerEvents();
+
+        }
     }
 }
 
