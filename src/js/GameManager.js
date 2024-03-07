@@ -1,6 +1,34 @@
 let TD = new TowerDefence();
 let JumpAndRun = new JumpAndRunClass(0);
-let GameMode = 1;
+let GameMode = 0;
+let World = 0;
+
+let images = [
+    {
+        Center: "src/img/eye.png",
+        Outer: "src/img/EyeCentered.png",
+        Gate: "src/img/Gate.png"
+    },
+    {
+        Center: "src/img/Mitte.png",
+        Outer: "src/img/World2.png",
+        Gate: "src/img/Gate2.png"
+    }
+];
+
+let loadedImages = [
+    {
+        Center: new Image(),
+        Outer: new Image(),
+        Gate: new Image()
+    },
+    {
+        Center: new Image(),
+        Outer: new Image(),
+        Gate: new Image()
+    }
+
+];
 
 let MenuButton = new Image();
 MenuButton.src = "src/img/MenuButton.png";
@@ -55,7 +83,7 @@ class MainMenu{
             let imageY = ctx.canvas.height/2-10 -250;
             ctx.translate(imageX + 250, imageY + 250);
             ctx.rotate(this.frame * Math.PI / 180);
-            ctx.drawImage(EyeImage, -250, -250, 500, 500);
+            ctx.drawImage(loadedImages[World].Outer, -250, -250, 500, 500);
             ctx.rotate(-this.frame * Math.PI / 180);
             ctx.translate(-(imageX + 250), -(imageY + 250));
 
@@ -64,7 +92,7 @@ class MainMenu{
             let imageY2 = ctx.canvas.height/2 -172;
             ctx.translate(imageX2 + 130, imageY2 + 130);
             ctx.rotate(this.frame * Math.PI / 180);
-            ctx.drawImage(EyeImage, -130, -130, 260, 260);
+            ctx.drawImage(loadedImages[World].Outer, -130, -130, 260, 260);
             ctx.rotate(-this.frame * Math.PI / 180);
             ctx.translate(-(imageX2 + 130), -(imageY2 + 130));
 
@@ -77,18 +105,24 @@ class MainMenu{
 
 
             //Draws Gate
-            ctx.drawImage(EyeImage2, ctx.canvas.width/2 - 52,ctx.canvas.height/2 -75,70,70);
-            ctx.drawImage(GateImage, ctx.canvas.width/2 - 290,ctx.canvas.height/2 -300,580,600);
+            ctx.drawImage(loadedImages[World].Center, ctx.canvas.width/2 - 52,ctx.canvas.height/2 -75,70,70);
+            ctx.drawImage(loadedImages[World].Gate, ctx.canvas.width/2 - 290,ctx.canvas.height/2 -300,580,600);
 
             //Draws Arrow
-            ctx.drawImage(ArrowImage, ctx.canvas.width/2 +300,ctx.canvas.height/2 - 50,50,100);
+            if(World < images.length-1){
+                ctx.drawImage(ArrowImage, ctx.canvas.width/2 +300,ctx.canvas.height/2 - 50,50,100);
+            }
+
 
             //Draw fliped Arrow
-            ctx.translate(ctx.canvas.width/2 - 250, ctx.canvas.height/2 + 50);
-            ctx.rotate(Math.PI);
-            ctx.drawImage(ArrowImage, 0,0,50,100);
-            ctx.rotate(-Math.PI);
-            ctx.translate(-(ctx.canvas.width/2 + -250), -(ctx.canvas.height/2 + 50));
+            if(World > 0){
+                ctx.translate(ctx.canvas.width/2 - 250, ctx.canvas.height/2 + 50);
+                ctx.rotate(Math.PI);
+                ctx.drawImage(ArrowImage, 0,0,50,100);
+                ctx.rotate(-Math.PI);
+                ctx.translate(-(ctx.canvas.width/2 + -250), -(ctx.canvas.height/2 + 50));
+            }
+
 
         }
 
@@ -103,6 +137,25 @@ class MainMenu{
                     }
                 }
             }else if(MainMenuObj.MainMenuMode === 2){
+
+                if(MousePos.x >= 47 && MousePos.x <= 49){
+                    if(MousePos.y >= 15 && MousePos.y <= 19){
+                        if(World < images.length-1){
+                            World++;
+                        }
+                    }
+                }
+
+                if(MousePos.x >= 17 && MousePos.x <= 19){
+                    if(MousePos.y >= 15 && MousePos.y <= 19){
+                        if(World > 0){
+                            World--;
+                        }
+                    }
+                }
+
+
+                //Door
                 if(MousePos.x >= 23 && MousePos.x <= 37){
                     if(MousePos.y >= 3 && MousePos.y <= 28){
                         //Door Clicked
@@ -117,13 +170,19 @@ class MainMenu{
 }
 let MainMenuObj = new MainMenu();
 window.onload = function(){
+    loadedImages.forEach(function(image){
+        image.Center.src = images[loadedImages.indexOf(image)].Center;
+        image.Outer.src = images[loadedImages.indexOf(image)].Outer;
+        image.Gate.src = images[loadedImages.indexOf(image)].Gate;
+    });
+
     console.log("Game started"+ GameMode);
     if(GameMode === 0){
         document.body.style.background = "#212121";
         document.getElementById("GameBox").style.width = "960px";
         document.getElementById("GameBox").style.height = "540px";
         document.getElementById("Shop").style.display = "none";
-        //document.getElementById("debugText").style.display = "none";
+        document.getElementById("debugText").style.display = "none";
         document.getElementById("myCanvas").style.background = "#000000"
         Update();
     }else if(GameMode === 1){
@@ -147,6 +206,10 @@ let LastGameMode = 0;
 
 
 function Update(){
+    EyeImage.src = images[World].Outer;
+    EyeImage2.src = images[World].Center;
+    GateImage.src = images[World].Gate;
+
     if(GameMode === 0){
         MainMenuObj.Draw();
 
