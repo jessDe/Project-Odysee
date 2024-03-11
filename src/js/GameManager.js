@@ -2,6 +2,7 @@ let TD = new TowerDefence();
 let JumpAndRun = new JumpAndRunClass(0);
 let GameMode = 0;
 let World = 0;
+let selectingLevel = false;
 
 let images = [
     {
@@ -30,6 +31,26 @@ let loadedImages = [
 
 ];
 
+
+let Unlocks = [
+    {
+        World: 1,
+        Unlock: {
+            Level2: false,
+            Level3: false
+        },
+        unlocked: true
+    },
+    {
+        World: 2,
+        Unlock: {
+            Level2: false,
+            Level3: false
+        },
+        unlocked: false
+    }
+]
+
 let MenuButton = new Image();
 MenuButton.src = "src/img/MenuButton.png";
 
@@ -49,6 +70,9 @@ EyeImage2.src = "src/img/eye.png";
 
 let ArrowImage = new Image();
 ArrowImage.src = "src/img/Arrow.png";
+
+let lockImage = new Image();
+lockImage.src = "src/img/locked.png";
 
 
 /*
@@ -108,20 +132,75 @@ class MainMenu{
             ctx.drawImage(loadedImages[World].Center, ctx.canvas.width/2 - 52,ctx.canvas.height/2 -75,70,70);
             ctx.drawImage(loadedImages[World].Gate, ctx.canvas.width/2 - 290,ctx.canvas.height/2 -300,580,600);
 
-            //Draws Arrow
-            if(World < images.length-1){
-                ctx.drawImage(ArrowImage, ctx.canvas.width/2 +300,ctx.canvas.height/2 - 50,50,100);
-            }
 
 
-            //Draw fliped Arrow
-            if(World > 0){
-                ctx.translate(ctx.canvas.width/2 - 250, ctx.canvas.height/2 + 50);
-                ctx.rotate(Math.PI);
-                ctx.drawImage(ArrowImage, 0,0,50,100);
-                ctx.rotate(-Math.PI);
-                ctx.translate(-(ctx.canvas.width/2 + -250), -(ctx.canvas.height/2 + 50));
+            if(!selectingLevel){
+                //Draws Arrow
+                if(World < images.length-1){
+                    ctx.drawImage(ArrowImage, ctx.canvas.width/2 +300,ctx.canvas.height/2 - 50,50,100);
+                }
+
+
+                //Draw fliped Arrow
+                if(World > 0){
+                    ctx.translate(ctx.canvas.width/2 - 250, ctx.canvas.height/2 + 50);
+                    ctx.rotate(Math.PI);
+                    ctx.drawImage(ArrowImage, 0,0,50,100);
+                    ctx.rotate(-Math.PI);
+                    ctx.translate(-(ctx.canvas.width/2 + -250), -(ctx.canvas.height/2 + 50));
+                }
+                if(!Unlocks[World].unlocked){
+                    ctx.clearRect(canvas.width/2-140,110,223, canvas.height/2+119);
+                    ctx.drawImage(lockImage, canvas.width/2 - 105, canvas.height/2 - 75, 150,150);
+                }
+            }else{
+                //Draw Level Select
+                //make a grey overlay
+                ctx.fillStyle = "rgba(0,0,0,0.5)";
+                ctx.fillRect(0,0,canvas.width, canvas.height);
+
+                ctx.fillStyle = "white";
+                ctx.font = "30px PixelFont";
+                ctx.fillText("Select Level", ctx.canvas.width/2 - 100, 50);
+
+
+
+                //Level 1
+                ctx.fillStyle = "#ff0000";
+                ctx.fillRect(canvas.width/2-400, canvas.height/2 - 100, 200, 200);
+
+                ctx.font = "50px PixelFont";
+                ctx.fillStyle = "white";
+                ctx.fillText("Level 1", canvas.width/2-380, canvas.height/2 + 150);
+
+
+                //Level 2
+                ctx.fillStyle = "#ff0000";
+                ctx.fillRect(canvas.width/2-100, canvas.height/2 - 100, 200, 200);
+
+                ctx.font = "50px PixelFont";
+                ctx.fillStyle = "white";
+                ctx.fillText("Level 2", canvas.width/2-80, canvas.height/2 + 150);
+
+                if(!Unlocks[World].Unlock.Level2){
+                    ctx.drawImage(lockImage, canvas.width/2-75, canvas.height/2 - 75, 150, 150);
+                }
+
+                //Level 3
+                ctx.fillStyle = "#ff0000";
+                ctx.fillRect(canvas.width/2+200, canvas.height/2 - 100, 200, 200);
+
+                ctx.font = "50px PixelFont";
+                ctx.fillStyle = "white";
+                ctx.fillText("Level 3", canvas.width/2+220, canvas.height/2 + 150);
+
+                if(!Unlocks[World].Unlock.Level3){
+                    ctx.drawImage(lockImage, canvas.width/2+225, canvas.height/2 - 75, 150, 150);
+                }
+
+
             }
+
 
 
         }
@@ -137,32 +216,73 @@ class MainMenu{
                     }
                 }
             }else if(MainMenuObj.MainMenuMode === 2){
-
-                if(MousePos.x >= 47 && MousePos.x <= 49){
-                    if(MousePos.y >= 15 && MousePos.y <= 19){
-                        if(World < images.length-1){
-                            World++;
+                if(!selectingLevel){
+                    if(MousePos.x >= 47 && MousePos.x <= 49){
+                        if(MousePos.y >= 15 && MousePos.y <= 19){
+                            if(World < images.length-1){
+                                World++;
+                            }
                         }
                     }
-                }
 
-                if(MousePos.x >= 17 && MousePos.x <= 19){
-                    if(MousePos.y >= 15 && MousePos.y <= 19){
-                        if(World > 0){
-                            World--;
+                    if(MousePos.x >= 17 && MousePos.x <= 19){
+                        if(MousePos.y >= 15 && MousePos.y <= 19){
+                            if(World > 0){
+                                World--;
+                            }
                         }
                     }
-                }
 
 
-                //Door
-                if(MousePos.x >= 23 && MousePos.x <= 37){
-                    if(MousePos.y >= 3 && MousePos.y <= 28){
-                        //Door Clicked
-                        GameMode = 1;
-                        console.log("GameMode: "+GameMode);
+                    //Door
+                    if(MousePos.x >= 23 && MousePos.x <= 37){
+                        if(MousePos.y >= 3 && MousePos.y <= 28){
+                            //Door Clicked
+                            if(Unlocks[World].unlocked){
+                                selectingLevel = true;
+                            }
+                        }
+                    }
+                }else{
+                    //Level Select
+
+                    if(MousePos.x >= 12 && MousePos.x <= 21){
+                        if(MousePos.y >= 13 && MousePos.y <= 22){
+                            //Level 1
+                            selectingLevel = false;
+                            GameMode = 1;
+                            JumpAndRun = new JumpAndRunClass(0);
+                        }
+                    }else if(MousePos.x >= 27 && MousePos.x <= 36){
+                        if(MousePos.y >= 13 && MousePos.y <= 22){
+                            if(Unlocks[World].Unlock.Level2){
+                                //Level 2
+                                selectingLevel = false;
+                                JumpAndRun = new JumpAndRunClass(1);
+                                GameMode = 1;
+                            }else {
+                                console.log("Level 2 locked");
+                            }
+
+                        }
+                    }else if(MousePos.x >= 42 && MousePos.x <= 51){
+                        if(MousePos.y >= 13 && MousePos.y <= 22){
+                            if(Unlocks[World].Unlock.Level3){
+                                //Level 3
+                                selectingLevel = false;
+                                TD = new TowerDefence();
+                                GameMode = 2;
+                            }else{
+                                console.log("Level 3 locked");
+                            }
+
+
+                        }
+                    }else{
+                        selectingLevel = false;
                     }
                 }
+
             }
 
         });
@@ -182,7 +302,7 @@ window.onload = function(){
         document.getElementById("GameBox").style.width = "960px";
         document.getElementById("GameBox").style.height = "540px";
         document.getElementById("Shop").style.display = "none";
-        document.getElementById("debugText").style.display = "none";
+        //document.getElementById("debugText").style.display = "none";
         document.getElementById("myCanvas").style.background = "#000000"
         Update();
     }else if(GameMode === 1){
@@ -246,4 +366,15 @@ function Update(){
         LastGameMode = GameMode;
     }
     window.requestAnimationFrame(Update)
+}
+
+
+//Unlock Level
+function UnlockLevel(World, Level){
+    Unlocks[World].unlocked = true;
+    if(Level === 2){
+        Unlocks[World].Unlock.Level2 = true;
+    }else if(Level === 3){
+        Unlocks[World].Unlock.Level3 = true;
+    }
 }
