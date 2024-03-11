@@ -37,7 +37,7 @@ let Unlocks = [
         World: 1,
         Unlock: {
             Level2: false,
-            Level3: false
+            Level3: true
         },
         unlocked: true
     },
@@ -246,37 +246,28 @@ class MainMenu{
                 }else{
                     //Level Select
 
-                    if(MousePos.x >= 12 && MousePos.x <= 21){
-                        if(MousePos.y >= 13 && MousePos.y <= 22){
-                            //Level 1
+                    if(MousePos.x >= 12 && MousePos.x <= 21 && MousePos.y >= 13 && MousePos.y <= 22){
+                        //Level 1
+                        selectingLevel = false;
+                        GameMode = 1;
+                        JumpAndRun = new JumpAndRunClass(0);
+                    }else if(MousePos.x >= 27 && MousePos.x <= 36 && MousePos.y >= 13 && MousePos.y <= 22){
+                        if(Unlocks[World].Unlock.Level2){
+                            //Level 2
                             selectingLevel = false;
+                            JumpAndRun = new JumpAndRunClass(1);
                             GameMode = 1;
-                            JumpAndRun = new JumpAndRunClass(0);
+                        }else {
+                            console.log("Level 2 locked");
                         }
-                    }else if(MousePos.x >= 27 && MousePos.x <= 36){
-                        if(MousePos.y >= 13 && MousePos.y <= 22){
-                            if(Unlocks[World].Unlock.Level2){
-                                //Level 2
-                                selectingLevel = false;
-                                JumpAndRun = new JumpAndRunClass(1);
-                                GameMode = 1;
-                            }else {
-                                console.log("Level 2 locked");
-                            }
-
-                        }
-                    }else if(MousePos.x >= 42 && MousePos.x <= 51){
-                        if(MousePos.y >= 13 && MousePos.y <= 22){
-                            if(Unlocks[World].Unlock.Level3){
-                                //Level 3
-                                selectingLevel = false;
-                                TD = new TowerDefence();
-                                GameMode = 2;
-                            }else{
-                                console.log("Level 3 locked");
-                            }
-
-
+                    }else if(MousePos.x >= 42 && MousePos.x <= 51 && MousePos.y >= 13 && MousePos.y <= 22){
+                        if(Unlocks[World].Unlock.Level3){
+                            //Level 3
+                            selectingLevel = false;
+                            TD = new TowerDefence();
+                            GameMode = 2;
+                        }else{
+                            console.log("Level 3 locked");
                         }
                     }else{
                         selectingLevel = false;
@@ -299,6 +290,7 @@ window.onload = function(){
     console.log("Game started"+ GameMode);
     if(GameMode === 0){
         document.body.style.background = "#212121";
+        document.addEventListener('keydown', handleKeyPress);
         document.getElementById("GameBox").style.width = "960px";
         document.getElementById("GameBox").style.height = "540px";
         document.getElementById("Shop").style.display = "none";
@@ -367,7 +359,27 @@ function Update(){
     }
     window.requestAnimationFrame(Update)
 }
+function handleKeyPress(event) {
+    // Access the key code of the pressed key
+    var keyCode = event.keyCode || event.which;
 
+    // Log the key code to the console (you can do something else based on the key code)
+    console.log('Key pressed - Key Code:', keyCode);
+
+    if(GameMode === 0){
+        if(keyCode === 27){
+            if(selectingLevel){
+                selectingLevel = false;
+            }
+        }
+    }else if(GameMode === 2){
+        TD.clickevent(keyCode);
+    }
+
+}
+
+// Attach the event listener to the document
+document.addEventListener('keydown', handleKeyPress);
 
 //Unlock Level
 function UnlockLevel(World, Level){

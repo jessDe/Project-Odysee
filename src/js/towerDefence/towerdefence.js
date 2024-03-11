@@ -164,6 +164,7 @@ class TowerDefence{
         this.SunTimer = 0;
         this.SunFrameTime = 0;
         this.LakeFrame = 0;
+        this.pausescreen = false;
     }
 
     LoadBlockCords(){
@@ -178,7 +179,35 @@ class TowerDefence{
         });
     }
 
+    clickevent(key){
+        if(key === 66){
+            if(MouseMode === "blocking"){
+                MouseMode = "none";
+            }else{
+                MouseMode = "blocking";
+            }
+        }else if(key === 27){
 
+            if(TD.GameRunning === true){
+                TD.GameRunning = false;
+
+                setTimeout(() => {
+                    ctx.fillStyle = "rgba(0,0,0,0.5)";
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.font = "30px PixelFont";
+                    ctx.fillStyle = "white";
+                    ctx.fillText("Paused", canvas.width/2-50, canvas.height/2);
+                    ctx.fillText("Press ESC to continue", canvas.width/2-150, canvas.height/2+50);
+                }, 50);
+                TD.pausescreen = true;
+            }else{
+                TD.GameRunning = true;
+                TD.animate();
+                TD.pausescreen = false;
+            }
+
+        }
+    }
 
     drawMap(){
         ctx.drawImage(mapImage, 0, 0, 1280, 720);
@@ -421,6 +450,28 @@ class TowerDefence{
     }
 
     registerEvents(){
+
+
+        // Attach the event listener to the window
+        window.addEventListener('blur', function (){
+            if(TD.GameRunning){
+                TD.GameRunning = false;
+            }
+
+        });
+
+        window.addEventListener('focus', function (){
+            if(TD.GameRunning === false && TD.pausescreen === false){
+                ctx.fillStyle = "rgba(0,0,0,0.5)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.font = "30px PixelFont";
+                ctx.fillStyle = "white";
+                ctx.fillText("Paused", canvas.width/2-50, canvas.height/2);
+                //press esc to continue
+                ctx.fillText("Press ESC to continue", canvas.width/2-150, canvas.height/2+50);
+                TD.pausescreen = true;
+            }
+        });
         checkbox.addEventListener("change", function() {
             if (this.checked) {
                 console.log("Checkbox is checked");
@@ -432,16 +483,19 @@ class TowerDefence{
         });
 
         canvas.addEventListener('click', function() {
-            if(MouseMode === "placing"){
-                TD.placeTower();
+            if(TD.GameRunning){
+                if(MouseMode === "placing"){
+                    TD.placeTower();
 
-            }else if(MouseMode === "blocking"){
-                if(blockCords.some(cord => cord.x === MousePos.x && cord.y === MousePos.y)){
-                    blockCords.splice(blockCords.indexOf(blockCords.find(cord => cord.x === MousePos.x && cord.y === MousePos.y)), 1);
-                }else {
-                    blockCords.push(new transform(MousePos.x, MousePos.y));
+                }else if(MouseMode === "blocking"){
+                    if(blockCords.some(cord => cord.x === MousePos.x && cord.y === MousePos.y)){
+                        blockCords.splice(blockCords.indexOf(blockCords.find(cord => cord.x === MousePos.x && cord.y === MousePos.y)), 1);
+                    }else {
+                        blockCords.push(new transform(MousePos.x, MousePos.y));
+                    }
                 }
             }
+
 
         });
     }
