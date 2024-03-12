@@ -75,6 +75,7 @@ class Player {
     // Sonstiges
     this.map = map;
   }
+
   // Kollisionsmethode für Terrain, übernommen vom J&R aus dem Unterricht
   blockade( pixelX, pixelY, map ) {
     let zeichenLO, zeichenLU, zeichenRO, zeichenRU;
@@ -128,7 +129,7 @@ class Player {
       steuerung.springen = false;
       this.velocitY = this.jumpStrength * -1;
       this.airStair++;
-      console.log("AS: "+ this.airStair +" - ASL: "+ this.airStairLimit +" - steuerung.springen: "+ steuerung.springen);
+      // console.log("AS: "+ this.airStair +" - ASL: "+ this.airStairLimit +" - steuerung.springen: "+ steuerung.springen);
       this.juggler('jump');
     }
     // PC rutschen lassen
@@ -155,9 +156,9 @@ class Player {
     }
     // PC Fallkontrolle
     this.velocitY += this.gravity;
-    if (this.y < this.map.height * TILESIZE - this.h && this.airStair > 0) this.y += this.velocitY;
+    if (this.y < this.map.height * TILESIZE - this.h) this.y += this.velocitY;
     let blockiert = this.blockade( this.x, this.y, this.map ) ;
-    console.log("blockiert: "+ blockiert.oben +", "+ blockiert.unten +", "+ blockiert.links +", "+ blockiert.rechts);
+    console.log("x: "+ this.x +" - blockiert: "+ blockiert.oben +", "+ blockiert.unten +", "+ blockiert.links +", "+ blockiert.rechts);
     if (this.velocitY > 0 && blockiert.unten ) {
       this.y = TILESIZE * blockiert.zeileUnten - this.h - 0.1;
       this.velocitY = 0;
@@ -219,11 +220,11 @@ class Player {
           this.image.src = this.sprites.jump.image;
         }
         break;
-      case 'jump':
+      case 'slide':
         if (this.image !== this.sprites.slide.image) {
           this.frame = 0;
-          this.frMax = this.sprites.jump.frMax;
-          this.image.src = this.sprites.jump.image;
+          this.frMax = this.sprites.slide.frMax;
+          this.image.src = this.sprites.slide.image;
         }
         break;
       case 'attack1':
