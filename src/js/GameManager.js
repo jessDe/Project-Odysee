@@ -1,6 +1,6 @@
 let TD = new TowerDefence();
 let JumpAndRun = new JumpAndRunClass(0);
-let GameMode = 0;
+let GameMode = 1;
 let World = 0;
 let selectingLevel = false;
 

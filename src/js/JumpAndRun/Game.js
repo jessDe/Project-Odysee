@@ -4,10 +4,10 @@ let steuerung = {
     links: false,
     rechts: false,
     springen: false,
-    rutschen: false,
+    slide: false,
     angriff1: false,
     angriff2: false,
-    magie: false,
+    magic: false,
     pause: false
 };
 
@@ -19,7 +19,7 @@ class JumpAndRunClass {
         this.curlevel = level;
         this.lvlc = LEVELS[this.curlevel];
         this.zuletzt = new Date().getTime();
-        this.myPlayer = new Player( this.lvlc.map.spawn.player.x, this.lvlc.map.spawn.player.y, 32, 64 );
+        this.myPlayer = new Player( this.lvlc.map.spawn.player.x, this.lvlc.map.spawn.player.y, 64, 64, this.lvlc.map );
         this.bgimg = new Image();
         this.bgimg.src = this.lvlc.bgimg;
         this.tileset = new Image();
@@ -36,7 +36,6 @@ class JumpAndRunClass {
 
 
     drawLevel(){
-
         let leinwand = {
             width: 0,
             height: 0
@@ -48,21 +47,19 @@ class JumpAndRunClass {
         let PlayerPos = this.lvlc.map.spawn.player;
         leinwand.width = TILESIZE * this.lvlc.map.pattern[0].length;
         leinwand.height = TILESIZE * this.lvlc.map.pattern.length;
-        let pinsel = ctx;			// NACHLESEN
+        let pinsel = ctx;
         pinsel.drawImage( this.bgimg, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
         //console.log('Breite: '+ leinwand.width +', Höhe: '+ leinwand.height);
 
         // Durchlaufe alle Zeilen der Map
         for( let zeile = 0; zeile < this.lvlc.map.pattern.length ; zeile++ ) {
-
             // Durchlaufe darin alle Spalten der Map
             for( let spalte = 0; spalte < this.lvlc.map.pattern[0].length; spalte++ ) {
                 // Bestimmte die Position des aktuellen Feldes im TILES-Array
-                let pos = this.lvlc.map.mask.indexOf( this.lvlc.map.pattern[zeile].charAt( spalte ) );			// NACHLESEN
+                let pos = this.lvlc.map.mask.indexOf( this.lvlc.map.pattern[zeile].charAt( spalte ) );
                 // Falls Map-Eintrag unter den angegebenen TILES ist
                 if( pos >= 0) {
                     // dann zeichne das entsprechende Feld auf die Leinwand
-
                     pinsel.drawImage(this.tileset, TILESIZE * pos, 0, TILESIZE, TILESIZE, spalte*TILESIZE-offset.x*TILESIZE, zeile*TILESIZE+offset.y*TILESIZE, TILESIZE, TILESIZE);
                     //console.log('Zeile: '+ zeile +', Spalte: '+ spalte +', Pos: '+ pos);
                     ctx.font = "30px Arial";
@@ -72,14 +69,8 @@ class JumpAndRunClass {
                 }else{
                     //console.log("TileSet Error"+ this.lvlc.map.pattern[zeile].charAt( spalte ))
                 }
-
             }
-
         }
-
-
-
-
     }
     steuern(event) {
         if (event.defaultPrevented) {
@@ -91,7 +82,7 @@ class JumpAndRunClass {
             case "ArrowRight":
                 steuerung.rechts = (event.type === 'keydown'); break;
             case "ArrowDown":
-                steuerung.rutschen = (event.type === 'keydown'); break;
+                steuerung.slide = (event.type === 'keydown'); break;
             case "ArrowUp":
                 steuerung.springen = (event.type === 'keydown'); break;
             case "Space":
@@ -118,8 +109,7 @@ class JumpAndRunClass {
         let dauer = ( jetzt - JumpAndRun.zuletzt ) /1000 ;
         JumpAndRun.drawLevel();
         JumpAndRun.zuletzt = jetzt;
-        //this.myPlayer.update( dauer );
-        //this.myPlayer.puppeteer();
+        JumpAndRun.myPlayer.update();
         window.requestAnimationFrame( JumpAndRun.updateGame );
     }
 }

@@ -8,88 +8,85 @@ class Player {
     this.w = w;
     this.h = h;
     // Bewegungsgeschwindigkeit, Sprungkraft, Schwerkraft und Air-Stair
-    this.speed = 200;
-    this.atkCooldown = 200;
-    this.jumpStrength = 280;
-    this.gravity = 0.5;
+    this.speed = 5;
+    this.velocitY = 1;
+    this.jumpStrength = 15;
+    this.gravity = 0.981;
     this.airStair = 0;
     this.airStairLimit = 2;
     // Kampfwerte des Spielers
     this.hitpoints = 100;
-    this.atkPow = 30;
+    this.alive = true;
+    this.atkPow = 40;
     this.defPow = 20;
     this.magPow = 50;
     this.mag2nd = 20;
+    this.atkCooldown = 250;
     this.hasDeflect = false;
-
-    this.Karte = map
-  }
-  // Methode zum Bewegen des Spielers
-  puppeteer( dauer ){
-    // PC nach links bewegen
-    if (steuerung.links) {
-      this.x -= this.speed;
-      let blockiert = this.blockade( this.x, this.y, this.Karte ) ;
-      if( blockiert.links ) this.x = TILESIZE * blockiert.spalteLinks + TILESIZE;
-    }
-    // PC nach rechts bewegen
-    if (steuerung.rechts) {
-      this.x += this.speed;
-      let blockiert = this.blockade( this.x, this.y, this.Karte ) ;
-      if( blockiert.rechts ) this.x = TILESIZE * blockiert.spalteRechts - this.w - 1 ;
-    }
-    // PC springen lassen
-    if (steuerung.springen) {
-      if (this.airStair <= this.airStairLimit) {
-        this.y = -this.jumpStrength;
-        this.airStair++;
+    this.offensive = false;
+    // Animation und Darstellung
+    this.frame = 0;
+    this.frPast = 0;
+    this.frMax = 12;
+    this.image = new Image();
+    this.image.src = './src/img/pc/runRight.png';
+    this.sprites = {
+      idle: {
+        image: './src/img/pc/runRight.png',
+        frMax: 12
+      },
+      runLeft: {
+        image: './src/img/pc/runLeft.png',
+        frMax: 12
+      },
+      runRight: {
+        image: './src/img/pc/runRight.png',
+        frMax: 12
+      },
+      jump: {
+        image: './src/img/pc/runRight.png',
+        frMax: 12
+      },
+      slide: {
+        image: '',
+        frMax: 1
+      },
+      angriff1: {
+        image: '',
+        frMax: 1
+      },
+      angriff2: {
+        image: '',
+        frMax: 1
+      },
+      magic: {
+        image: '',
+        frMax: 1
+      },
+      struck: {
+        image: '',
+        frMax: 1
+      },
+      death: {
+        image: '',
+        frMax: 1
       }
     }
-    // PC rutschen lassen
-    if (steuerung.rutschen) {
-
-    }
-    // PC angreifen lassen
-    if (steuerung.angriff1) {
-
-    }
-    // PC angreifen lassen
-    if (steuerung.angriff2) {
-
-    }
-    // Spieler Magie einsetzen lassen
-    if (steuerung.magie) {
-
-    }
-    // Spiel pausieren
-    if (steuerung.pause) {
-
-    }
-    // PC Fallkontrolle
-    if (this.y < height - this.h) {
-      this.y += this.gravity;
-    } else {
-      this.y = height - this.h;
-      this.y = 0;
-      this.airStair = 0;
-    }
+    // Sonstiges
+    this.map = map;
   }
+  // Kollisionsmethode für Terrain, übernommen vom J&R aus dem Unterricht
   blockade( pixelX, pixelY, map ) {
     let zeichenLO, zeichenLU, zeichenRO, zeichenRU;
-    let b = {} ;		// enthält ein "Blockade-Objekt" mit Boolean-Eigenschaften links, oben, rechts, unten
-    // Berechne aus den Pixel-Koordinaten die Tilemap-Koordinaten
+    let b = {} ;
     b.spalteLinks = Math.floor( pixelX / TILESIZE ) ;
     b.spalteRechts = Math.floor( ( pixelX + this.w ) / TILESIZE ) ;
     b.zeileOben = Math.floor( pixelY / TILESIZE ) ;
     b.zeileUnten = Math.floor( ( pixelY + this.h ) / TILESIZE ) ;
-    // Blockade-Information: true, falls in der Map an der Zeile / Spalte ein blockierendes Tile steht
-    // Nimm das Zeichen aus der angegebenen Zeile und Spalte
     zeichenLO = map.pattern[ b.zeileOben ].charAt( b.spalteLinks ) ;
     zeichenLU = map.pattern[ b.zeileUnten ].charAt( b.spalteLinks ) ;
     zeichenRO = map.pattern[ b.zeileOben ].charAt( b.spalteRechts ) ;
     zeichenRU = map.pattern[ b.zeileUnten ].charAt( b.spalteRechts ) ;
-    // Falls es in SOLID vorkommt, ist diese Richtung blockiert (true);
-    // if( SOLID.indexOf( zeichenLO ) >= 0 || SOLID.indexOf( zeichenLU ) >= 0 ) { b.links = true } else { b.links = false } ;
     b.links = ( map.solid.indexOf( zeichenLO ) >= 0 || map.solid.indexOf( zeichenLU ) >= 0 ) ;
     b.rechts = ( map.solid.indexOf( zeichenRO ) >= 0 || map.solid.indexOf( zeichenRU ) >= 0 ) ;
     b.oben = ( map.solid.indexOf( zeichenLO ) >= 0 || map.solid.indexOf( zeichenRO ) >= 0 ) ;
@@ -97,21 +94,206 @@ class Player {
     return b;
   }
 
-
-
-  anzeigen() {
-    let levelStift = level.getContext('2d');		// Stift zum Zeichnen des Level
-    // Nimm aus dem Level den Ausschnitt, der sich um die aktuelle Spielerposition befindet
-    let ausschnittX = ( this.x + this.w/2 - ausschnitt.width/2 );
-    let bereich = levelStift.getImageData( ausschnittX,0, ausschnitt.width,ausschnitt.height );
-    //
-    let ausschnittStift = ausschnitt.getContext('2d');
-    ausschnittStift.putImageData( bereich, 0, 0 );
-    // Einzeichnen des Spieler in den Ausschnitt
-    ausschnittStift.drawImage( this.sprite, this.frame*this.breite, this.animation*this.hoehe, this.breite, this.hoehe, ausschnitt.width/2-this.breite/2, this.posY, this.breite, this.hoehe );
+  // Methode zum Handlen von Treffern am PC
+  struck() {
+    this.hitpoints -= 10; // Variable für Gegnerangriff einbauen!!!
+    if (this.hitpoints <= 0) {
+      this.juggler('death');
+    } else this.juggler('struck');
   }
 
-  // Fähigkeiten und Talente des Spieler
+
+  // Puppeteer: PC-Bewegung
+  puppeteer(){
+        // Idle
+        // if (!steuerung) {
+        //  this.juggler('idle');
+        // }
+    // PC nach links bewegen
+    if (steuerung.links) {
+      this.x -= this.speed;
+      let blockiert = this.blockade( this.x, this.y, this.map ) ;
+      if( blockiert.links ) this.x = TILESIZE * blockiert.spalteLinks + TILESIZE;
+      this.juggler('runLeft');
+    }
+    // PC nach rechts bewegen
+    if (steuerung.rechts) {
+      this.x += this.speed;
+      let blockiert = this.blockade( this.x, this.y, this.map ) ;
+      if( blockiert.rechts ) this.x = TILESIZE * blockiert.spalteRechts - this.w - 1 ;
+      this.juggler('runRight');
+    }
+    // PC springen lassen + Multi-Jump-Funktionalität ("Air-Stair")
+    if (steuerung.springen && this.airStair < this.airStairLimit) {
+      steuerung.springen = false;
+      this.velocitY = this.jumpStrength * -1;
+      this.airStair++;
+      console.log("AS: "+ this.airStair +" - ASL: "+ this.airStairLimit +" - steuerung.springen: "+ steuerung.springen);
+      this.juggler('jump');
+    }
+    // PC rutschen lassen
+    if (steuerung.slide) {
+      this.juggler('slide');
+    }
+    // PC angreifen lassen
+    if (steuerung.angriff1) {
+      this.juggler('angriff1');
+      this.offensive = true;
+    }
+    // PC angreifen lassen
+    if (steuerung.angriff2) {
+
+    }
+    // Spieler Magie einsetzen lassen
+    if (steuerung.magic) {
+      // NYI
+    }
+    // Spiel pausieren
+    if (steuerung.pause) {
+      // Spiel pausieren
+
+    }
+    // PC Fallkontrolle
+    this.velocitY += this.gravity;
+    if (this.y < this.map.height * TILESIZE - this.h && this.airStair > 0) this.y += this.velocitY;
+    let blockiert = this.blockade( this.x, this.y, this.map ) ;
+    console.log("blockiert: "+ blockiert.oben +", "+ blockiert.unten +", "+ blockiert.links +", "+ blockiert.rechts);
+    if (this.velocitY > 0 && blockiert.unten ) {
+      this.y = TILESIZE * blockiert.zeileUnten - this.h - 0.1;
+      this.velocitY = 0;
+      this.airStair = 0;
+    }
+    if (this.velocitY < 0 && blockiert.oben ) {
+      this.y = TILESIZE * blockiert.zeileOben + TILESIZE;
+      this.velocitY = 0;
+    }
+  }
+
+  // Juggler: "Jongliert" mit den Sprites des PCs
+  // geschrieben von: AZ
+  juggler( sprite ) {
+    if (this.image == this.sprites.death.image) {
+      if (this.frame == this.sprites.death.frMax - 1)
+        this.alive = false;
+      return;
+    }
+    // Ausführen von Angriff1 cancelt die aktuelle Animation
+    if (
+        this.image == this.sprites.angriff1.image &&
+        this.frame < this.sprites.angriff1.frMax - 1
+       )
+    return;
+    // Einstecken eines Treffers cancelt die aktuelle Animation
+    if (
+        this.image == this.sprites.struck.image &&
+        this.frame < this.sprites.struck.frMax - 1
+       )
+    return;
+    // Switch-Verzweigung für die einzelnen States
+    switch (sprite) {
+      case 'idle':
+        if (this.image !== this.sprites.idle.image) {
+          this.frame = 0;
+          this.frMax = this.sprites.idle.frMax;
+          this.image.src = this.sprites.idle.image;
+        }
+        break;
+      case 'runLeft':
+        if (this.image !== this.sprites.runLeft.image) {
+          // this.frame = 0;
+          this.frMax = this.sprites.runLeft.frMax;
+          this.image.src = this.sprites.runLeft.image;
+        }
+        break;
+      case 'runRight':
+        if (this.image !== this.sprites.runRight.image) {
+          // this.frame = 0;
+          this.frMax = this.sprites.runRight.frMax;
+          this.image.src = this.sprites.runRight.image;
+        }
+        break;
+      case 'jump':
+        if (this.image !== this.sprites.jump.image) {
+          this.frame = 0;
+          this.frMax = this.sprites.jump.frMax;
+          this.image.src = this.sprites.jump.image;
+        }
+        break;
+      case 'jump':
+        if (this.image !== this.sprites.slide.image) {
+          this.frame = 0;
+          this.frMax = this.sprites.jump.frMax;
+          this.image.src = this.sprites.jump.image;
+        }
+        break;
+      case 'attack1':
+        if (this.image !== this.sprites.angriff1.image) {
+          this.frame = 0;
+          this.frMax = this.sprites.angriff1.frMax;
+          this.image.src = this.sprites.angriff1.image;
+        }
+        break;
+      case 'attack2':
+        if (this.image !== this.sprites.angriff2.image) {
+          this.frame = 0;
+          this.frMax = this.sprites.angriff2.frMax;
+          this.image.src = this.sprites.angriff2.image;
+        }
+        break;
+      case 'magic':
+        if (this.image !== this.sprites.magic.image) {
+          this.frame = 0;
+          this.frMax = this.sprites.magic.frMax;
+          this.image.src = this.sprites.magic.image;
+        }
+        break;
+      case 'struck':
+        if (this.image !== this.sprites.struck.image) {
+          this.frame = 0;
+          this.frMax = this.sprites.struck.frMax;
+          this.image.src = this.sprites.struck.image;
+        }
+        break;
+      case 'death':
+        if (this.image !== this.sprites.death.image) {
+          this.frame = 0;
+          this.frMax = this.sprites.death.frMax;
+          this.image.src = this.sprites.death.image;
+        }
+        break;
+    }
+  }
+
+  // Anzeigen des PCs
+  drawPC() {
+    ctx.drawImage(
+        this.image,
+        this.frame * (this.image.width / this.frMax),
+        0,
+        this.image.width / this.frMax,
+        this.image.height,
+        this.x,
+        this.y,
+        (this.image.width / this.frMax),
+        this.image.height
+    )
+    // console.log("PC: "+ this.x +", "+ this.y +", "+ this.image.width +", "+ this.image.height +", "+ this.frame +", "+ this.frPast +", "+ this.frMax +", "+ this.image.src)
+  }
+
+  // Alternative Methode für Frames und so, muss getestet werden
+  ticker() {
+    this.frPast++;
+    if (this.frPast % this.frMax == 0) {
+      if (this.frame < this.frMax - 1) {
+        this.frame++;
+      } else {
+        this.frame = 0;
+      }
+    }
+  }
+
+
+  // Fähigkeiten und Talente des PCs
   talents() {
     this.talents = {
       hyperactive: function () {
@@ -136,12 +318,11 @@ class Player {
 
     }
 
-
-    // Methode zum Aktualisieren des Spielers
-
-  update( dauer ) {
-    this.puppeteer( dauer );
-    this.anzeigen();
+  // Methode zum Aktualisieren des PC
+  update() {
+    this.puppeteer();
+    this.ticker();
+    this.drawPC();
   }
 
 }
