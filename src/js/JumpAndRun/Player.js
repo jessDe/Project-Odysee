@@ -24,6 +24,9 @@ class Player {
     this.atkCooldown = 250;
     this.hasDeflect = false;
     this.offensive = false;
+
+    this.offsetX = 0;
+    this.offsetY = 0;
     // Animation und Darstellung
     this.frame = 0;
     this.frPast = 0;
@@ -32,50 +35,56 @@ class Player {
     this.image.src = './src/img/pc/runRight.png';
     this.sprites = {
       idle: {
-        image: './src/img/pc/runRight.png',
+        image: new Image(),
         frMax: 12
       },
       runLeft: {
-        image: './src/img/pc/runLeft.png',
+        image: new Image(),
         frMax: 12
       },
       runRight: {
-        image: './src/img/pc/runRight.png',
+        image: new Image(),
         frMax: 12
       },
       jump: {
-        image: './src/img/pc/runRight.png',
+        image: new Image(),
         frMax: 12
       },
       slide: {
-        image: '',
+        image: new Image(),
         frMax: 1
       },
       angriff1: {
-        image: '',
+        image: new Image(),
         frMax: 1
       },
       angriff2: {
-        image: '',
+        image: new Image(),
         frMax: 1
       },
       magic: {
-        image: '',
+        image: new Image(),
         frMax: 1
       },
       struck: {
-        image: '',
+        image: new Image(),
         frMax: 1
       },
       death: {
-        image: '',
+        image: new Image(),
         frMax: 1
       }
     }
+
+    this.sprites.idle.image.src = './src/img/pc/runRight.png';
+    this.sprites.runLeft.image.src = './src/img/pc/runLeft.png';
+    this.sprites.runRight.image.src = './src/img/pc/runRight.png';
+    this.sprites.jump.image.src = './src/img/pc/runRight.png';
+    this.sprites.slide.image.src = './src/img/pc/runRight.png';
+
     // Sonstiges
     this.map = map;
   }
-
   // Kollisionsmethode für Terrain, übernommen vom J&R aus dem Unterricht
   blockade( pixelX, pixelY, map ) {
     let zeichenLO, zeichenLU, zeichenRO, zeichenRU;
@@ -158,7 +167,6 @@ class Player {
     this.velocitY += this.gravity;
     if (this.y < this.map.height * TILESIZE - this.h) this.y += this.velocitY;
     let blockiert = this.blockade( this.x, this.y, this.map ) ;
-    console.log("x: "+ this.x +" - blockiert: "+ blockiert.oben +", "+ blockiert.unten +", "+ blockiert.links +", "+ blockiert.rechts);
     if (this.velocitY > 0 && blockiert.unten ) {
       this.y = TILESIZE * blockiert.zeileUnten - this.h - 0.1;
       this.velocitY = 0;
@@ -173,20 +181,20 @@ class Player {
   // Juggler: "Jongliert" mit den Sprites des PCs
   // geschrieben von: AZ
   juggler( sprite ) {
-    if (this.image == this.sprites.death.image) {
-      if (this.frame == this.sprites.death.frMax - 1)
+    if (this.image === this.sprites.death.image) {
+      if (this.frame === this.sprites.death.frMax - 1)
         this.alive = false;
       return;
     }
     // Ausführen von Angriff1 cancelt die aktuelle Animation
     if (
-        this.image == this.sprites.angriff1.image &&
+        this.image === this.sprites.angriff1.image &&
         this.frame < this.sprites.angriff1.frMax - 1
        )
     return;
     // Einstecken eines Treffers cancelt die aktuelle Animation
     if (
-        this.image == this.sprites.struck.image &&
+        this.image === this.sprites.struck.image &&
         this.frame < this.sprites.struck.frMax - 1
        )
     return;
@@ -194,72 +202,65 @@ class Player {
     switch (sprite) {
       case 'idle':
         if (this.image !== this.sprites.idle.image) {
-          this.frame = 0;
           this.frMax = this.sprites.idle.frMax;
-          this.image.src = this.sprites.idle.image;
+          this.image = this.sprites.idle.image;
         }
         break;
       case 'runLeft':
         if (this.image !== this.sprites.runLeft.image) {
-          // this.frame = 0;
           this.frMax = this.sprites.runLeft.frMax;
-          this.image.src = this.sprites.runLeft.image;
+          this.image = this.sprites.runLeft.image;
         }
         break;
       case 'runRight':
         if (this.image !== this.sprites.runRight.image) {
-          // this.frame = 0;
           this.frMax = this.sprites.runRight.frMax;
-          this.image.src = this.sprites.runRight.image;
+          this.image = this.sprites.runRight.image;
         }
         break;
       case 'jump':
         if (this.image !== this.sprites.jump.image) {
-          this.frame = 0;
           this.frMax = this.sprites.jump.frMax;
-          this.image.src = this.sprites.jump.image;
+          this.image = this.sprites.jump.image;
         }
         break;
       case 'slide':
         if (this.image !== this.sprites.slide.image) {
-          this.frame = 0;
-          this.frMax = this.sprites.slide.frMax;
-          this.image.src = this.sprites.slide.image;
+          this.frMax = this.sprites.jump.frMax;
+          this.image = this.sprites.jump.image;
         }
         break;
       case 'attack1':
         if (this.image !== this.sprites.angriff1.image) {
           this.frame = 0;
           this.frMax = this.sprites.angriff1.frMax;
-          this.image.src = this.sprites.angriff1.image;
+          this.image = this.sprites.angriff1.image;
         }
         break;
       case 'attack2':
         if (this.image !== this.sprites.angriff2.image) {
           this.frame = 0;
           this.frMax = this.sprites.angriff2.frMax;
-          this.image.src = this.sprites.angriff2.image;
+          this.image = this.sprites.angriff2.image;
         }
         break;
       case 'magic':
         if (this.image !== this.sprites.magic.image) {
           this.frame = 0;
           this.frMax = this.sprites.magic.frMax;
-          this.image.src = this.sprites.magic.image;
+          this.image = this.sprites.magic.image;
         }
         break;
       case 'struck':
         if (this.image !== this.sprites.struck.image) {
-          this.frame = 0;
           this.frMax = this.sprites.struck.frMax;
-          this.image.src = this.sprites.struck.image;
+          this.image = this.sprites.struck.image;
         }
         break;
       case 'death':
         if (this.image !== this.sprites.death.image) {
-          this.frame = 0;
           this.frMax = this.sprites.death.frMax;
-          this.image.src = this.sprites.death.image;
+          this.image = this.sprites.death.image;
         }
         break;
     }
@@ -273,18 +274,17 @@ class Player {
         0,
         this.image.width / this.frMax,
         this.image.height,
-        this.x,
+        canvas.width / 2,
         this.y,
         (this.image.width / this.frMax),
         this.image.height
     )
-    // console.log("PC: "+ this.x +", "+ this.y +", "+ this.image.width +", "+ this.image.height +", "+ this.frame +", "+ this.frPast +", "+ this.frMax +", "+ this.image.src)
   }
 
   // Alternative Methode für Frames und so, muss getestet werden
   ticker() {
     this.frPast++;
-    if (this.frPast % this.frMax == 0) {
+    if (this.frPast % this.frMax === 0) {
       if (this.frame < this.frMax - 1) {
         this.frame++;
       } else {

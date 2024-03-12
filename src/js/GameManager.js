@@ -19,14 +19,14 @@ let images = [
 
 let loadedImages = [
     {
-        Center: new Image(),
-        Outer: new Image(),
-        Gate: new Image()
+        Center: null,
+        Outer: null,
+        Gate: null
     },
     {
-        Center: new Image(),
-        Outer: new Image(),
-        Gate: new Image()
+        Center: null,
+        Outer: null,
+        Gate: null
     }
 
 ];
@@ -96,6 +96,7 @@ class MainMenu{
     }
     Draw(){
         this.frame -= 0.175;
+        ctx.clearRect(0,0,canvas.width, canvas.height);
         if(this.MainMenuMode === 0){
             ctx.drawImage(Title, 0,0, 634, 221, ctx.canvas.width/2- 400, ctx.canvas.height*0.1, 800, 300);
             ctx.drawImage(MenuButton, 0,0,64,64, ctx.canvas.width/2- 100, ctx.canvas.height*0.7, 200,200);
@@ -105,6 +106,7 @@ class MainMenu{
             //Rotate Outer Eye
             let imageX = ctx.canvas.width/2-15 - 250;
             let imageY = ctx.canvas.height/2-10 -250;
+
             ctx.translate(imageX + 250, imageY + 250);
             ctx.rotate(this.frame * Math.PI / 180);
             ctx.drawImage(loadedImages[World].Outer, -250, -250, 500, 500);
@@ -282,12 +284,14 @@ class MainMenu{
 let MainMenuObj = new MainMenu();
 window.onload = function(){
     loadedImages.forEach(function(image){
+        image.Center = new Image();
+        image.Outer = new Image();
+        image.Gate = new Image();
         image.Center.src = images[loadedImages.indexOf(image)].Center;
         image.Outer.src = images[loadedImages.indexOf(image)].Outer;
         image.Gate.src = images[loadedImages.indexOf(image)].Gate;
     });
 
-    console.log("Game started"+ GameMode);
     if(GameMode === 0){
         document.body.style.background = "#212121";
         document.addEventListener('keydown', handleKeyPress);
@@ -296,7 +300,8 @@ window.onload = function(){
         document.getElementById("Shop").style.display = "none";
         //document.getElementById("debugText").style.display = "none";
         document.getElementById("myCanvas").style.background = "#000000"
-        Update();
+        JumpAndRun = new JumpAndRunClass(0);
+        TD = new TowerDefence();
     }else if(GameMode === 1){
         document.getElementById("GameBox").style.width = "960px";
         document.getElementById("GameBox").style.height = "540px";
@@ -309,6 +314,7 @@ window.onload = function(){
         document.getElementById("debugText").style.display = "block";
         TD.StartGame();
     }
+    Update();
 
 }
 
@@ -325,10 +331,6 @@ function Update(){
     if(GameMode === 0){
         MainMenuObj.Draw();
 
-    }else if(GameMode === 1){
-
-    }else if(GameMode === 2){
-
     }
 
     if(LastGameMode !== GameMode){
@@ -339,14 +341,20 @@ function Update(){
             document.getElementById("Shop").style.display = "none";
             document.getElementById("debugText").style.display = "none";
             document.getElementById("myCanvas").style.background = "#000000"
+            JumpAndRun.GameRunning = false;
         }else if(GameMode === 1){
             document.body.style.background = "#65006e";
             document.getElementById("GameBox").style.width = "960px";
             document.getElementById("GameBox").style.height = "540px";
             document.getElementById("Shop").style.display = "none";
-            JumpAndRun.Start();
+            if(JumpAndRun.GameRunning === false){
+                JumpAndRun.Start();
+            }
+
+
 
         }else if(GameMode === 2){
+
             document.body.style.backgroundImage = "url('src/img/bg_egypt01.jpg')";
             document.getElementById("debugText").style.display = "block";
             document.getElementById("Shop").style.display = "block";

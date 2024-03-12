@@ -25,9 +25,11 @@ class JumpAndRunClass {
         this.tileset = new Image();
         this.tileset.src = this.lvlc.tileset;
         this.frame = 0;
+        this.GameRunning = false;
     }
 
     Start(){
+        this.GameRunning = true;
         this.drawLevel();
         this.updateGame();
         window.addEventListener('keydown', this.steuern);
@@ -41,7 +43,7 @@ class JumpAndRunClass {
             height: 0
         };
         let offset = {
-            x: 0,
+            x: this.myPlayer.x/TILESIZE - (canvas.width/TILESIZE)/2,
             y: 0,
         };
         let PlayerPos = this.lvlc.map.spawn.player;
@@ -62,10 +64,6 @@ class JumpAndRunClass {
                     // dann zeichne das entsprechende Feld auf die Leinwand
                     pinsel.drawImage(this.tileset, TILESIZE * pos, 0, TILESIZE, TILESIZE, spalte*TILESIZE-offset.x*TILESIZE, zeile*TILESIZE+offset.y*TILESIZE, TILESIZE, TILESIZE);
                     //console.log('Zeile: '+ zeile +', Spalte: '+ spalte +', Pos: '+ pos);
-                    ctx.font = "30px Arial";
-                    ctx.fillStyle = "red";
-                    ctx.fillText(pos, spalte*TILESIZE + TILESIZE/2 + offset.x-TILESIZE, zeile*TILESIZE+TILESIZE/2 +1 +offset.y*TILESIZE);
-
                 }else{
                     //console.log("TileSet Error"+ this.lvlc.map.pattern[zeile].charAt( spalte ))
                 }
@@ -110,6 +108,8 @@ class JumpAndRunClass {
         JumpAndRun.drawLevel();
         JumpAndRun.zuletzt = jetzt;
         JumpAndRun.myPlayer.update();
-        window.requestAnimationFrame( JumpAndRun.updateGame );
+        if(JumpAndRun.GameRunning){
+            window.requestAnimationFrame( JumpAndRun.updateGame );
+        }
     }
 }
