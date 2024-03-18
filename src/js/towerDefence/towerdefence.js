@@ -2,7 +2,10 @@ class tower {
     constructor(x, y){
         this.position = new transform(x, y);
         this.projectileImage = projectile1Image;
+        this.TimeBetweenShots = 5;
         this.timeSinceLastShot = 0;
+        this.projectilespeed = 5;
+        this.projectileDamage = 10;
         this.projectiles = [
             new projectile(this.position.x, this.position.y,this.projectileImage)
         ];
@@ -79,33 +82,35 @@ AnimatedLakeImage.src = "./src/img/new_dessert_lake.png";
 
 const HTMLShop = document.getElementById("Shop");
 
-const MoneyText = document.getElementById("money");
-const LivesText = document.getElementById("lives");
-const RoundText = document.getElementById("rounds");
 
 const Shop = [
-    new ShopTower("Sabu Tower", 100, tower1Image),
-    new ShopTower("Sabu Tower", 100, tower1Image),
+    new ShopTower("Sabu Tower", 50, tower1Image),
+    new ShopTower("Sinal Tower", 100, tower1Image),
 ];
 
-const Rounds = [
-    new Round(
-        [
-            new RoundEnemy(new EnemyTD(100,3, 100), 0),
-            new RoundEnemy(new EnemyTD(100,3, 100), 2),
-            new RoundEnemy(new EnemyTD(100,3, 100), 5),
-            new RoundEnemy(new EnemyTD(100,3, 100), 7),
-            new RoundEnemy(new EnemyTD(100,3, 100), 10),
-            new RoundEnemy(new EnemyTD(100,3, 100), 12),
-            new RoundEnemy(new EnemyTD(100,3, 100), 15),
-        ],
-        100),
-    new Round(
-        [
-            new RoundEnemy(new EnemyTD(100,3, 100), 0)
-        ],
-        100),
-];
+function generateRoundEnemies(roundNumber) {
+    let enemies = [];
+    let numEnemies = 10*roundNumber; // Increase number of enemies with each round
+    for (let i = 0; i < numEnemies; i++) {
+        let health = 150 + roundNumber * 50 + 10*i; // Increase health with each round
+        let speed = 3 + roundNumber * 0.1; // Increase speed with each round
+        let delay = i * 2 - roundNumber*0.1; // Delay of 2 seconds between each enemy
+        enemies.push(new RoundEnemy(new EnemyTD(health, speed, 5*roundNumber), delay));
+    }
+    return enemies;
+}
+
+function GenerateRounds(){
+    let rounds = [];
+    for (let i = 0; i < 100; i++) {
+        rounds.push(new Round(
+            generateRoundEnemies(i),
+            100*i*(3/4)));
+    }
+    return rounds;
+}
+
+const Rounds = GenerateRounds();
 
 
 let MousePos = {
@@ -248,12 +253,15 @@ class TowerDefence{
                 console.log("Round " + TD.CurrentRound + " finished");
                 TD.money += Rounds[TD.CurrentRound].endReward;
                 TD.CurrentRound++;
+
+                TD.time = 0;
             }
             if (TD.CurrentRound < Rounds.length) {
                 Rounds[TD.CurrentRound].enemies.forEach((enemy, index) => {
                     if (enemy.delay <= TD.time) {
                         console.log("Spawned Enemy");
                         TD.enemies.push(enemy.enemy);
+                        console.log(enemy.enemy);
                         Rounds[TD.CurrentRound].enemies.splice(index, 1);
                     }
                 });
@@ -301,8 +309,8 @@ class TowerDefence{
 
 
             });
-            if (everyProjectileHasTarget && tower.timeSinceLastShot > 5) {
-                tower.projectiles.push(new projectile(tower.position.x, tower.position.y));
+            if (everyProjectileHasTarget && tower.timeSinceLastShot > tower.TimeBetweenShots) {
+                tower.projectiles.push(new projectile(tower.position.x, tower.position.y, tower.projectileDamage, tower.projectilespeed));
                 tower.timeSinceLastShot = 0;
             }
             tower.timeSinceLastShot++;
@@ -501,6 +509,7 @@ class TowerDefence{
     }
     StartGame(){
         if(TD.GameRunning === false){
+
             Shop.forEach((shopTower, index) => {
                 HTMLShop.innerHTML += "<img src='"+shopTower.image.src+"' width='40' height='80' onclick='TD.buyTower("+index+")' alt='Tower'><p class='TowerName'>"+shopTower.name+"</p><p class='TowerPrice'>"+shopTower.price+"$ </p>";
             });

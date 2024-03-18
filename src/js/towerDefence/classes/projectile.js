@@ -1,11 +1,12 @@
 class projectile {
-    constructor(x, y) {
+    constructor(x, y, damage, speed) {
         this.position = new transform(x,y)
         this.velocity = new transform(0,0)
         this.distance = 0
-        this.damage = 10
+        this.damage = damage
         this.target = null
         this.OutOfBounds = false
+        this.speed = speed
     }
     draw() {
         ctx.drawImage(projectile1Image, (this.position.x)*20+8, (this.position.y)*20, 30, 30)
