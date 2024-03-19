@@ -1,14 +1,14 @@
-// JS-Datei für eine Auswahl an Leveln, wird später in eine JSON-Datei ausgelagert
+// JS-Datei für eine Auswahl an Leveln
 // geschrieben von: AZ
 const LEVELS = [
     {
         name: "void00",
-        theme: "void",
+        realm: "void",
         tileset: "./src/img/tileset/ts_void00.png",
         bgimg: "./src/img/bgimg/bgimg_void00.jpg",
         map: {
             width: 200,
-            height: 15,
+            height: 17,
             pattern: [
                 'HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH',//00
                 'H                                                                                                                                                                                                      H',//01
@@ -16,26 +16,35 @@ const LEVELS = [
                 'H                                                                                                                                                                                                      H',//03
                 'H                                                                                                                                                                                                      H',//04
                 'H                                                                                                                                                                                                      H',//05
-                'H                                                                               7020108                                                        70058                                                   H',//06
-                'H                                                                               6     9                                                        6   9                                                   H',//07
-                'H                                                            700308             6     9                                                        6   9                                                   H',//08
-                'H                           700208                           6    9             6     9                             70001008           70043001H   9                                                   H',//09
-                'H000000000200000000030000020H    H300100002020100040003000010H    H0000002000300H     9                             6      9           6           H000410502000000030000050000000101000000003000001002H',//10
-                'H                                                                                     H40001030000020000000100003001H      H00050100000H                                                               H',//11
-                'H                                                                                                                                                                                                      H',//12
+                'H                                                                                                                                                                                                      H',//06
+                'H                                                                               7020108                                                        70058                                                   H',//07
+                'H                                                                               6     9                                                        6   9                                                   H',//08
+                'H                                                            700308             6     s                                                        6   9                                                   H',//09
+                'H                           700208                           6    9             6     s                             70001008           70043001H   9                                                   H',//10
+                'H000000000200000000030000020H    H300100002020100040003000010H    H0000002000300H     9                             6      9           6           H000410502000000030000050000000101000000003000001002H',//11
+                'H                                                                                     H40001030000020000000100003001H      H00050100000H                                                               H',//12
                 'H                                                                                                                                                                                                      H',//13
-                'HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH' //14
+                'H                                                                                                                                                                                                      H',//14
+                'H                                                                                    HH                                                                                                                H',//15
+                'HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH' //16
             ],
-            mask: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+            mask: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 's'],
             solid: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'H'],
             spawn: {
-                player: { x: 120, y: 140 }
+                player: { x: 120, y: 140, oX: 0, oY: 0 },
+                sigils: [
+                    { name: 'dewdropS', type: 'Sigil', pos: {x: 200, y: 140, oX: 0, oY: 0 }},
+                    { name: 'dewdropS', type: 'Sigil', pos: {x: 300, y: 140, oX: 0, oY: 0 }}
+                ],
+                enemies: [
+                    { name: 'dumbass', type: 'Enemy', pos: {x: 800, y: 140, oX: 0, oY: 0 }}
+                ]
             }
         }
     },
     {
         name: "egypt01",
-        theme: "egypt",
+        realm: "egypt",
         tileset: "",
         bgimg: "",
         map: {
@@ -75,13 +84,13 @@ const LEVELS = [
             mask: ['', '', '', '', '', '', '', '', '', ''],
             solid: ['', '', '', '', '', '', '', '', '', ''],
             spawn: [
-                player = {x: 120, y: 360}
+                player = {x: 120, y: 360, oX: 0, oY: 0 }
             ]
         },
     },
     {
         name: "egypt02",
-        theme: "egypt",
+        realm: "egypt",
         tileset: "",
         bgimg: "",
         map: {
@@ -121,7 +130,7 @@ const LEVELS = [
             mask: ['', '', '', '', '', '', '', '', '', ''],
             solid: ['', '', '', '', '', '', '', '', '', ''],
             spawn: [
-                player = {x: 120, y: 360}
+                player = {x: 120, y: 360, oX: 0, oY: 0 }
             ]
         }
     }
