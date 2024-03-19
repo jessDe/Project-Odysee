@@ -120,6 +120,9 @@ class Enemy extends Entity {
     }
     move() {
         this.pos.x += this.stats.speed * this.direction;
+        this.pos.y += this.gravity * (this.pos.y < JumpAndRun.myPlayer.pos.y ? 1 : -1) * this.aiLevel;
+
+
     }
     update() {
         // KI-Verhalten

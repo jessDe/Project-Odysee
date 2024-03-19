@@ -119,7 +119,7 @@ class Player {
       },
       struck: {
         image: new Image(),
-        frMax: 1
+        frMax: 12
       },
       death: {
         image: new Image(),
@@ -135,7 +135,7 @@ class Player {
     this.sprites.jumpR.image.src = './src/img/pc/jumpR.png';
     this.sprites.slideL.image.src = './src/img/pc/slideL.png';
     this.sprites.slideR.image.src = './src/img/pc/slideR.png';
-    this.sprites.struck.image.src = './src/img/pc/struckL.png';
+    this.sprites.struck.image.src = './src/img/pc/runLeft.png';
     // this.sprites.angriffL.image.src = './src/img/pc/angriffL.png';
     // this.sprites.angriffR.image.src = './src/img/pc/angriffR.png';
     // this.sprites.specialL.image.src = './src/img/pc/specialL.png';

@@ -18,14 +18,14 @@ let world = {
     offsetX: 0,
     offsetY: 0
 }
-let gamepads = navigator.getGamepads();
+let gamepads;
 
 class JumpAndRunClass {
     constructor(level) {
         this.curlevel = level;
         this.lvlc = LEVELS[this.curlevel];
         // this.zuletzt = new Date().getTime();
-        this.myPlayer = new Player( this.lvlc.map, { w: 64, h: 64 }, { maxHP: 100, curHP: 50, atk: 40, atkCD: 150, def: 20, mag: 50, mgx: 20, speed: 4 } );
+        this.myPlayer = new Player( this.lvlc.map, { w: 64, h: 64 }, { maxHP: 100, curHP: 100, atk: 40, atkCD: 150, def: 20, mag: 50, mgx: 20, speed: 4 } );
         this.bgimg = new Image();
         this.bgimg.src = this.lvlc.bgimg;
         this.tileset = new Image();
@@ -37,6 +37,9 @@ class JumpAndRunClass {
     Start(){
         lastTime = new Date();
         this.GameRunning = true;
+        this.myPlayer = new Player( this.lvlc.map, { w: 64, h: 64 }, { maxHP: 100, curHP: 100, atk: 40, atkCD: 150, def: 20, mag: 50, mgx: 20, speed: 4 } );
+        activeSGL = [];
+        activeNMY = [];
         this.drawLevel();
         this.populate(this.lvlc.map.spawn);
         this.updateGame();
@@ -44,6 +47,8 @@ class JumpAndRunClass {
         console.log(activeSGL);
         window.addEventListener('keydown', this.steuern);
         window.addEventListener('keyup', this.steuern);
+        window.addEventListener('gamepadconnected', this.gamepad);
+        window.addEventListener('gamepaddisconnected', this.gamepad);
     }
     /*
     // drawLevel-Methode, Unterrichtsversion
@@ -156,22 +161,6 @@ class JumpAndRunClass {
                 ntt.alive = false;
             return;
         }
-        // Ausführen von Angriff1 cancelt die aktuelle Animation
-        if (
-            ntt.image === ntt.sprites.angriffL.image &&
-            ntt.frame < ntt.sprites.angriffL.frMax - 1
-        )
-            return;
-        /*
-        // Einstecken eines Treffers cancelt die aktuelle Animation
-        if (
-            ntt.image === ntt.sprites.struck.image &&
-            ntt.frame < ntt.sprites.struck.frMax - 1
-        )
-            return;
-        */
-
-        // Switch-Verzweigung für die einzelnen States
         switch (sprite) {
             case 'idle':
                 if (ntt.image !== ntt.sprites.idle.image) {
@@ -291,13 +280,15 @@ class JumpAndRunClass {
             if( target === JumpAndRun.myPlayer && target.hardboiled && this.calcDamage(attacker, target) > 16 ) {
                 target.stats.curHP -= 16;
             } else target.stats.curHP -= this.calcDamage(attacker, target);
-            if (target.curHP <= 0) {
+            if (target.stats.curHP <= 0) {
                 JumpAndRun.juggler(target,'death');
                 target.alive = false;
                 let drop = dropLoot(target);
                 if (drop !== null) {
                     activeSGL.push(drop);
                 }
+
+
             } else JumpAndRun.juggler(target,'struck');
         }
         target.damageCD = 0;
@@ -311,6 +302,7 @@ class JumpAndRunClass {
             this.spawnNTT(nmy);
         }
     }
+
     spawnNTT( item ) {
         let ntt;
         switch(item.type) {
@@ -336,6 +328,56 @@ class JumpAndRunClass {
         window.removeEventListener('keyup', this.steuern);
     }
 
+    // Methode für Gamepad-Management
+    gamepad( ) {
+        gamepads = navigator.getGamepads();
+        if(gamepads[0] === undefined) return;
+
+        if (gamepads[0] !== null) {
+            if (gamepads[0].buttons[0].pressed && steuerung.springen === false) {
+                steuerung.springen = true;
+            } else if(!gamepads[0].buttons[0].pressed) {
+                steuerung.springen = false;
+            }
+            if (gamepads[0].buttons[1].pressed) {
+                steuerung.angriff = true;
+            } else {
+                steuerung.angriff = false;
+            }
+            if (gamepads[0].buttons[2].pressed) {
+                steuerung.slide = true;
+            } else {
+                steuerung.slide = false;
+            }
+            if (gamepads[0].buttons[3].pressed) {
+                steuerung.slide = true;
+            } else {
+                steuerung.slide = false;
+            }
+            if (gamepads[0].axes[0] < -0.5) {
+                steuerung.links = true;
+            } else {
+                steuerung.links = false;
+            }
+            if (gamepads[0].axes[0] > 0.5) {
+                steuerung.rechts = true;
+            } else {
+                steuerung.rechts = false;
+            }
+            if (gamepads[0].axes[1] < -0.5) {
+
+            } else {
+
+            }
+            if (gamepads[0].axes[1] > 0.5) {
+
+            } else {
+
+            }
+        }
+    }
+
+
     updateGame() {
         let now = new Date();
         let period = ( now.getTime() - lastTime.getTime() ) /1000 ;
@@ -350,33 +392,19 @@ class JumpAndRunClass {
         for (let sigil of activeSGL) {
             sigil.update();
         }
+        if(!JumpAndRun.myPlayer.alive){
+            JumpAndRun.GameRunning = false;
+            activeNMY = [];
+            activeSGL = [];
+            fade();
+        }
         checkPhysical();
+        JumpAndRun.gamepad();
         if(JumpAndRun.GameRunning){
             window.requestAnimationFrame( JumpAndRun.updateGame );
         }
     }
 }
-/*
-function spawnNTT( item ) {
-    let ntt;
-    switch(item.type) {
-        case 'Enemy':
-            ntt = new Enemy(enemy[item.name], item.pos);
-            activeNMY.push(ntt);
-            break;
-        case 'Sigil':
-            ntt = new Sigil(sigil[item.name], item.pos);
-            activeSGL.push(ntt);
-            break;
-        default:
-            console.error('Invalid entity type:', item.type);
-            return null;
-    }
-    ntt.pos.x = item.pos.x - world.offsetX;
-    ntt.pos.y = item.pos.y - world.offsetY;
-    return ntt;
-}
-*/
 
 // Funktion zum Überprüfen, ob der Spieler mit einem Gegner kollidiert oder umgekehrt
 function checkPhysical() {
@@ -387,7 +415,7 @@ function checkPhysical() {
     }
     for (let sigil of activeSGL) {
         if (rectCollision(JumpAndRun.myPlayer, sigil)) {
-            // sigil.effect;
+            sigil.effect();
             JumpAndRun.juggler(sigil,'death');
             sigil.alive = false;
             activeSGL.splice(activeSGL.indexOf(sigil), 1);
@@ -404,8 +432,20 @@ function rectCollision( rect1, rect2 ) {
             rect1.pos.y + rect1.size.h > rect2.pos.y );
 }
 
-
-
+let fadeVar = 0;
+function fade(){
+    if(fadeVar < 1){
+        fadeVar += 0.01;
+        ctx.fillStyle = 'rgba(0,0,0,'+fadeVar+')';
+        ctx.fillRect(0,0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(255,255,255,'+fadeVar+')'
+        ctx.font = 'bold 50px Arial';
+        ctx.fillText('You Died!', canvas.width/2 -100, canvas.height/2 -25)
+        setTimeout(fade, 30)
+    }else{
+        GameMode = 0;
+    }
+}
 
 
 // Jedes Mal, wenn eine Entität stirbt, soll geprüft werden, ob sie etwas aus ihrem Loot-Array droppt

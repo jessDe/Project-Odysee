@@ -275,7 +275,7 @@ const enemy = {
         stats: {
             maxHP: 100,
             curHP: 100,
-            atk: 1,
+            atk: 150,
             atkCD: 500,
             def: 0,
             speed: 1

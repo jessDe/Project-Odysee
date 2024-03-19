@@ -251,8 +251,9 @@ class MainMenu{
                     if(MousePos.x >= 12 && MousePos.x <= 21 && MousePos.y >= 13 && MousePos.y <= 22){
                         //Level 1
                         selectingLevel = false;
-                        GameMode = 1;
                         JumpAndRun = new JumpAndRunClass(0);
+                        GameMode = 1;
+                        JumpAndRun.Start();
                     }else if(MousePos.x >= 27 && MousePos.x <= 36 && MousePos.y >= 13 && MousePos.y <= 22){
                         if(Unlocks[World].Unlock.Level2){
                             //Level 2
@@ -307,6 +308,7 @@ window.onload = function(){
         document.getElementById("GameBox").style.height = "540px";
         document.getElementById("Shop").style.display = "none";
         document.body.style.background = "#1c001f";
+        JumpAndRun = new JumpAndRunClass(0);
         JumpAndRun.Start();
 
     }else if(GameMode === 2){
@@ -348,6 +350,7 @@ function Update(){
             document.getElementById("GameBox").style.height = "540px";
             document.getElementById("Shop").style.display = "none";
             if(JumpAndRun.GameRunning === false){
+                JumpAndRun = new JumpAndRunClass(0);
                 JumpAndRun.Start();
             }
 
