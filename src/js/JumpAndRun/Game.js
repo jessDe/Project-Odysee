@@ -18,6 +18,7 @@ let world = {
     offsetX: 0,
     offsetY: 0
 }
+let gamepads = navigator.getGamepads();
 
 class JumpAndRunClass {
     constructor(level) {
@@ -305,9 +306,9 @@ class JumpAndRunClass {
         lastTime = now;
         JumpAndRun.drawLevel();
         JumpAndRun.myPlayer.update(period);
-        // JumpAndRun.myPlayer.damageCD += period;
+        JumpAndRun.myPlayer.damageCD += period;
         for (let enemy of activeNMY) {
-            // enemy.damageCD += period;
+            enemy.damageCD += period;
             enemy.update();
         }
         for (let sigil of activeSGL) {
