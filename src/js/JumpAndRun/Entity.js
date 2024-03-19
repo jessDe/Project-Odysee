@@ -23,14 +23,16 @@ class Entity{
         }
     }
     draw() {
+        ctx.strokeStyle = '#ffffff' ;
+        ctx.strokeRect(this.pos.x - world.offsetX*TILESIZE, this.pos.y - world.offsetY*TILESIZE, this.size.w, this.size.h);
         ctx.drawImage(
             this.image,
             this.frame * (this.image.width / this.frMax),
             0,
             this.image.width / this.frMax,
             this.image.height,
-            this.pos.x - world.offsetX,
-            this.pos.y - world.offsetY,
+            this.pos.x - world.offsetX*TILESIZE,
+            this.pos.y - world.offsetY*TILESIZE,
             (this.image.width / this.frMax) * this.size.s,
             this.image.height * this.size.s
         )

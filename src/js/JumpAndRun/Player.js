@@ -127,7 +127,6 @@ class Player {
       }
     };
 
-    this.aether = 0;
     this.sprites.idleL.image.src = './src/img/pc/idleL.png';
     this.sprites.idleR.image.src = './src/img/pc/idleR.png';
     this.sprites.runLeft.image.src = './src/img/pc/runLeft.png';
@@ -136,13 +135,13 @@ class Player {
     this.sprites.jumpR.image.src = './src/img/pc/jumpR.png';
     this.sprites.slideL.image.src = './src/img/pc/slideL.png';
     this.sprites.slideR.image.src = './src/img/pc/slideR.png';
+    this.sprites.struck.image.src = './src/img/pc/struckL.png';
     // this.sprites.angriffL.image.src = './src/img/pc/angriffL.png';
     // this.sprites.angriffR.image.src = './src/img/pc/angriffR.png';
     // this.sprites.specialL.image.src = './src/img/pc/specialL.png';
     // this.sprites.specialR.image.src = './src/img/pc/specialR.png';
     // this.sprites.magicL.image.src = './src/img/pc/magicL.png';
     // this.sprites.magicR.image.src = './src/img/pc/magicR.png';
-    // this.sprites.struck.image.src = './src/img/pc/struck.png';
     // this.sprites.death.image.src = './src/img/pc/death.png';
 
   }
@@ -343,9 +342,9 @@ class Player {
 
   updateAtkBox() {
     if (this.direction === 1) {
-      this.atkBox.pos.x = this.pos.x + this.size.w;
+      this.atkBox.pos.x = canvas.width/2-32 + this.size.w;
     } else {
-      this.atkBox.pos.x = this.pos.x - this.atkBox.size.w;
+      this.atkBox.pos.x = canvas.width/2-32 - this.atkBox.size.w;
     }
     this.atkBox.pos.y = this.pos.y + (this.size.h - this.atkBox.size.h) / 2;
     // atkBox anzeigen
@@ -356,11 +355,11 @@ class Player {
   hpBar() {
     let am = 0.40 + (0.60 * (1 - (this.stats.curHP / this.stats.maxHP)));
     ctx.fillStyle = "rgba(255, 255, 255, 1)";
-    ctx.fillRect( (canvas.width/2 - 20), this.pos.y - 2 + ((canvas.height - this.pos.y) / 1.5), 104, 14);
+    ctx.fillRect( (canvas.width/2 - 52), this.pos.y - 2 + ((canvas.height - this.pos.y) / 1.5), 104, 14);
     ctx.fillStyle = "rgba(255, 0, 0, " + am + ")";
-    ctx.fillRect( (canvas.width/2 - 18), this.pos.y + ((canvas.height - this.pos.y) / 1.5), 100, 10);
+    ctx.fillRect( (canvas.width/2 - 50), this.pos.y + ((canvas.height - this.pos.y) / 1.5), 100, 10);
     ctx.fillStyle = "rgba(0, 255, 0, 0.75)";
-    ctx.fillRect( (canvas.width/2 - 18), this.pos.y + ((canvas.height - this.pos.y) / 1.5), 100 * (this.stats.curHP / this.stats.maxHP), 10);
+    ctx.fillRect( (canvas.width/2 - 50), this.pos.y + ((canvas.height - this.pos.y) / 1.5), 100 * (this.stats.curHP / this.stats.maxHP), 10);
 
   }
 

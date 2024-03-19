@@ -87,6 +87,8 @@ class JumpAndRunClass {
             x: (this.myPlayer.pos.x + this.myPlayer.size.w/2 )/TILESIZE - (canvas.width/TILESIZE)/2,
             y: 0,
         };
+        world.offsetX = offset.x;
+        world.offsetY = offset.y;
         // let PlayerPos = this.lvlc.map.spawn.player; // obsolet
         leinwand.width = TILESIZE * this.lvlc.map.pattern[0].length;
         leinwand.height = TILESIZE * this.lvlc.map.pattern.length;
@@ -385,7 +387,7 @@ function checkPhysical() {
     }
     for (let sigil of activeSGL) {
         if (rectCollision(JumpAndRun.myPlayer, sigil)) {
-            sigil.effect;
+            // sigil.effect;
             JumpAndRun.juggler(sigil,'death');
             sigil.alive = false;
             activeSGL.splice(activeSGL.indexOf(sigil), 1);

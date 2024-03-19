@@ -4,7 +4,7 @@ const sigil = {
     dewdropS: {
         name: 'Kleiner Tautropfen',
         type: 'Sigil',
-        size: {w: 18, h: 19, s: 2},
+        size: {w: 18, h: 19, s: 1},
         effect: function () {
             JumpAndRun.myPlayer.healcap(15);
         },
