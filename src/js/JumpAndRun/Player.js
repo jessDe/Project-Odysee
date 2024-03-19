@@ -285,21 +285,6 @@ class Player {
   /*
   // Anzeigen des PCs
   drawPC() {
-    ctx.drawImage(
-        this.image,
-        this.frame * (this.image.width / this.frMax),
-        0,
-        this.image.width / this.frMax,
-        this.image.height,
-        canvas.width / 2 - this.size.w / 2,
-        this.pos.y,
-        (this.image.width / this.frMax),
-        this.image.height
-    );
-  }
-  */
-
-  drawPC() {
     let sop = {
       x: (this.pos.x + this.size.w/2 - canvas.width/2 ),
       y: (this.pos.y + this.size.h/2 - canvas.height/2 )
@@ -319,7 +304,22 @@ class Player {
         (this.image.width / this.frMax),
         this.image.height)
   }
+  */
 
+
+  drawPC() {
+    ctx.drawImage(
+        this.image,
+        this.frame * (this.image.width / this.frMax),
+        0,
+        this.image.width / this.frMax,
+        this.image.height,
+        canvas.width / 2 - this.size.w / 2,
+        this.pos.y,
+        (this.image.width / this.frMax),
+        this.image.height
+    );
+  }
 
   // Alternative Methode für Frames und so, muss getestet werden
   ticker() {
@@ -356,11 +356,11 @@ class Player {
   hpBar() {
     let am = 0.40 + (0.60 * (1 - (this.stats.curHP / this.stats.maxHP)));
     ctx.fillStyle = "rgba(255, 255, 255, 1)";
-    ctx.fillRect( (this.pos.x - 20), this.pos.y - 2 + ((canvas.height - this.pos.y) / 1.5), 104, 14);
+    ctx.fillRect( (canvas.width/2 - 20), this.pos.y - 2 + ((canvas.height - this.pos.y) / 1.5), 104, 14);
     ctx.fillStyle = "rgba(255, 0, 0, " + am + ")";
-    ctx.fillRect( (this.pos.x - 18), this.pos.y + ((canvas.height - this.pos.y) / 1.5), 100, 10);
+    ctx.fillRect( (canvas.width/2 - 18), this.pos.y + ((canvas.height - this.pos.y) / 1.5), 100, 10);
     ctx.fillStyle = "rgba(0, 255, 0, 0.75)";
-    ctx.fillRect((this.pos.x - 18), this.pos.y + ((canvas.height - this.pos.y) / 1.5), 100 * (this.stats.curHP / this.stats.maxHP), 10);
+    ctx.fillRect( (canvas.width/2 - 18), this.pos.y + ((canvas.height - this.pos.y) / 1.5), 100 * (this.stats.curHP / this.stats.maxHP), 10);
 
   }
 

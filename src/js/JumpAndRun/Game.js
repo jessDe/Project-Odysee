@@ -45,6 +45,7 @@ class JumpAndRunClass {
         window.addEventListener('keydown', this.steuern);
         window.addEventListener('keyup', this.steuern);
     }
+    /*
     // drawLevel-Methode, Unterrichtsversion
     drawLevel() {
         let screen = {
@@ -76,7 +77,40 @@ class JumpAndRunClass {
         }
         return screen;
     }
+    */
+    drawLevel(){
+        let leinwand = {
+            width: 0,
+            height: 0
+        };
+        let offset = {
+            x: (this.myPlayer.pos.x + this.myPlayer.size.w/2 )/TILESIZE - (canvas.width/TILESIZE)/2,
+            y: 0,
+        };
+        // let PlayerPos = this.lvlc.map.spawn.player; // obsolet
+        leinwand.width = TILESIZE * this.lvlc.map.pattern[0].length;
+        leinwand.height = TILESIZE * this.lvlc.map.pattern.length;
+        let pinsel = ctx;
+        pinsel.drawImage( this.bgimg, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+        //console.log('Breite: '+ leinwand.width +', Höhe: '+ leinwand.height);
 
+        // Durchlaufe alle Zeilen der Map
+        for( let zeile = 0; zeile < this.lvlc.map.pattern.length ; zeile++ ) {
+            // Durchlaufe darin alle Spalten der Map
+            for( let spalte = 0; spalte < this.lvlc.map.pattern[0].length; spalte++ ) {
+                // Bestimmte die Position des aktuellen Feldes im TILES-Array
+                let pos = this.lvlc.map.mask.indexOf( this.lvlc.map.pattern[zeile].charAt( spalte ) );
+                // Falls Map-Eintrag unter den angegebenen TILES ist
+                if( pos >= 0) {
+                    // dann zeichne das entsprechende Feld auf die Leinwand
+                    pinsel.drawImage(this.tileset, TILESIZE * pos, 0, TILESIZE, TILESIZE, spalte*TILESIZE-offset.x*TILESIZE, zeile*TILESIZE+offset.y*TILESIZE, TILESIZE, TILESIZE);
+                    //console.log('Zeile: '+ zeile +', Spalte: '+ spalte +', Pos: '+ pos);
+                }else{
+                    //console.log("TileSet Error"+ this.lvlc.map.pattern[zeile].charAt( spalte ))
+                }
+            }
+        }
+    }
     steuern(event) {
         if (event.defaultPrevented) {
             return; // Do nothing if the event was already processed
