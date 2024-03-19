@@ -20,10 +20,146 @@ let world = {
 }
 let gamepads;
 
+const LEVELS = [
+    {
+        name: "void00",
+        realm: "void",
+        tileset: "./src/img/tileset/ts_void00.png",
+        bgimg: "./src/img/bgimg/bgimg_void00.jpg",
+        map: {
+            width: 200,
+            height: 17,
+            pattern: [
+                'HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH',//00
+                'H                                                                                                                                                                                                      H',//01
+                'H                                                                                                                                                                                                      H',//02
+                'H                                                                                                                                                                                                      H',//03
+                'H                                                                                                                                                                                                      H',//04
+                'H                                                                                                                                                                                                      H',//05
+                'H                                                                                                                                                                                                      H',//06
+                'H                                                                               7020108                                                        70058                                                   H',//07
+                'H                                                                               6     9                                                        6   9                                                   H',//08
+                'H                                                            700308             6     s                                                        6   9                                                   H',//09
+                'H                           700208                           6    9             6     s                             70001008           70043001H   9                                                   H',//10
+                'H000000000200000000030000020H    H300100002020100040003000010H    H0000002000300H     9                             6      9           6           H000410502000000030000050000000101000000003000001002H',//11
+                'H                                                                                     H40001030000020000000100003001H      H00050100000H                                                               H',//12
+                'H                                                                                                                                                                                                      H',//13
+                'H                                                                                                                                                                                                      H',//14
+                'H                                                                                    HH                                                                                                                H',//15
+                'HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH' //16
+            ],
+            mask: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 's'],
+            solid: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'H'],
+            spawn: {
+                player: { x: 120, y: 140, oX: 0, oY: 0 },
+                sigils: [
+                    { name: 'dewdropS', type: 'Sigil', pos: {x: 200, y: 240, oX: 0, oY: 0 }},
+                    { name: 'dewdropS', type: 'Sigil', pos: {x: 300, y: 240, oX: 0, oY: 0 }}
+                ],
+                enemies: [
+                    { name: 'dumbass', type: 'Enemy', pos: {x: 800, y: 140, oX: 0, oY: 0 }}
+                ]
+            }
+        }
+    },
+    {
+        name: "egypt01",
+        realm: "egypt",
+        tileset: "",
+        bgimg: "",
+        map: {
+            width: 200,
+            height: 15,
+            pattern: [
+                'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE',//00
+                'EEEEEEEEEEEEEEEEEE         EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE           EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE',//01
+                'EEEE    EEEEEEEE             EEEEEEEEEEEEEEEEEEEEEEEEEEEEE                       EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                         EEEEEEEEEEEEEEEEEE      EEEEEEEEEEEEEEEEEEEEEEEEE       EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE',//02
+                'EE                               EEEEEEEEEEEEEEEEEEEEE                              EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                                EEEEEE                      EEEEEEEEEEEEEE             EEEEEEEEEEEEEEEEEEEE              EEEEEEEEEEEEEEEEEEEE',//03
+                'EE                  EEEE           EEEEEEEEEEEEEEEEE            EEEEEEE              EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE        EEEEEEEEEEEE                                            EEEEEEEEE                      EEEEEEEEEEE                    EEEEEEEEEEEEEEEEE',//04
+                'EE               EEEEEEEEEE         EEEEEEEEEEE             EEEEEEEEEEEEEE            EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE       EEEEEEEEEEEEEEEEE                                            EEEE         EEEE                  EEE                        EEEEEEEEEEEEEEE',//05
+                'EEE      EEEEEEEEEEEEEEEEEEEE        EEEEEEEE            EEEEEEEEEEEEEEEEEEE          EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE     EEEEEEEEEEEEEEEEEEEEE                   EEEEEEEEEEEE                       EEEEEEEEE                                         EEEEEEEEEEEEEEE',//06
+                'EEEE    EEEEEEEEEEEEEEEEEEEEEEE       EEEE            EEEEEEEEEEEEEEEEEEEEEEEE      EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE     EEEEEEEEEEEEEEEEEEEEEEEEE            EEEEEEEEEEEEEEEEEEEEE             EEEEEEEEEEEEEEEEEE                                    EEEEEEEEEEEEEEE',//07
+                'EEEEE   EEEEEEEEEEEEEEEEEEEEEEEE                 EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE     EEEEEEEEEEEEEE     EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE        EEEEEEEEEEEEEEEEEEEEEEEEEE                              EEEEEEEEEEEEEEE',//08
+                'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE              EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE               EEEEEE      EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE      EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                     EEEEEEEEEEEEEEEEE',//09
+                'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE       EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                   EEE     EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE               EEEEEEEEEEEEEEEEEEEE',//10
+                'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE     EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                          EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE',//11
+                'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE    EEEEEEEEEEEEEEE        EEEEEEEEEEEEEEEEEEEEEEEEEE     EEEEEEEEEEEEEEEEEEEEEE   EEEEEEEEEEEE        EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE',//12
+                'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE    EEEEEEEEEEEEEE                EEEEEEEEEEEEEEEEEE       EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE      EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE',//13
+                'EEEEEEEEEE          EEEEEEEE              EEEEEEEEEEEEEE                  EEEEEEEEEEEEEEEE       EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE       EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE',//14
+                'EEEEEE                                   EEEEEEEEEEEEEEEE      EEEEEE     EEEEEEEEEEEEEEEEEEEE    EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE      EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE',//15
+                'EEEE                                   EEEEEEEEEEEEEEEE      EEEEEEEEE     EEEEEEEEEEEEEEEEE          EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE     EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE',//16
+                'EE       EEEEEEEEE            EEEEEEEEEEEEEEEEEEEEEEEEE      EEEEEEEEEE     EEEEEEEEEEEEEEEE           EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE       EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE',//17
+                'EE      EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE     EEEEEEEEEEE     EEEEEEEEEEEEEEEEEEEEEEE    EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE        EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE',//18
+                'EEE     EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE     EEEEEEEEEEE    EEEEEEEEEEEEEEEEEEEEEEE     EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE       EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                              EEEEEEEEEEE',//19
+                'EEEE     EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE      EEEEEEEEE    EEEEEEEEEEEEEEEEEEEEEEEE    EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                 EEEEEEEEEEEEEEEEEEEEEEEEEE                        EEEEEEEEEEEEEEEEEEEEEEEEEEEEE                                      EEEEEEEEE',//20
+                'EEEE     EEEEEEEEEEEEEEEEE         EEEEEEEEEEEEEEEEEEEEE     EEEEEEEEE     EEEEEEEEEEEEEEEEEEEEEEE       EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                  EEEEEEEEEEEEEEEEE                                   EEEEEEEEEEEEEEEEEEEEEE                                         EEEEEEEE',//21
+                'EEE    EEEEEEEEEEEEE                  EEEEEEEEEEEEEEEE      EEEEEEEEEEEE    EEEEEEEEEEEEEEEEEEEEEEEE          EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                       EEEE                       EEEEEEE               EEEEEEEEEEEEEEEEE                                            EEEEEEE',//22
+                'EE     EEEEEEEE                        EEEEEEEEE            EEEEEEEEEEEE      EEEEEEEEEEEEEEEE                         EEEEEEEEEEEE               EEEEEE                            EEEEEEEEEEEEEEEEEEEEE             EEEEEEEEEEEE        EE                                    EEEEEEEE',//23
+                'EEE      EEEE              EEEEEE       EEEE               EEEEEEEEEEEEEE                               EE                                      EEEEEEEEEEE                     EEEEEEEEEEEEEEEEEEEEEEEEEEEEE                            EEEE                                  EEEEEEEEE',//24
+                'EEEE                  EEEEEEEEEEEEE                   EEEEEEEEEEEEEEEEEEEEE                      EEEEEEEEEEE                                 EEEEEEEEEEEEEEEEEEE           EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                      EEEEEEE                                EEEEEEEEEE',//25
+                'EEEEEE         EEEEEEEEEEEEEEEEEEEEEE          EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE        EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE      EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE',//26
+                'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE' //27
+                //	'0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789'
+            ],
+            mask: ['', '', '', '', '', '', '', '', '', ''],
+            solid: ['', '', '', '', '', '', '', '', '', ''],
+            spawn: [
+                player = {x: 120, y: 360, oX: 0, oY: 0 }
+            ]
+        },
+    },
+    {
+        name: "egypt02",
+        realm: "egypt",
+        tileset: "",
+        bgimg: "",
+        map: {
+            width: 200,
+            height: 15,
+            pattern: [
+                'DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD',//00
+                'M                                                                                                                                                                                                                                                                                       ',//01
+                'M                                                                                                                                                                                                                                                                                       ',//02
+                'M                                                                                                                                                                                                                                                                                       ',//03
+                'M               PP         PP                                                                                                PPPP                                                                                                                                                       ',//04
+                'M                                                                                                                                    PP                                                                                                                                                 ',//05
+                'M                                                      PPPPPPPPP                                                                                                                                                                                          PP                            ',//06
+                'M         PP                                                                                                                               XX                                                                                                            PPPP                           ',//07
+                'M                                                                 XX                                                                                                                                                                                      PP                            ',//08
+                'M                                                                                                                                               PP                                                                                                       PPPP                           ',//09
+                'M                                                              P                                                                              PPPPPP                                                                                                      PP                            ',//10
+                'M     PPPP                                                                                                                                      PP                                                                                                       PPPP                           ',//11
+                'M                 PP                                                                                                                            PP                                                                     PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP                         ',//12
+                'M                                                          XX         EEEE                                                                    PPPPPP                                                               PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP                         ',//13
+                'M                                                                   EEEEEEEEEE                                                                  PP                                                       PPPP       PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP                         ',//14
+                'M                     PPPP                                        EEEEEEEEEEEEEEEEEEEEEEEEE           EE  EE                                    PP             PPPP                              PPPP                 PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP                           ',//15
+                'M                                                               EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                                  PPPPPP                                     PPPP                             PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP                               ',//16
+                'M             PPPP                                            EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                                 PP                               PPPP                                                                                                   ',//17
+                'M                                                           EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                               PP                                                                                                                                      ',//18
+                'M                               EE  EEEE    EE            EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                           PPPPPP                                                                                                                                    ',//19
+                'EEEEEEE            EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE    EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                                     PP                                                                 ',//20
+                'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE         EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE   EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE           PP          PP                                                                             ',//21
+                'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                   EEEEEEEEEEEEEEEEEEEEE     EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                                             PPPP                                                   ',//22
+                'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                      EEEEEEEEEEEEEEEE      EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                                                                                                    ',//23
+                'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                                    EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                                                                                                    ',//24
+                'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                         EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                                                                                                      ',//25
+                'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                  EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                                                                                                        ',//26
+                'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE                                                                                                          ' //27
+                //	'0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789'
+            ],
+            mask: ['', '', '', '', '', '', '', '', '', ''],
+            solid: ['', '', '', '', '', '', '', '', '', ''],
+            spawn: [
+                player = {x: 120, y: 360, oX: 0, oY: 0 }
+            ]
+        }
+    }
+]
+
 class JumpAndRunClass {
     constructor(level) {
         this.curlevel = level;
-        this.lvlc = LEVELS[this.curlevel];
+        this.lvlc = JSON.parse(JSON.stringify(LEVELS[this.curlevel]));
         // this.zuletzt = new Date().getTime();
         this.myPlayer = new Player( this.lvlc.map, { w: 64, h: 64 }, { maxHP: 100, curHP: 100, atk: 40, atkCD: 150, def: 20, mag: 50, mgx: 20, speed: 4 } );
         this.bgimg = new Image();
@@ -32,6 +168,7 @@ class JumpAndRunClass {
         this.tileset.src = this.lvlc.tileset;
         this.frame = 0;
         this.GameRunning = false;
+        console.log('JumpAndRunClass created');
     }
 
     Start(){
@@ -40,11 +177,28 @@ class JumpAndRunClass {
         this.myPlayer = new Player( this.lvlc.map, { w: 64, h: 64 }, { maxHP: 100, curHP: 100, atk: 40, atkCD: 150, def: 20, mag: 50, mgx: 20, speed: 4 } );
         activeSGL = [];
         activeNMY = [];
+        world = {
+            offsetX: 0,
+            offsetY: 0
+        }
+        this.lvlc = JSON.parse(JSON.stringify(LEVELS[this.curlevel]));
+
+        steuerung = {
+            links: false,
+            rechts: false,
+            springen: false,
+            slide: false,
+            angriff: false,
+            special: false,
+            magic: false,
+            pause: false
+        };
         this.drawLevel();
+        console.log(activeNMY.toString());
+        console.log(activeSGL.toString());
+
         this.populate(this.lvlc.map.spawn);
         this.updateGame();
-        console.log(activeNMY);
-        console.log(activeSGL);
         window.addEventListener('keydown', this.steuern);
         window.addEventListener('keyup', this.steuern);
         window.addEventListener('gamepadconnected', this.gamepad);
@@ -253,9 +407,11 @@ class JumpAndRunClass {
                 }
                 break;
             case 'struck':
+
                 if (ntt.image !== ntt.sprites.struck.image) {
                     ntt.frMax = ntt.sprites.struck.frMax;
                     ntt.image = ntt.sprites.struck.image;
+                    console.log('StruckImage');
                 }
                 break;
             case 'death':
@@ -299,15 +455,17 @@ class JumpAndRunClass {
             this.spawnNTT(sgl);
         }
         for (let nmy of spawn.enemies) {
+
             this.spawnNTT(nmy);
         }
     }
 
     spawnNTT( item ) {
-        let ntt;
+        let ntt = null;
         switch(item.type) {
             case 'Enemy':
                 ntt = new Enemy(enemy[item.name], item.pos);
+                console.log(item.pos)
                 activeNMY.push(ntt);
                 break;
             case 'Sigil':
@@ -318,8 +476,6 @@ class JumpAndRunClass {
                 console.error('Invalid entity type:', item.type);
                 return null;
         }
-        ntt.pos.x = item.pos.x - world.offsetX;
-        ntt.pos.y = item.pos.y - world.offsetY;
         return ntt;
     }
 
@@ -444,6 +600,7 @@ function fade(){
         setTimeout(fade, 30)
     }else{
         GameMode = 0;
+        fadeVar = 0;
     }
 }
 

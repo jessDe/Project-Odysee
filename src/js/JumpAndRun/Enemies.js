@@ -32,11 +32,19 @@ class JREnemy{
     }
     update(frameTime, playerPosition){
         this.draw(frameTime)
-        if(this.position.x < playerPosition.x){
-            this.position.x += 1
-        }else{
-            this.position.x -= 1
+        if(calculateDistance(this.position.x,this.position.y, playerPosition.x, playerPosition.y) < 1000){
+            if(this.position.x < playerPosition.x){
+                this.position.x += 1
+            }else{
+                this.position.x -= 1
+            }
+            if(this.position.y < playerPosition.y){
+                this.position.y += 1
+            }else{
+                this.position.y -= 1
+            }
         }
+
 
     }
 }

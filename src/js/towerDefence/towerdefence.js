@@ -170,6 +170,7 @@ class TowerDefence{
         this.SunFrameTime = 0;
         this.LakeFrame = 0;
         this.pausescreen = false;
+        this.GameEnded = false;
     }
 
     LoadBlockCords(){
@@ -387,6 +388,14 @@ class TowerDefence{
 
         if(TD.GameRunning){
             requestAnimationFrame(TD.animate);
+        }else if(TD.GameEnded){
+            ctx.fillStyle = "rgba(0,0,0,0.5)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = "30px PixelFont";
+            ctx.fillStyle = "white";
+            ctx.fillText("Game Over", canvas.width/2-50, canvas.height/2);
+            //press esc to continue
+            ctx.fillText("Press ESC to return to Level Select", canvas.width/2-200, canvas.height/2+50);
         }
 
         if(MouseMode === "blocking"){
