@@ -307,6 +307,13 @@ class Player {
 
 
   drawPC() {
+    let playerOffset = 0;
+    if(this.pos.y > canvas.height/4*3) {
+        playerOffset = this.pos.y - canvas.height/4*3;
+        world.offsetY = playerOffset/TILESIZE;
+    }else{
+      playerOffset = 0;
+    }
     ctx.drawImage(
         this.image,
         this.frame * (this.image.width / this.frMax),
@@ -314,7 +321,7 @@ class Player {
         this.image.width / this.frMax,
         this.image.height,
         canvas.width / 2 - this.size.w / 2,
-        this.pos.y,
+        this.pos.y - playerOffset,
         (this.image.width / this.frMax),
         this.image.height
     );
@@ -348,18 +355,30 @@ class Player {
     }
     this.atkBox.pos.y = this.pos.y + (this.size.h - this.atkBox.size.h) / 2;
     // atkBox anzeigen
+    let atkBoxOffset = 0;
+    if(this.pos.y > canvas.height/4*3) {
+      atkBoxOffset = this.pos.y-(this.pos.y - canvas.height/4*3);
+    }else{
+      atkBoxOffset = this.atkBox.pos.y;
+    }
     ctx.fillStyle = "rgba(127, 0, 255, 0.50)";
-    ctx.fillRect(this.atkBox.pos.x, this.atkBox.pos.y, this.atkBox.size.w, this.atkBox.size.h);
+    ctx.fillRect(this.atkBox.pos.x, atkBoxOffset, this.atkBox.size.w, this.atkBox.size.h);
   }
 
   hpBar() {
+    let hpOffset = 0;
+    if(this.pos.y > canvas.height/4*3) {
+      hpOffset = this.pos.y - (this.pos.y - canvas.height/4*3) +100;
+    }else{
+      hpOffset = this.pos.y - 2 + ((canvas.height - this.pos.y) / 1.5);
+    }
     let am = 0.40 + (0.60 * (1 - (this.stats.curHP / this.stats.maxHP)));
     ctx.fillStyle = "rgba(255, 255, 255, 1)";
-    ctx.fillRect( (canvas.width/2 - 52), this.pos.y - 2 + ((canvas.height - this.pos.y) / 1.5), 104, 14);
+    ctx.fillRect( (canvas.width/2 - 52), hpOffset -2, 104, 14);
     ctx.fillStyle = "rgba(255, 0, 0, " + am + ")";
-    ctx.fillRect( (canvas.width/2 - 50), this.pos.y + ((canvas.height - this.pos.y) / 1.5), 100, 10);
+    ctx.fillRect( (canvas.width/2 - 50), hpOffset, 100, 10);
     ctx.fillStyle = "rgba(0, 255, 0, 0.75)";
-    ctx.fillRect( (canvas.width/2 - 50), this.pos.y + ((canvas.height - this.pos.y) / 1.5), 100 * (this.stats.curHP / this.stats.maxHP), 10);
+    ctx.fillRect( (canvas.width/2 - 50), hpOffset, 100 * (this.stats.curHP / this.stats.maxHP), 10);
 
   }
 

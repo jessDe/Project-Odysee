@@ -275,13 +275,13 @@ const enemy = {
         stats: {
             maxHP: 100,
             curHP: 100,
-            atk: 150,
+            atk: 1,
             atkCD: 500,
             def: 0,
             speed: 1
         },
-        atkBox: { pos: {x: 1, y: 1, oX: 1, oY: 1}, size: {w: 1, h: 1, s: 1} },
-        aiLevel: 2,
+        atkBox: { pos: {x: 0, y: 0, oX: 0, oY: 0}, size: {w: 0, h: 0, s: 0} },
+        aiLevel: 1,
         rLength: 100,
         loot: [null, null, null, null, null, null, null, null, null, null],
         frMax: 4,

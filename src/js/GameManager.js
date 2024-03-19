@@ -1,5 +1,5 @@
 let TD = new TowerDefence();
-let JumpAndRun = new JumpAndRunClass(0);
+let JumpAndRun = new JumpAndRunClass(1);
 let GameMode = 1;
 let World = 0;
 let selectingLevel = false;
@@ -308,7 +308,7 @@ window.onload = function(){
         document.getElementById("GameBox").style.height = "540px";
         document.getElementById("Shop").style.display = "none";
         document.body.style.background = "#1c001f";
-        JumpAndRun = new JumpAndRunClass(0);
+        JumpAndRun = new JumpAndRunClass(1);
         JumpAndRun.Start();
 
     }else if(GameMode === 2){
@@ -350,7 +350,7 @@ function Update(){
             document.getElementById("GameBox").style.height = "540px";
             document.getElementById("Shop").style.display = "none";
             if(JumpAndRun.GameRunning === false){
-                JumpAndRun = new JumpAndRunClass(0);
+                JumpAndRun = new JumpAndRunClass(1);
                 JumpAndRun.Start();
             }
 
