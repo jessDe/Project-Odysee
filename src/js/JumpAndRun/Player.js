@@ -41,6 +41,13 @@ class Player {
     this.sglEff = {
       def: 0
     };
+    this.sounds = {
+      Jump: new Audio('./src/sounds/jump.wav'),
+      Slide: new Audio('./src/sounds/slide.wav'),
+      Attack: new Audio('./src/sounds/HitEnemy.wav'),
+      Hurt: new Audio('./src/sounds/Hit.wav'),
+      Pickup: new Audio('./src/sounds/pickup.wav')
+    }
     this.atkBox = {
       pos: {
         x: canvas.width / 2 + this.size.w / 2,
@@ -205,6 +212,8 @@ class Player {
       steuerung.springen = false;
       this.velocity.y = -this.jumpStrength;
       this.airStair++;
+      this.sounds.Jump.load();
+      this.sounds.Jump.play().then(r => {});
       if( this.direction === 1 ) JumpAndRun.juggler( JumpAndRun.myPlayer, 'jumpR');
       else JumpAndRun.juggler( JumpAndRun.myPlayer, 'jumpL');
     }
@@ -214,6 +223,8 @@ class Player {
       this.invulnerable = true;
       this.slideCooldown = 100;
       this.slideDuration = 15;
+        this.sounds.Slide.load();
+        this.sounds.Slide.play().then(r => {});
       if( this.direction === 1 ) JumpAndRun.juggler( JumpAndRun.myPlayer, 'slideR');
       else JumpAndRun.juggler( JumpAndRun.myPlayer, 'slideL');
     }
@@ -318,7 +329,7 @@ class Player {
       this.atkBox.pos.x = canvas.width/2-32 + this.size.w;
     } else {
       this.atkBox.pos.x = canvas.width/2-32 - this.atkBox.size.w;
-    } (canvas.width/2-32 + this.size.w) : (canvas.width/2-32 - this.atkBox.size.w);
+    }
     */
     this.atkBox.pos.x = (this.direction === 1) ? (this.pos.x + this.size.w + this.atkBox.size.w) : this.pos.x - (this.size.w/2 + this.atkBox.size.w);
     this.atkBox.pos.y = this.pos.y; //  + this.size.h / 2 - this.pos.y * mathIsAwesome
