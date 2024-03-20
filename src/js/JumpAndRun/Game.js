@@ -19,7 +19,7 @@ let world = {
 }
 let mathIsAwesome;
 let gamepads;
-
+let goodbye;
 
 class JumpAndRunClass {
     constructor(level) {
@@ -48,6 +48,7 @@ class JumpAndRunClass {
     Start(){
         lastTime = new Date();
         this.GameRunning = true;
+        goodbye = "You died.";
         steuerung = {
             links: false,
             rechts: false,
@@ -275,6 +276,7 @@ class JumpAndRunClass {
                 JumpAndRun.juggler(target,'death');
                 target.alive = false;
                 JumpAndRun.activeNMY.splice(JumpAndRun.activeNMY.indexOf(target), 1);
+                if(attacker.name === 'Yamoma') goodbye = "Yamoma killed you.";
                 let drop = dropLoot(target);
                 if (drop !== null) {
                     JumpAndRun.activeSGL.push(drop);
@@ -352,8 +354,6 @@ class JumpAndRunClass {
         }
         if(!JumpAndRun.myPlayer.alive){
             JumpAndRun.GameRunning = false;
-            this.activeNMY = [];
-            this.activeSGL = [];
             fade();
         }
         checkPhysical();
@@ -398,7 +398,7 @@ function fade(){
         ctx.fillRect(0,0, canvas.width, canvas.height);
         ctx.fillStyle = 'rgba(255,255,255,'+fadeVar+')'
         ctx.font = 'bold 50px Arial';
-        ctx.fillText('You died.', canvas.width/2 -100, canvas.height/2 -25)
+        ctx.fillText(goodbye, canvas.width/2 -100, canvas.height/2 -25)
         setTimeout(fade, 30)
     }else{
         GameMode = 0;

@@ -242,6 +242,7 @@ class Player {
         }
       }
       this.attacking = false;
+      console.log(JumpAndRun.activeNMY);
     }
     /*
     // Zweiter Angriff, NYI

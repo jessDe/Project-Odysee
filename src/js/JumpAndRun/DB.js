@@ -4,7 +4,7 @@ const sigil = {
     dewdropS: {
         name: 'Kleiner Tautropfen',
         type: 'Sigil',
-        size: {w: 18, h: 19, s: 1},
+        size: {w: 18, h: 19, s: 4},
         effect: function () {
             JumpAndRun.myPlayer.healcap(15);
         },
@@ -162,112 +162,6 @@ const sigil = {
 }
 
 const enemy = {
-    dummy: {
-        name: 'Dummy',
-        type: 'Enemy',
-        size: {w: 0, h: 0, s: 1},
-        atkBox: {x: 0, y: 0, w: 0, h: 0, s: 1},
-        aiLevel: 0,
-        rLength: 0,
-        stats: {
-            maxHP: 1,
-            curHP: 1,
-            atk: 0,
-            atkCD: 0,
-            def: 0,
-            speed: 0
-        },
-        image: new Image(),
-        imageSrc: './src/img/ntt/sgl/_idle.png',
-        sprites: {
-            idle: {
-                fraMax: 5,
-                image: new Image(),
-                imageSrc: './src/img/ntt/sgl/_idle.png',
-            },
-            death: {
-                fraMax: 4,
-                image: new Image(),
-                imageSrc: './src/img/ntt/sgl/_death.png',
-            }
-        },
-        loot: [null, null, null, null, null, null, null, null, null, null]
-    },
-    slime: {
-        name: 'Schleim',
-        type: 'Enemy',
-        aiLevel: 1,
-        stats: {
-            maxHP: 20,
-            curHP: 20,
-            atk: 5,
-            atkCD: 300,
-            def: 5,
-            speed: 1
-        },
-        image: new Image(),
-        loot: [null, null, null, null, null, null, null, null, null, null]
-    },
-    goblin: {
-        name: 'Goblin',
-        type: 'Enemy',
-        aiLevel: 2,
-        stats: {
-            maxHP: 30,
-            curHP: 30,
-            atk: 10,
-            atkCD: 200,
-            def: 10,
-            speed: 2
-        },
-        image: new Image(),
-        loot: [null, null, null, null, null, null, null, null, null, null]
-    },
-    orc: {
-        name: 'Ork',
-        type: 'Enemy',
-        aiLevel: 3,
-        stats: {
-            maxHP: 40,
-            curHP: 40,
-            atk: 15,
-            atkCD: 250,
-            def: 10,
-            speed: 3
-        },
-        image: new Image(),
-        loot: [null, null, null, null, null, null, null, null, null, null]
-    },
-    troll: {
-        name: 'Troll',
-        type: 'Enemy',
-        aiLevel: 4,
-        stats: {
-            maxHP: 60,
-            curHP: 40,
-            atk: 50,
-            atkCD: 500,
-            def: 0,
-            speed: 2
-        },
-        image: new Image(),
-        loot: [null, null, null, null, null, null, null, null, null, null]
-    },
-    dragon: {
-        name: 'Drache',
-        type: 'Enemy',
-        aiLevel: 5,
-        stats: {
-            maxHP: 80,
-            curHP: 80,
-            atk: 25,
-            atkCD: 300,
-            def: 20,
-            speed: 3
-        },
-        image: new Image(),
-        loot: [null, null, null, null, null, null, null, null, null, null]
-    },
     dumbass: {
         name: 'Riesentrottel',
         type: 'Enemy',
@@ -318,6 +212,35 @@ const enemy = {
                 fraMax: 4,
                 image: new Image(),
                 imageSrc: './src/img/ntt/nmy/dumbass_idle.png',
+            }
+        }
+    },
+    yamoma: {
+        name: 'Yamoma',
+        honorific: 'Vertilger von Hoffnung, Unbesehenes Auge, Abgesandter der Verdammis, Inkarnation der Entropie',
+        type: 'Enemy',
+        size: {w: 64, h: 64, s: 1},
+        stats: {
+            maxHP: 99999,
+            curHP: 99999,
+            atk: 99999,
+            atkCD: 1,
+            def: 99999,
+            speed: 0
+        },
+        atkBox: { pos: {x: 1, y: 1, oX: 1, oY: 1}, size: {w: 1, h: 1, s: 1} },
+        hasLoot: false,
+        aiLevel: 0,
+        rLength: 0,
+        loot: [],
+        frMax: 1,
+        image: new Image(),
+        imageSrc: './src/img/ntt/nmy/yamoma_idle.png',
+        sprites: {
+            idle: {
+                fraMax: 1,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/yamoma_idle.png',
             }
         }
     }

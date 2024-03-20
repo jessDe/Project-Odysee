@@ -93,7 +93,7 @@ const LEVELS = [
                     {}
                 ],
                 enemies: [
-                    {}
+                    {name: 'yamoma', type: 'Enemy', pos: {x: 8810, y: 840, oX: 0, oY: 0 }}
                 ]
             },
 

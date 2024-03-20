@@ -308,7 +308,7 @@ window.onload = function(){
         document.getElementById("GameBox").style.height = "540px";
         document.getElementById("Shop").style.display = "none";
         document.body.style.background = "#1c001f";
-        JumpAndRun = new JumpAndRunClass(0);    //// <--- Levelwahl :>
+        JumpAndRun = new JumpAndRunClass(1);    //// <--- Levelwahl :>
         JumpAndRun.Start();
 
     }else if(GameMode === 2){

@@ -100,7 +100,7 @@ class Enemy extends Entity {
         }
         this.gravity = 0.5;
         this.damageCD = 0;  // Cooldown für Schaden
-        // Distanz für patroullierende Gegner
+        // Distanz für patroullierende Gegner, kann umgebaut werden!
         this.route = {
             start: this.pos.x,
             end: this.pos.x - props.rLength
