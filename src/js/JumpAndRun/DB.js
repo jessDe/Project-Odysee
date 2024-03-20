@@ -273,12 +273,12 @@ const enemy = {
         type: 'Enemy',
         size: {w: 128, h: 128, s: 1},
         stats: {
-            maxHP: 100,
-            curHP: 100,
-            atk: 1,
+            maxHP: 5,
+            curHP: 5,
+            atk: 5,
             atkCD: 500,
             def: 0,
-            speed: 1
+            speed: 0
         },
         atkBox: { pos: {x: 0, y: 0, oX: 0, oY: 0}, size: {w: 0, h: 0, s: 0} },
         hasLoot: true,
@@ -300,6 +300,16 @@ const enemy = {
                 imageSrc: './src/img/ntt/nmy/dumbass_idle.png',
             },
             angriffR: {
+                fraMax: 4,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/dumbass_idle.png',
+            },
+            struckL: {
+                fraMax: 4,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/dumbass_idle.png',
+            },
+            struckR: {
                 fraMax: 4,
                 image: new Image(),
                 imageSrc: './src/img/ntt/nmy/dumbass_idle.png',

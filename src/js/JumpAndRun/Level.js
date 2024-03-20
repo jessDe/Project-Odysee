@@ -11,7 +11,10 @@ const LEVELS = [
             height: 17,
             pattern: [
                 'HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH',//00
-                'H                                                                                                                                                                                                      H',//01
+                'H                                                                                                                                                                                                      H',
+                'H                                                                                                                                                                                                      H',
+                'H                                                                                                                                                                                                      H',
+                'H                                                                                                                                                                                                      H',
                 'H                                                                                                                                                                                                      H',//02
                 'H                                                                                                                                                                                                      H',//03
                 'H                                                                                                                                                                                                      H',//04
@@ -23,7 +26,7 @@ const LEVELS = [
                 'H                           700208                           6    9             6     s                             70001008           70043001H   9                                                   H',//10
                 'H000000000200000000030000020H    H300100002020100040003000010H    H0000002000300H     9                             6      9           6           H000410502000000030000050000000101000000003000001002H',//11
                 'H                                                                                     H40001030000020000000100003001H      H00050100000H                                                               H',//12
-                'H                                                                                                                                                                                                      H',//13
+                'H                                                                                                                                                                                                      H',
                 'H                                                                                                                                                                                                      H',//14
                 'H                                                                                    HH                                                                                                                H',//15
                 'HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH' //16
@@ -37,7 +40,7 @@ const LEVELS = [
                     { name: 'dewdropS', type: 'Sigil', pos: {x: 300, y: 240, oX: 0, oY: 0 }}
                 ],
                 enemies: [
-                    { name: 'dumbass', type: 'Enemy', pos: {x: 800, y: 140, oX: 0, oY: 0 }}
+                    { name: 'dumbass', type: 'Enemy', pos: {x: 800, y: 280, oX: 0, oY: 0 }}
                 ]
             }
         }

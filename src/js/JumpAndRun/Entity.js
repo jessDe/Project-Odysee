@@ -119,7 +119,7 @@ class Enemy extends Entity {
                 this.pos.x + this.size.w + this.atkBox.size.w > pc.pos.x);
     }
     move() {
-        this.pos.x += this.stats.speed * this.direction;
+        this.pos.x += this.stats.speed * this.direction + this.velocity.x;
         this.pos.y += this.gravity * (this.pos.y < JumpAndRun.myPlayer.pos.y ? 1 : -1) * this.aiLevel;
 
 

@@ -6,7 +6,7 @@ let steuerung = {
     rechts: false,
     springen: false,
     slide: false,
-    angriff: false,
+    attack: false,
     special: false,
     magic: false,
     pause: false
@@ -53,7 +53,7 @@ class JumpAndRunClass {
             rechts: false,
             springen: false,
             slide: false,
-            angriff: false,
+            attack: false,
             special: false,
             magic: false,
             pause: false
@@ -100,7 +100,16 @@ class JumpAndRunClass {
                 }
             }
         }
-        if( this.lvlc.type === "underground" ) pinsel.drawImage( this.test, 0, 0, canvas.width*2, canvas.height*2, (JumpAndRun.myPlayer.pos.x + JumpAndRun.myPlayer.size.w/2) - canvas.width - offset.x*TILESIZE, (JumpAndRun.myPlayer.pos.y + JumpAndRun.myPlayer.size.h/2) - canvas.height -offset.y*TILESIZE, canvas.width*2, canvas.height*2);
+        if( this.lvlc.type === "underground" ) pinsel.drawImage(
+            this.test,
+            0,
+            0,
+            canvas.width*2,
+            canvas.height*2,
+            (JumpAndRun.myPlayer.pos.x + JumpAndRun.myPlayer.size.w/2) - canvas.width - offset.x*TILESIZE,
+            (JumpAndRun.myPlayer.pos.y + JumpAndRun.myPlayer.size.h/2) - canvas.height -offset.y*TILESIZE,
+            canvas.width*2,
+            canvas.height*2);
     }
     steuern(event) {
         if (event.defaultPrevented) {
@@ -120,13 +129,13 @@ class JumpAndRunClass {
                 case "ArrowUp":
                     steuerung.springen = (event.type === 'keydown');
                     break;
-                case "Space":
-                    steuerung.angriff = (event.type === 'keydown');
+                case "Control":
+                    steuerung.attack = (event.type === 'keydown');
                     break;
-                case "Shift":
+                case "":
                     steuerung.special = (event.type === 'keydown');
                     break;
-                case "Control":
+                case "":
                     steuerung.magic = (event.type === 'keydown');
                     break;
                 case "Escape":
@@ -201,27 +210,27 @@ class JumpAndRunClass {
                 }
                 break;
             case 'attackL':
-                if (ntt.image !== ntt.sprites.angriffL.image) {
-                    ntt.frMax = ntt.sprites.angriffL.frMax;
-                    ntt.image = ntt.sprites.angriffL.image;
+                if (ntt.image !== ntt.sprites.attackL.image) {
+                    ntt.frMax = ntt.sprites.attackL.frMax;
+                    ntt.image = ntt.sprites.attackL.image;
                 }
                 break;
             case 'attackR':
-                if (ntt.image !== ntt.sprites.angriffR.image) {
-                    ntt.frMax = ntt.sprites.angriffR.frMax;
-                    ntt.image = ntt.sprites.angriffR.image;
+                if (ntt.image !== ntt.sprites.attackR.image) {
+                    ntt.frMax = ntt.sprites.attackR.frMax;
+                    ntt.image = ntt.sprites.attackR.image;
                 }
                 break;
                 case 'specialL':
-                if (ntt.image !== ntt.sprites.angriffL.image) {
-                    ntt.frMax = ntt.sprites.angriffL.frMax;
-                    ntt.image = ntt.sprites.angriffL.image;
+                if (ntt.image !== ntt.sprites.attackL.image) {
+                    ntt.frMax = ntt.sprites.attackL.frMax;
+                    ntt.image = ntt.sprites.attackL.image;
                 }
                 break;
             case 'specialR':
-                if (ntt.image !== ntt.sprites.angriffR.image) {
-                    ntt.frMax = ntt.sprites.angriffR.frMax;
-                    ntt.image = ntt.sprites.angriffR.image;
+                if (ntt.image !== ntt.sprites.attackR.image) {
+                    ntt.frMax = ntt.sprites.attackR.frMax;
+                    ntt.image = ntt.sprites.attackR.image;
                 }
                 break;
             case 'magicL':
@@ -236,12 +245,18 @@ class JumpAndRunClass {
                     ntt.image = ntt.sprites.magicR.image;
                 }
                 break;
-            case 'struck':
+            case 'struckL':
 
-                if (ntt.image !== ntt.sprites.struck.image) {
-                    ntt.frMax = ntt.sprites.struck.frMax;
-                    ntt.image = ntt.sprites.struck.image;
-                    console.log('StruckImage');
+                if (ntt.image !== ntt.sprites.struckL.image) {
+                    ntt.frMax = ntt.sprites.struckL.frMax;
+                    ntt.image = ntt.sprites.struckL.image;
+                }
+                break;
+            case 'struckR':
+
+                if (ntt.image !== ntt.sprites.struckR.image) {
+                    ntt.frMax = ntt.sprites.struckR.frMax;
+                    ntt.image = ntt.sprites.struckR.image;
                 }
                 break;
             case 'death':
@@ -262,19 +277,16 @@ class JumpAndRunClass {
     struck( attacker, target ) {
         if(target.damageCD < 1.5) return;
         if(!target.invulnerable || target.type !== 'Sigil'){
-            if( target === JumpAndRun.myPlayer && target.hardboiled && this.calcDamage(attacker, target) > 16 ) {
-                target.stats.curHP -= 16;
-            } else target.stats.curHP -= this.calcDamage(attacker, target);
+            target.stats.curHP -= this.calcDamage(attacker, target);
             if (target.stats.curHP <= 0) {
                 JumpAndRun.juggler(target,'death');
                 target.alive = false;
                 let drop = dropLoot(target);
                 if (drop !== null) {
-                    activeSGL.push(drop);
+                    JumpAndRun.activeSGL.push(drop);
                 }
-
-
-            } else JumpAndRun.juggler(target,'struck');
+            } else if (target.direction === 1) JumpAndRun.juggler(target,'struckR');
+            else JumpAndRun.juggler(target,'struckL');
         }
         target.damageCD = 0;
     }
@@ -321,7 +333,7 @@ class JumpAndRunClass {
             } else {
                 steuerung.springen = false;
             }
-            steuerung.angriff = gamepads[0].buttons[1].pressed;
+            steuerung.attack = gamepads[0].buttons[1].pressed;
             steuerung.slide = gamepads[0].buttons[2].pressed;
             // steuerung.slide = gamepads[0].buttons[3].pressed; // Test
             steuerung.links = gamepads[0].axes[0] < -0.5;

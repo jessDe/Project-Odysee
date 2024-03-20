@@ -87,27 +87,27 @@ class Player {
       },
       slideL: {
         image: new Image(),
-        frMax: 12
+        frMax: 4
       },
       slideR: {
         image: new Image(),
-        frMax: 12
+        frMax: 4
       },
-      angriffL: {
+      attackL: {
         image: new Image(),
-        frMax: 1
+        frMax: 5
       },
-      angriffR: {
+      attackR: {
         image: new Image(),
-        frMax: 1
+        frMax: 5
       },
       specialL: {
         image: new Image(),
-        frMax: 1
+        frMax: 5
       },
       specialR: {
         image: new Image(),
-        frMax: 1
+        frMax: 5
       },
       magicL: {
         image: new Image(),
@@ -117,9 +117,13 @@ class Player {
         image: new Image(),
         frMax: 1
       },
-      struck: {
+      struckL: {
         image: new Image(),
-        frMax: 12
+        frMax: 2
+      },
+      struckR: {
+        image: new Image(),
+        frMax: 2
       },
       death: {
         image: new Image(),
@@ -135,9 +139,10 @@ class Player {
     this.sprites.jumpR.image.src = './src/img/pc/jumpR.png';
     this.sprites.slideL.image.src = './src/img/pc/slideL.png';
     this.sprites.slideR.image.src = './src/img/pc/slideR.png';
-    this.sprites.struck.image.src = './src/img/pc/runLeft.png';
-    // this.sprites.angriffL.image.src = './src/img/pc/angriffL.png';
-    // this.sprites.angriffR.image.src = './src/img/pc/angriffR.png';
+    this.sprites.struckL.image.src = './src/img/pc/struckL.png';
+    this.sprites.struckR.image.src = './src/img/pc/struckR.png';
+    this.sprites.attackL.image.src = './src/img/pc/attackL.png';
+    this.sprites.attackR.image.src = './src/img/pc/attackR.png';
     // this.sprites.specialL.image.src = './src/img/pc/specialL.png';
     // this.sprites.specialR.image.src = './src/img/pc/specialR.png';
     // this.sprites.magicL.image.src = './src/img/pc/magicL.png';
@@ -170,10 +175,10 @@ class Player {
   }
 
   // Puppeteer: PC-Bewegung und Animationen
-  puppeteer( target ){
+  puppeteer(){
     this.velocity.x = 0;
     // PC in Ruheposition
-    if (!steuerung.links && !steuerung.rechts && this.airStair === 0 && !steuerung.slide && !steuerung.angriff && !steuerung.special && !steuerung.magic) {
+    if (!steuerung.links && !steuerung.rechts && this.airStair === 0 && !steuerung.slide && !steuerung.attack && !steuerung.special && !steuerung.magic) {
       if( this.direction === 1 ) JumpAndRun.juggler( JumpAndRun.myPlayer,'idleR');
       else JumpAndRun.juggler( JumpAndRun.myPlayer,'idleL');
     }
@@ -212,29 +217,22 @@ class Player {
       if( this.direction === 1 ) JumpAndRun.juggler( JumpAndRun.myPlayer, 'slideR');
       else JumpAndRun.juggler( JumpAndRun.myPlayer, 'slideL');
     }
-    /*
     // Standard-Angriff, Kombo-Variante - benötigt zusätzliche Änderungen
-    if (steuerung.angriff ) {
-      if( this.direction === 1 ) JumpAndRun.juggler( JumpAndRun.myPlayer, 'angriffR');
-      else JumpAndRun.juggler( JumpAndRun.myPlayer, 'angriffL');
-      if (this.attacking) {
-        if (rectCollision(this.atkBox, target)) {
-          this.atkCC++;
-          switch (this.atkCC) {
-            case 1:
-              target.stats.curHP -= this.stats.atk; break;
-            case 2:
-              target.stats.curHP -= this.stats.atk * 1.5; break;
-            case 3:
-              target.stats.curHP -= this.stats.atk * 2; this.atkCC = 0; break;
-            default:
-              this.atkCC = 0; break;
-          }
-          this.attacking = false;
+    if (steuerung.attack ) {
+      this.attacking = true;
+      if (this.direction === 1) JumpAndRun.juggler(JumpAndRun.myPlayer, 'attackR');
+      else JumpAndRun.juggler(JumpAndRun.myPlayer, 'attackL');
+      console.log(JumpAndRun.myPlayer.pos, JumpAndRun.myPlayer.atkBox.pos, JumpAndRun.activeNMY[0].pos, rectCollision(JumpAndRun.myPlayer.atkBox, JumpAndRun.activeNMY[0]));
+      for (let enemy of JumpAndRun.activeNMY) {
+        if (rectCollision(JumpAndRun.myPlayer.atkBox, enemy)) {
+          JumpAndRun.struck(JumpAndRun.myPlayer, enemy);
+        } else {
+
         }
       }
+      this.attacking = false;
     }
-    */
+    /*
     // Zweiter Angriff, NYI
     if (steuerung.special) {
       if( this.direction === 1 ) JumpAndRun.juggler( JumpAndRun.myPlayer, 'specialR');
@@ -245,10 +243,7 @@ class Player {
       if( this.direction === 1 ) JumpAndRun.juggler( JumpAndRun.myPlayer, 'magicR');
       else JumpAndRun.juggler( JumpAndRun.myPlayer, 'magicL');
     }
-    // Spiel pausieren
-    if (steuerung.pause) {
-      // Spiel pausieren
-    }
+    */
     if(this.slideDuration > 0) this.velocity.x = this.slideDuration * 2 * this.direction;
     // PC Fallkontrolle
     this.velocity.y += this.gravity;
@@ -278,44 +273,19 @@ class Player {
       }
 
     }
-    // console.log(Math.floor(this.pos.x), Math.floor(this.pos.y))
-
   }
-  /*
-  // Anzeigen des PCs
-  drawPC() {
-    let sop = {
-      x: (this.pos.x + this.size.w/2 - canvas.width/2 ),
-      y: (this.pos.y + this.size.h/2 - canvas.height/2 )
-    }
-    let area = ctx.getImageData( sop.x,0, canvas.width, canvas.height );
-    ctx.putImageData( area, 0, 0 );
-    // ctx.strokeStyle = '#ffffff' ;
-    // ctx.strokeRect( ( canvas.width/2 - this.size.w/2 ), this.pos.y, this.size.w, this.size.h ) ;
-    ctx.drawImage(
-        this.image,
-        this.frame * (this.image.width / this.frMax),
-        0,
-        this.image.width / this.frMax,
-        this.image.height,
-        canvas.width / 2 - this.size.w / 2,
-        this.pos.y,
-        (this.image.width / this.frMax),
-        this.image.height)
-  }
-  */
-
-
   drawPC() {
     let playerOffset = this.pos.y * mathIsAwesome - this.size.h / 2;
+    let flipper;
     world.offsetY = playerOffset/TILESIZE;
+    flipper = ( this.direction === 1 ) ? 0 : (this.image.width/this.frMax - this.atkBox.size.w) ;
     ctx.drawImage(
         this.image,
         this.frame * (this.image.width / this.frMax),
         0,
         this.image.width / this.frMax,
         this.image.height,
-        canvas.width / 2 - this.size.w / 2,
+        canvas.width / 2 - this.size.w / 2 - flipper,
         (this.pos.y - playerOffset),
         (this.image.width / this.frMax),
         this.image.height
@@ -358,14 +328,6 @@ class Player {
 
   hpBar() {
     let hpOffset = this.pos.y * mathIsAwesome - this.size.h / 2;
-    /*
-    if(this.pos.y > canvas.height/4*3) {
-      hpOffset = this.pos.y - (this.pos.y - canvas.height/4*3) +100;
-    }else{
-      hpOffset = this.pos.y - 2 + ((canvas.height - this.pos.y) / 1.5);
-    }
-
-     */
     let am = 0.40 + (0.60 * (1 - (this.stats.curHP / this.stats.maxHP)));
     ctx.fillStyle = "rgba(255, 255, 255, 1)";
     ctx.fillRect( (canvas.width/2 - 52), this.pos.y + 94 - hpOffset, 104, 19);
