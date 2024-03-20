@@ -17,8 +17,8 @@ let world = {
     offsetX: 0,
     offsetY: 0
 }
+let mathIsAwesome;
 let gamepads;
-
 
 
 class JumpAndRunClass {
@@ -28,6 +28,8 @@ class JumpAndRunClass {
         this.myPlayer = new Player( this.lvlc.map, { w: 64, h: 64 }, { maxHP: 100, curHP: 100, atk: 40, atkCD: 150, def: 20, mag: 50, mgx: 20, speed: 4 } );
         this.bgimg = new Image();
         this.bgimg.src = this.lvlc.bgimg;
+        this.test = new Image();
+        this.test.src = "./src/img/bgimg/vig.png";
         this.tileset = new Image();
         this.tileset.src = this.lvlc.tileset;
         this.frame = 0;
@@ -38,6 +40,7 @@ class JumpAndRunClass {
             offsetX: 0,
             offsetY: 0
         }
+        mathIsAwesome = (TILESIZE * this.lvlc.map.pattern.length / canvas.height - 1);
         this.populate(this.lvlc.map.spawn);
         console.log('JumpAndRunClass created');
     }
@@ -78,9 +81,9 @@ class JumpAndRunClass {
         leinwand.width = TILESIZE * this.lvlc.map.pattern[0].length;
         leinwand.height = TILESIZE * this.lvlc.map.pattern.length;
         let pinsel = ctx;
-        pinsel.drawImage( this.bgimg, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
-        //console.log('Breite: '+ leinwand.width +', Höhe: '+ leinwand.height);
+        pinsel.drawImage( this.bgimg, JumpAndRun.myPlayer.pos.x * (this.bgimg.width / (this.lvlc.map.pattern[0].length * TILESIZE)), 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
 
+        //console.log('Breite: '+ leinwand.width +', Höhe: '+ leinwand.height);
         // Durchlaufe alle Zeilen der Map
         for( let zeile = 0; zeile < this.lvlc.map.pattern.length ; zeile++ ) {
             // Durchlaufe darin alle Spalten der Map
@@ -97,6 +100,7 @@ class JumpAndRunClass {
                 }
             }
         }
+        if( this.lvlc.type === "underground" ) pinsel.drawImage( this.test, 0, 0, canvas.width*2, canvas.height*2, (JumpAndRun.myPlayer.pos.x + JumpAndRun.myPlayer.size.w/2) - canvas.width - offset.x*TILESIZE, (JumpAndRun.myPlayer.pos.y + JumpAndRun.myPlayer.size.h/2) - canvas.height -offset.y*TILESIZE, canvas.width*2, canvas.height*2);
     }
     steuern(event) {
         if (event.defaultPrevented) {
@@ -280,7 +284,6 @@ class JumpAndRunClass {
             this.spawnNTT(sgl);
         }
         for (let nmy of spawn.enemies) {
-
             this.spawnNTT(nmy);
         }
     }
@@ -314,13 +317,13 @@ class JumpAndRunClass {
         if (gamepads[0] !== null) {
             if (gamepads[0].buttons[0].pressed) {
                 steuerung.springen = true;
-                console.log(JumpAndRun.myPlayer.airStair, JumpAndRun.myPlayer.airStairLimit);
+                console.log(JumpAndRun.myPlayer.airStair, JumpAndRun.myPlayer.airStairLimit); // Double Jump funktioniert nicht mit Pad
             } else {
                 steuerung.springen = false;
             }
             steuerung.angriff = gamepads[0].buttons[1].pressed;
             steuerung.slide = gamepads[0].buttons[2].pressed;
-            steuerung.slide = gamepads[0].buttons[3].pressed;
+            // steuerung.slide = gamepads[0].buttons[3].pressed; // Test
             steuerung.links = gamepads[0].axes[0] < -0.5;
             steuerung.rechts = gamepads[0].axes[0] > 0.5;
         }
@@ -414,5 +417,7 @@ function dropLoot( entity ) {
         return drop;
     }
 }
+
+
 
 

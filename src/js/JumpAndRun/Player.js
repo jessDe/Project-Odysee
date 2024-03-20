@@ -44,13 +44,13 @@ class Player {
     this.atkBox = {
       pos: {
         x: canvas.width / 2 + this.size.w / 2,
-        y: this.pos.y + 16, // ( (this.size.h - this.atkBox.size.h) / 2) <- funktioniert nicht? (atkBox undefined)
+        y: this.pos.y,
         oX: 0,
         oY: 0
       },
       size: {
-        w: 48,
-        h: 48,
+        w: 64,
+        h: 64,
         s: 1    // Variable für eventuelle Skalierung
       }
     }
@@ -149,7 +149,7 @@ class Player {
 
 
 
-  // Kollisionsmethode für Terrain, übernommen vom J&R aus dem Unterricht
+  // Kollisionsmethode für Terrain, schamlos kopiert vom Unterrichtsmaterial
   blockade( pixelX, pixelY, map ) {
     let zeichenLO, zeichenLU, zeichenRO, zeichenRU;
     let b = {} ;
@@ -307,13 +307,8 @@ class Player {
 
 
   drawPC() {
-    let playerOffset = 0;
-    if(this.pos.y > canvas.height/4*3) {
-        playerOffset = this.pos.y - canvas.height/4*3;
-        world.offsetY = playerOffset/TILESIZE;
-    }else{
-      playerOffset = 0;
-    }
+    let playerOffset = this.pos.y * mathIsAwesome - this.size.h / 2;
+    world.offsetY = playerOffset/TILESIZE;
     ctx.drawImage(
         this.image,
         this.frame * (this.image.width / this.frMax),
@@ -321,7 +316,7 @@ class Player {
         this.image.width / this.frMax,
         this.image.height,
         canvas.width / 2 - this.size.w / 2,
-        this.pos.y - playerOffset,
+        (this.pos.y - playerOffset),
         (this.image.width / this.frMax),
         this.image.height
     );
@@ -348,37 +343,38 @@ class Player {
   }
 
   updateAtkBox() {
+    /*
     if (this.direction === 1) {
       this.atkBox.pos.x = canvas.width/2-32 + this.size.w;
     } else {
       this.atkBox.pos.x = canvas.width/2-32 - this.atkBox.size.w;
     }
-    this.atkBox.pos.y = this.pos.y + (this.size.h - this.atkBox.size.h) / 2;
-    // atkBox anzeigen
-    let atkBoxOffset = 0;
-    if(this.pos.y > canvas.height/4*3) {
-      atkBoxOffset = this.pos.y-(this.pos.y - canvas.height/4*3);
-    }else{
-      atkBoxOffset = this.atkBox.pos.y;
-    }
+    */
+    this.atkBox.pos.x = (this.direction === 1) ? (canvas.width/2-32 + this.size.w) : (canvas.width/2-32 - this.atkBox.size.w);
+    this.atkBox.pos.y = this.pos.y + this.size.h / 2 - this.pos.y * mathIsAwesome; // + ((this.size.h - this.atkBox.size.h) / 2);
     ctx.fillStyle = "rgba(127, 0, 255, 0.50)";
-    ctx.fillRect(this.atkBox.pos.x, atkBoxOffset, this.atkBox.size.w, this.atkBox.size.h);
+    ctx.fillRect(this.atkBox.pos.x, this.atkBox.pos.y, this.atkBox.size.w, this.atkBox.size.h);
   }
 
   hpBar() {
-    let hpOffset = 0;
+    let hpOffset = this.pos.y * mathIsAwesome - this.size.h / 2;
+    /*
     if(this.pos.y > canvas.height/4*3) {
       hpOffset = this.pos.y - (this.pos.y - canvas.height/4*3) +100;
     }else{
       hpOffset = this.pos.y - 2 + ((canvas.height - this.pos.y) / 1.5);
     }
+
+     */
     let am = 0.40 + (0.60 * (1 - (this.stats.curHP / this.stats.maxHP)));
     ctx.fillStyle = "rgba(255, 255, 255, 1)";
-    ctx.fillRect( (canvas.width/2 - 52), hpOffset -2, 104, 14);
+    ctx.fillRect( (canvas.width/2 - 52), this.pos.y + 94 - hpOffset, 104, 19);
     ctx.fillStyle = "rgba(255, 0, 0, " + am + ")";
-    ctx.fillRect( (canvas.width/2 - 50), hpOffset, 100, 10);
+    ctx.fillRect( (canvas.width/2 - 50), this.pos.y + 96 - hpOffset, 100, 10);
     ctx.fillStyle = "rgba(0, 255, 0, 0.75)";
-    ctx.fillRect( (canvas.width/2 - 50), hpOffset, 100 * (this.stats.curHP / this.stats.maxHP), 10);
+    ctx.fillRect( (canvas.width/2 - 50), this.pos.y + 96 - hpOffset, 100 * (this.stats.curHP / this.stats.maxHP), 10);
+    ctx.fillStyle = "rgba(255, 200, 0, 0.75)";
+    ctx.fillRect( (canvas.width/2 - 50), this.pos.y + 106 - hpOffset, 100 - (1 * this.slideCooldown), 5);
 
   }
 

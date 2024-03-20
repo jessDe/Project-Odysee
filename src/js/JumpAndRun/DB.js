@@ -281,9 +281,10 @@ const enemy = {
             speed: 1
         },
         atkBox: { pos: {x: 0, y: 0, oX: 0, oY: 0}, size: {w: 0, h: 0, s: 0} },
-        aiLevel: 1,
+        hasLoot: true,
+        aiLevel: 0,
         rLength: 100,
-        loot: [null, null, null, null, null, null, null, null, null, null],
+        loot: ['dewdropS'],
         frMax: 4,
         image: new Image(),
         imageSrc: './src/img/ntt/nmy/dumbass_idle.png',
