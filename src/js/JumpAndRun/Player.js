@@ -222,7 +222,7 @@ class Player {
       this.attacking = true;
       if (this.direction === 1) JumpAndRun.juggler(JumpAndRun.myPlayer, 'attackR');
       else JumpAndRun.juggler(JumpAndRun.myPlayer, 'attackL');
-      console.log(JumpAndRun.myPlayer.pos, JumpAndRun.myPlayer.atkBox.pos, JumpAndRun.activeNMY[0].pos, rectCollision(JumpAndRun.myPlayer.atkBox, JumpAndRun.activeNMY[0]));
+      // console.log(JumpAndRun.myPlayer.pos, JumpAndRun.myPlayer.atkBox.pos, JumpAndRun.activeNMY[0].pos, rectCollision(JumpAndRun.myPlayer.atkBox, JumpAndRun.activeNMY[0]));
       for (let enemy of JumpAndRun.activeNMY) {
         if (rectCollision(JumpAndRun.myPlayer.atkBox, enemy)) {
           JumpAndRun.struck(JumpAndRun.myPlayer, enemy);
@@ -318,15 +318,15 @@ class Player {
       this.atkBox.pos.x = canvas.width/2-32 + this.size.w;
     } else {
       this.atkBox.pos.x = canvas.width/2-32 - this.atkBox.size.w;
-    }
+    } (canvas.width/2-32 + this.size.w) : (canvas.width/2-32 - this.atkBox.size.w);
     */
-    this.atkBox.pos.x = (this.direction === 1) ? (canvas.width/2-32 + this.size.w) : (canvas.width/2-32 - this.atkBox.size.w);
-    this.atkBox.pos.y = this.pos.y + this.size.h / 2 - this.pos.y * mathIsAwesome; // + ((this.size.h - this.atkBox.size.h) / 2);
+    this.atkBox.pos.x = (this.direction === 1) ? (this.pos.x + this.size.w + this.atkBox.size.w) : this.pos.x - (this.size.w/2 + this.atkBox.size.w);
+    this.atkBox.pos.y = this.pos.y; //  + this.size.h / 2 - this.pos.y * mathIsAwesome
     ctx.fillStyle = "rgba(127, 0, 255, 0.50)";
     ctx.fillRect(this.atkBox.pos.x, this.atkBox.pos.y, this.atkBox.size.w, this.atkBox.size.h);
   }
 
-  hpBar() {
+  ui() {
     let hpOffset = this.pos.y * mathIsAwesome - this.size.h / 2;
     let am = 0.40 + (0.60 * (1 - (this.stats.curHP / this.stats.maxHP)));
     ctx.fillStyle = "rgba(255, 255, 255, 1)";
@@ -336,7 +336,7 @@ class Player {
     ctx.fillStyle = "rgba(0, 255, 0, 0.75)";
     ctx.fillRect( (canvas.width/2 - 50), this.pos.y + 96 - hpOffset, 100 * (this.stats.curHP / this.stats.maxHP), 10);
     ctx.fillStyle = "rgba(255, 200, 0, 0.75)";
-    ctx.fillRect( (canvas.width/2 - 50), this.pos.y + 106 - hpOffset, 100 - (1 * this.slideCooldown), 5);
+    ctx.fillRect( (canvas.width/2 - 50), this.pos.y + 106 - hpOffset, 100 - (this.slideCooldown), 5);
 
   }
 
@@ -413,7 +413,7 @@ class Player {
   update(period) {
     this.puppeteer(period);
     this.updateAtkBox();
-    this.hpBar();
+    this.ui();
     this.ticker();
     this.drawPC();
   }

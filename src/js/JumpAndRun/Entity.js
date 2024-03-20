@@ -24,7 +24,7 @@ class Entity{
     }
     draw() {
         ctx.strokeStyle = '#ffffff' ;
-        ctx.strokeRect(this.pos.x - world.offsetX*TILESIZE, this.pos.y - world.offsetY*TILESIZE, this.size.w, this.size.h);
+        ctx.strokeRect(this.pos.x - world.offsetX*TILESIZE, this.pos.y - world.offsetY*TILESIZE, this.size.w*this.size.s, this.size.h*this.size.s);
         ctx.drawImage(
             this.image,
             this.frame * (this.image.width / this.frMax),
@@ -105,6 +105,7 @@ class Enemy extends Entity {
             start: this.pos.x,
             end: this.pos.x - props.rLength
         }
+        this.loot = props.loot; // {name: '', effect: ''}
         this.aggroRange = 200;  // Reichweite für Aggro
         this.attacking = false; // Flag für aktiver Angriff
         this.stats = props.stats; // {maxHP: 0, curHP: 0, atk: 0, atkCD: 0, def: 0, speed: 0}

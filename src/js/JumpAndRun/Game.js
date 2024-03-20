@@ -149,11 +149,6 @@ class JumpAndRunClass {
     }
 
     juggler( ntt, sprite ) {
-        if (ntt.image === ntt.sprites.death.image) {
-            if (ntt.frame === ntt.sprites.death.frMax - 1)
-                ntt.alive = false;
-            return;
-        }
         switch (sprite) {
             case 'idle':
                 if (ntt.image !== ntt.sprites.idle.image) {
@@ -246,14 +241,12 @@ class JumpAndRunClass {
                 }
                 break;
             case 'struckL':
-
                 if (ntt.image !== ntt.sprites.struckL.image) {
                     ntt.frMax = ntt.sprites.struckL.frMax;
                     ntt.image = ntt.sprites.struckL.image;
                 }
                 break;
             case 'struckR':
-
                 if (ntt.image !== ntt.sprites.struckR.image) {
                     ntt.frMax = ntt.sprites.struckR.frMax;
                     ntt.image = ntt.sprites.struckR.image;
@@ -281,6 +274,7 @@ class JumpAndRunClass {
             if (target.stats.curHP <= 0) {
                 JumpAndRun.juggler(target,'death');
                 target.alive = false;
+                JumpAndRun.activeNMY.splice(JumpAndRun.activeNMY.indexOf(target), 1);
                 let drop = dropLoot(target);
                 if (drop !== null) {
                     JumpAndRun.activeSGL.push(drop);
@@ -420,12 +414,13 @@ function dropLoot( entity ) {
     }
     if ( entity.hasLoot ) {
         let loot = entity.loot[ Math.floor( Math.random() * entity.loot.length ) ];
-        let drop = new loot.type( loot );
+        let drop = new Sigil(sigil[loot], entity.pos);
         // Drop-Position soll die Position der toten Entität sein, aber versetzt und entgegengesetzt der Spielerposition
         drop.pos.x = entity.pos.x + (entity.pos.x > JumpAndRun.myPlayer.pos.x ? 16 : -16);
         drop.pos.y = entity.pos.y - 16;
-        drop.size = entity.size;
-        this.juggler( drop, 'idle');
+        console.log(drop);
+        JumpAndRun.activeSGL.push(drop);
+        JumpAndRun.juggler( drop, 'idle');
         return drop;
     }
 }
