@@ -71,7 +71,7 @@ SunImage.src = "./src/img/Sun_365x329.png";
 
 //Load Projectile1
 const projectile1Image = new Image();
-projectile1Image.src = "./src/img/Projectile1.png";
+projectile1Image.src = "./src/img/projectile1.png";
 
 
 const Enemy1Image = new Image();

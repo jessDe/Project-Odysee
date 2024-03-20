@@ -37,7 +37,8 @@ const LEVELS = [
                 player: { x: 120, y: 140, oX: 0, oY: 0 },
                 sigils: [
                     { name: 'dewdropS', type: 'Sigil', pos: {x: 200, y: 240, oX: 0, oY: 0 }},
-                    { name: 'dewdropS', type: 'Sigil', pos: {x: 300, y: 240, oX: 0, oY: 0 }}
+                    { name: 'dewdropS', type: 'Sigil', pos: {x: 300, y: 240, oX: 0, oY: 0 }},
+                    { name: 'Portal', type: 'Sigil', pos: {x: 5000, y: 300, oX: 0, oY: 0 }}
                 ],
                 enemies: [
                     { name: 'dumbass', type: 'Enemy', pos: {x: 800, y: 280, oX: 0, oY: 0 }}
@@ -150,7 +151,11 @@ const LEVELS = [
             spawn: {
                 player: {x: 180, y: 160, oX: 0, oY: 0},
                 sigils: [
-                    {}
+                    {
+                        name: 'Portal',
+                        type: 'Sigil',
+                        pos: {x: 8448, y: 650, oX: 0, oY: 0}
+                    }
                 ],
                 enemies: [
                     {}

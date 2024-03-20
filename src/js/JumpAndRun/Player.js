@@ -229,17 +229,26 @@ class Player {
       else JumpAndRun.juggler( JumpAndRun.myPlayer, 'slideL');
     }
     // Standard-Angriff, Kombo-Variante - benötigt zusätzliche Änderungen
-    if (steuerung.attack ) {
+    if (steuerung.attack) {
       this.attacking = true;
       if (this.direction === 1) JumpAndRun.juggler(JumpAndRun.myPlayer, 'attackR');
       else JumpAndRun.juggler(JumpAndRun.myPlayer, 'attackL');
       // console.log(JumpAndRun.myPlayer.pos, JumpAndRun.myPlayer.atkBox.pos, JumpAndRun.activeNMY[0].pos, rectCollision(JumpAndRun.myPlayer.atkBox, JumpAndRun.activeNMY[0]));
+
       for (let enemy of JumpAndRun.activeNMY) {
         if (rectCollision(JumpAndRun.myPlayer.atkBox, enemy)) {
           JumpAndRun.struck(JumpAndRun.myPlayer, enemy);
+
         } else {
 
         }
+      }
+      if(this.frame === 3){
+
+
+        this.sounds.Attack.play().then(r => {
+
+        });
       }
       this.attacking = false;
       console.log(JumpAndRun.activeNMY);
@@ -334,8 +343,11 @@ class Player {
     */
     this.atkBox.pos.x = (this.direction === 1) ? (this.pos.x + this.size.w + this.atkBox.size.w) : this.pos.x - (this.size.w/2 + this.atkBox.size.w);
     this.atkBox.pos.y = this.pos.y; //  + this.size.h / 2 - this.pos.y * mathIsAwesome
-    ctx.fillStyle = "rgba(127, 0, 255, 0.50)";
-    ctx.fillRect(this.atkBox.pos.x, this.atkBox.pos.y, this.atkBox.size.w, this.atkBox.size.h);
+    if(debug){
+      ctx.fillStyle = "rgba(127, 0, 255, 0.50)";
+      ctx.fillRect(this.atkBox.pos.x, this.atkBox.pos.y, this.atkBox.size.w, this.atkBox.size.h);
+    }
+
   }
 
   ui() {

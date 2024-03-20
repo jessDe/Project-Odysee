@@ -25,6 +25,7 @@ class Entity{
     draw() {
         ctx.strokeStyle = '#ffffff' ;
         ctx.strokeRect(this.pos.x - world.offsetX*TILESIZE, this.pos.y - world.offsetY*TILESIZE, this.size.w*this.size.s, this.size.h*this.size.s);
+
         ctx.drawImage(
             this.image,
             this.frame * (this.image.width / this.frMax),

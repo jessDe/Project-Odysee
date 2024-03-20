@@ -158,6 +158,39 @@ const sigil = {
                 image: new Image(),
             }
         }
+    },
+    Portal: {
+        name: 'Portal',
+        type: 'Sigil',
+        size: {w: 261, h: 469, s: 0.3},
+        effect: function () {
+            JumpAndRun.GameRunning = false;
+            if(JumpAndRun.curlevel === 0){
+                Unlocks[0].unlocked = true;
+            } else if(JumpAndRun.curlevel === 1){
+                Unlocks[0].Unlock.Level2 = true;
+            }else if(JumpAndRun.curlevel === 2){
+                Unlocks[0].Unlock.Level3 = true;
+            }
+            GameMode = 0;
+
+        },
+        image: new Image(),
+        frMax: 6,
+        imageSrc: './src/img/Portal.png',
+        sprites: {
+            idle:  {
+                frMax: 6,
+                image: new Image(),
+                imageSrc: './src/img/Portal.png',
+            },
+            death: {
+                frMax: 6,
+                image: new Image(),
+                imageSrc: './src/img/Portal.png',
+            }
+        }
+
     }
 }
 

@@ -1,8 +1,9 @@
 let TD = new TowerDefence();
 let JumpAndRun = new JumpAndRunClass(1);
-let GameMode = 1;
+let GameMode = 0;
 let World = 0;
 let selectingLevel = false;
+const debug = false;
 
 let images = [
     {
@@ -251,14 +252,14 @@ class MainMenu{
                     if(MousePos.x >= 12 && MousePos.x <= 21 && MousePos.y >= 13 && MousePos.y <= 22){
                         //Level 1
                         selectingLevel = false;
-                        JumpAndRun = new JumpAndRunClass(0);
+                        JumpAndRun = new JumpAndRunClass(1);
                         GameMode = 1;
                         JumpAndRun.Start();
                     }else if(MousePos.x >= 27 && MousePos.x <= 36 && MousePos.y >= 13 && MousePos.y <= 22){
                         if(Unlocks[World].Unlock.Level2){
                             //Level 2
                             selectingLevel = false;
-                            JumpAndRun = new JumpAndRunClass(1);
+                            JumpAndRun = new JumpAndRunClass(2);
                             GameMode = 1;
                         }else {
                             console.log("Level 2 locked");
@@ -326,9 +327,7 @@ let LastGameMode = 0;
 
 
 function Update(){
-    EyeImage.src = images[World].Outer;
-    EyeImage2.src = images[World].Center;
-    GateImage.src = images[World].Gate;
+
 
     if(GameMode === 0){
         MainMenuObj.Draw();
@@ -350,7 +349,6 @@ function Update(){
             document.getElementById("GameBox").style.height = "540px";
             document.getElementById("Shop").style.display = "none";
             if(JumpAndRun.GameRunning === false){
-                JumpAndRun = new JumpAndRunClass(1);
                 JumpAndRun.Start();
             }
 
