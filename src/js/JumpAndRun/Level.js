@@ -1,4 +1,4 @@
-// noinspection SpellCheckingInspection
+// Datenbank für Level, mit zusätzlichen Informationen für jedes Level - geschrieben von AZ
 const LEVELS = [
     {
         name: "void00",

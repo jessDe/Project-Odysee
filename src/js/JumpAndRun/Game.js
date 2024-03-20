@@ -1,4 +1,4 @@
-
+// Spielkernel, Hauptautor: AZ - Beiträge von anderen Teammitgliedern sind kommentiert
 // Variablen
 const TILESIZE = 32;
 let steuerung = {
@@ -11,7 +11,6 @@ let steuerung = {
     magic: false,
     pause: false
 };
-
 let lastTime;
 let world = {
     offsetX: 0,
@@ -21,28 +20,28 @@ let mathIsAwesome;
 let gamepads;
 let goodbye;
 
+// Klasse für Starten des Spiels, erstellt von LP - Ergänzungen von AZ
 class JumpAndRunClass {
     constructor(level) {
-        this.curlevel = level;
-        this.lvlc = JSON.parse(JSON.stringify(LEVELS[this.curlevel]));
+        this.curlevel = level;  // Aktuelles Level
+        this.lvlc = JSON.parse(JSON.stringify(LEVELS[this.curlevel]));  // JS-Magie, begesteuert von LP
         this.myPlayer = new Player( this.lvlc.map, { w: 64, h: 64 }, { maxHP: 100, curHP: 100, atk: 40, atkCD: 150, def: 20, mag: 50, mgx: 20, speed: 4 } );
         this.bgimg = new Image();
-        this.bgimg.src = this.lvlc.bgimg;
+        this.bgimg.src = this.lvlc.bgimg;   // Ladet das Hintergrundbild wie in Level.js angegeben
         this.test = new Image();
-        this.test.src = "./src/img/bgimg/vig.png";
+        this.test.src = "./src/img/bgimg/vig.png";  // Vignette für Untergrundlevel
         this.tileset = new Image();
-        this.tileset.src = this.lvlc.tileset;
+        this.tileset.src = this.lvlc.tileset;   // Ladet die Tileset wie in Level.js angegeben
         this.frame = 0;
         this.GameRunning = false;
-        this.activeNMY = [];
-        this.activeSGL = [];
+        this.activeNMY = [];    // Array für aktive Gegner
+        this.activeSGL = [];    // Array für aktive Sigils
         world = {
             offsetX: 0,
             offsetY: 0
         }
-        mathIsAwesome = (TILESIZE * this.lvlc.map.pattern.length / canvas.height - 1);
-        this.populate(this.lvlc.map.spawn);
-        console.log('JumpAndRunClass created');
+        mathIsAwesome = (TILESIZE * this.lvlc.map.pattern.length / canvas.height - 1);  // Formel für Korrekturen zum Scrollen
+        this.populate(this.lvlc.map.spawn); // Füllt die Map mit Entitäten wie in Level.js angegeben
     }
 
     Start(){
@@ -75,7 +74,6 @@ class JumpAndRunClass {
             x: (this.myPlayer.pos.x + this.myPlayer.size.w/2 )/TILESIZE - (canvas.width/TILESIZE)/2,
             y: world.offsetY,
         };
-
         world.offsetX = offset.x;
         world.offsetY = offset.y;
         // let PlayerPos = this.lvlc.map.spawn.player; // obsolet
@@ -83,17 +81,10 @@ class JumpAndRunClass {
         leinwand.height = TILESIZE * this.lvlc.map.pattern.length;
         let pinsel = ctx;
         pinsel.drawImage( this.bgimg, JumpAndRun.myPlayer.pos.x * (this.bgimg.width / (this.lvlc.map.pattern[0].length * TILESIZE)), 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
-
-        //console.log('Breite: '+ leinwand.width +', Höhe: '+ leinwand.height);
-        // Durchlaufe alle Zeilen der Map
         for( let zeile = 0; zeile < this.lvlc.map.pattern.length ; zeile++ ) {
-            // Durchlaufe darin alle Spalten der Map
             for( let spalte = 0; spalte < this.lvlc.map.pattern[0].length; spalte++ ) {
-                // Bestimmte die Position des aktuellen Feldes im TILES-Array
                 let pos = this.lvlc.map.mask.indexOf( this.lvlc.map.pattern[zeile].charAt( spalte ) );
-                // Falls Map-Eintrag unter den angegebenen TILES ist
                 if( pos >= 0) {
-                    // dann zeichne das entsprechende Feld auf die Leinwand
                     pinsel.drawImage(this.tileset, TILESIZE * pos, 0, TILESIZE, TILESIZE, spalte*TILESIZE-offset.x*TILESIZE, zeile*TILESIZE-offset.y*TILESIZE, TILESIZE, TILESIZE);
                     //console.log('Zeile: '+ zeile +', Spalte: '+ spalte +', Pos: '+ pos);
                 }else{
@@ -101,6 +92,7 @@ class JumpAndRunClass {
                 }
             }
         }
+        // Zeichnet Vignette für Untergrundlevel
         if( this.lvlc.type === "underground" ) pinsel.drawImage(
             this.test,
             0,
@@ -114,7 +106,7 @@ class JumpAndRunClass {
     }
     steuern(event) {
         if (event.defaultPrevented) {
-            return; // Do nothing if the event was already processed
+            return; // Stopp, wenn das Event bereits bearbeitet wurde
         }
         if(JumpAndRun.myPlayer.alive) {
             switch (event.key) {
@@ -143,12 +135,12 @@ class JumpAndRunClass {
                     steuerung.pause = (event.type === 'keydown');
                     break;
                 default:
-                    return; // Quit when this doesn't handle the key event.
+                    return;
             }
         }
-        event.preventDefault();        // Cancel the default action to avoid it being handled twice
+        event.preventDefault(); // Verhindert, dass das Event weitergeleitet wird
     }
-
+    // Juggler: Wechselt zwischen den Sprites von Spieler und Entitäten
     juggler( ntt, sprite ) {
         switch (sprite) {
             case 'idle':
@@ -267,9 +259,9 @@ class JumpAndRunClass {
         let aAtk = attacker.stats.atk;
         return aAtk * (1 - (tDef / (100 + tDef)));
     }
-    // Methode zum Prüfen ob Einheiten getroffen wurden
+    // Methode zum Prüfen ob Einheiten getroffen wurden, mit Ergänzungen von LP - muss noch einwenig überarbeitet werden
     struck( attacker, target ) {
-        if(target.damageCD < 1.5) return;
+        if(target.damageCD < 1.5) return;   // damageCD stellt sicher, dass das Ziel nicht zu oft getroffen wird
         if(!target.invulnerable || target.type !== 'Sigil'){
             target.stats.curHP -= this.calcDamage(attacker, target);
             if (target.stats.curHP <= 0) {
@@ -286,7 +278,7 @@ class JumpAndRunClass {
         }
         target.damageCD = 0;
     }
-    // Methode zum initialen Füllen der Map mit Entitäten
+    // Methode zum initialen Füllen der Map mit Entitäten, abhängig davon was in Level.js eingetragen wurde
     populate(spawn) {
         for (let sgl of spawn.sigils) {
             this.spawnNTT(sgl);
@@ -317,7 +309,7 @@ class JumpAndRunClass {
     }
 
 
-    // Methode für Gamepad-Management
+    // Methode für Gamepad-Management, noch buggy
     gamepad( ) {
         gamepads = navigator.getGamepads();
         if(gamepads[0] === undefined) return;
@@ -343,7 +335,7 @@ class JumpAndRunClass {
         let period = ( now.getTime() - lastTime.getTime() ) /1000 ;
         lastTime = now;
         JumpAndRun.drawLevel();
-        JumpAndRun.myPlayer.update(period);
+        JumpAndRun.myPlayer.update();
         JumpAndRun.myPlayer.damageCD += period;
         for (let enemy of JumpAndRun.activeNMY) {
             enemy.damageCD += period;

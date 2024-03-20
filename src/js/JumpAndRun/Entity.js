@@ -1,4 +1,4 @@
-// Überklasse für NPCs (feindlich, neutral und freundlich, sofern existent)
+// Überklasse für NPCs (feindlich, neutral und freundlich, sofern existent) - Hauptautor: AZ
 class Entity{
     constructor(entity, pos) {
         this.name = entity.name;
@@ -48,40 +48,6 @@ class Entity{
             }
         }
     }
-
-    /*
-    // Neue drawNTT-Methode, Animationen + Sprites + Frames - BUGGY?
-    draw() {
-        for (const sprite in this.sprites) {
-            if (this.sprites[sprite].frPast > 1000 / 60) {
-                this.sprites[sprite].frame = (this.sprites[sprite].frame + 1) % this.sprites[sprite].frMax;
-                this.sprites[sprite].frPast = 0;
-            }
-        }
-        this.frPast += 1000 / 60;
-        for (const sprite in this.sprites) {
-            this.sprites[sprite].frPast += 1000 / 60;
-        }
-        for (const sprite in this.sprites) {
-            let posX = this.pos.x - this.pos.oX;
-            let posY = this.pos.y - this.pos.oY;
-            let width = (this.sprites[sprite].image.width / this.sprites[sprite].frMax) * this.size.s;
-            let height = this.sprites[sprite].image.height * this.size.s;
-            // console.log(posX, posY, width, height, this.size.s);
-            ctx.drawImage(
-                this.sprites[sprite].image,
-                this.sprites[sprite].frame * (this.sprites[sprite].image.width / this.sprites[sprite].frMax),
-                0,
-                this.sprites[sprite].image.width / this.sprites[sprite].frMax,
-                this.sprites[sprite].image.height,
-                posX,
-                posY,
-                width,
-                height
-            )
-        }
-    }
-    */
     update() {
         this.draw();
         this.ticker();
@@ -126,6 +92,7 @@ class Enemy extends Entity {
 
 
     }
+    // Update-Methode für Enemy-Entitäten, KI-Verhalten muss noch ausgebaut werden
     update() {
         // KI-Verhalten
         switch (this.aiLevel) {

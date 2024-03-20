@@ -1,5 +1,6 @@
 // Klasse für den Spieler (Jump'n'Run)
-// geschrieben von: AZ
+// geschrieben von:
+// Hauptautor: AZ - Beiträge von anderen Teammitgliedern sind kommentiert
 class Player {
   constructor(map, size, stats) {
     this.map = map; // Map-Objekt, beinhaltet PC-Position und Offset (siehe Zeile darunter)
@@ -37,7 +38,6 @@ class Player {
     this.isSliding = false;
     this.invulnerable = false;
     this.damageCD = 0;
-    this.atkCC = 0;
     this.sglEff = {
       def: 0
     };
@@ -157,11 +157,7 @@ class Player {
     // this.sprites.death.image.src = './src/img/pc/death.png';
 
   }
-
-
-
-
-  // Kollisionsmethode für Terrain, schamlos kopiert vom Unterrichtsmaterial
+  // Kollisionsmethode für Terrain, schamlos gestolen vom Unterrichtsmaterial
   blockade( pixelX, pixelY, map ) {
     let zeichenLO, zeichenLU, zeichenRO, zeichenRU;
     let b = {} ;
@@ -228,13 +224,11 @@ class Player {
       if( this.direction === 1 ) JumpAndRun.juggler( JumpAndRun.myPlayer, 'slideR');
       else JumpAndRun.juggler( JumpAndRun.myPlayer, 'slideL');
     }
-    // Standard-Angriff, Kombo-Variante - benötigt zusätzliche Änderungen
+    // Standard-Angriff, benötigt zusätzliche Änderungen
     if (steuerung.attack) {
       this.attacking = true;
       if (this.direction === 1) JumpAndRun.juggler(JumpAndRun.myPlayer, 'attackR');
       else JumpAndRun.juggler(JumpAndRun.myPlayer, 'attackL');
-      // console.log(JumpAndRun.myPlayer.pos, JumpAndRun.myPlayer.atkBox.pos, JumpAndRun.activeNMY[0].pos, rectCollision(JumpAndRun.myPlayer.atkBox, JumpAndRun.activeNMY[0]));
-
       for (let enemy of JumpAndRun.activeNMY) {
         if (rectCollision(JumpAndRun.myPlayer.atkBox, enemy)) {
           JumpAndRun.struck(JumpAndRun.myPlayer, enemy);
@@ -244,8 +238,6 @@ class Player {
         }
       }
       if(this.frame === 3){
-
-
         this.sounds.Attack.play().then(r => {
 
         });
@@ -283,7 +275,6 @@ class Player {
     // geschrieben von: LP
     if(blockiert.links || blockiert.rechts){
       this.velocity.x = 0;
-      // console.log("blocked sliding"+ blockiert.links + " "+blockiert.rechts)
     }else{
       if(this.blockade(Math.floor(this.pos.x)+TILESIZE, Math.floor(this.pos.y), this.map).rechts && this.direction === 1){
         this.velocity.x = 0;
@@ -292,9 +283,9 @@ class Player {
       }else{
         this.pos.x += this.velocity.x;
       }
-
     }
   }
+  // Zeichnet den Spieler, Hilfestellung durch LP
   drawPC() {
     let playerOffset = this.pos.y * mathIsAwesome - this.size.h / 2;
     let flipper;
@@ -312,7 +303,6 @@ class Player {
         this.image.height
     );
   }
-
   // Alternative Methode für Frames und so, muss getestet werden
   ticker() {
     this.frPast++;
@@ -323,6 +313,7 @@ class Player {
         this.frame = 0;
       }
     }
+    // Benötigt für Slide-Funktionalität, geschrieben von: LP
     if(this.slideCooldown > 0) this.slideCooldown--;
     if(this.isSliding){
       this.slideDuration--;
@@ -332,24 +323,7 @@ class Player {
       }
     }
   }
-
-  updateAtkBox() {
-    /*
-    if (this.direction === 1) {
-      this.atkBox.pos.x = canvas.width/2-32 + this.size.w;
-    } else {
-      this.atkBox.pos.x = canvas.width/2-32 - this.atkBox.size.w;
-    }
-    */
-    this.atkBox.pos.x = (this.direction === 1) ? (this.pos.x + this.size.w + this.atkBox.size.w) : this.pos.x - (this.size.w/2 + this.atkBox.size.w);
-    this.atkBox.pos.y = this.pos.y; //  + this.size.h / 2 - this.pos.y * mathIsAwesome
-    if(debug){
-      ctx.fillStyle = "rgba(127, 0, 255, 0.50)";
-      ctx.fillRect(this.atkBox.pos.x, this.atkBox.pos.y, this.atkBox.size.w, this.atkBox.size.h);
-    }
-
-  }
-
+  // draw-Methode für GUI-Elemente, aktuell nur HP-Balken und bei Bedarf atkBox
   ui() {
     let hpOffset = this.pos.y * mathIsAwesome - this.size.h / 2;
     let am = 0.40 + (0.60 * (1 - (this.stats.curHP / this.stats.maxHP)));
@@ -361,9 +335,16 @@ class Player {
     ctx.fillRect( (canvas.width/2 - 50), this.pos.y + 96 - hpOffset, 100 * (this.stats.curHP / this.stats.maxHP), 10);
     ctx.fillStyle = "rgba(255, 200, 0, 0.75)";
     ctx.fillRect( (canvas.width/2 - 50), this.pos.y + 106 - hpOffset, 100 - (this.slideCooldown), 5);
+    // atkBox für Debugging-Zwecke
+    this.atkBox.pos.x = (this.direction === 1) ? (this.pos.x + this.size.w + this.atkBox.size.w) : this.pos.x - (this.size.w/2 + this.atkBox.size.w);
+    this.atkBox.pos.y = this.pos.y; //  + this.size.h / 2 - this.pos.y * mathIsAwesome
+    if(debug){
+      ctx.fillStyle = "rgba(127, 0, 255, 0.50)";
+      ctx.fillRect(this.atkBox.pos.x, this.atkBox.pos.y, this.atkBox.size.w, this.atkBox.size.h);
+    }
 
   }
-
+  // Deckelt Spieler-HP
   healcap(value) {
     this.stats.curHP += value;
     if (this.stats.curHP > this.stats.maxHP) {
@@ -371,49 +352,7 @@ class Player {
       this.stats.curHP = this.stats.maxHP;
     }
   }
-
-    /*
-    // Methode für den Slide-Angriff des PCs
-    slideAttack(target) {
-      if (this.isSliding) {
-        if (rectCollision(this.atkBox, target)) {
-          target.stats.curHP -= this.stats.atk / 2;
-          target.velocity.y = -this.jumpStrength;
-          target.velocity.x += this.direction * this.stats.curHP / 2;
-          this.isSliding = false;
-          this.invulnerable = false;
-        }
-      }
-    }
-    megaSlideAttack(target) {
-      if (this.isSliding) {
-        if (rectCollision(this.atkBox, target)) {
-          target.stats.curHP -= this.stats.atk;
-          target.velocity.y = -this.jumpStrength;
-          target.velocity.x += this.direction * this.stats.curHP;
-          this.isSliding = false;
-          this.invulnerable = false;
-        }
-      }
-    }
-    */
-
-    // Methode für einen Spin-Angriff des PCs, wenn er sich in der Luft befindet
-    spinAttack(target) {
-      if (this.airStair > 0) {
-        if (rectCollision(this.atkBox, target)) {
-          target.stats.curHP -= this.stats.atk / 2;
-          target.velocity.y = -this.jumpStrength;
-          target.velocity.x += this.direction * this.stats.curHP / 2;
-        }
-      }
-    }
-
-
-
-
-
-  // Fähigkeiten und Talente des PCs
+  // Fähigkeiten und Talente des PCs, NYI
   /*
   talents() {
     this.talents = {
@@ -434,9 +373,8 @@ class Player {
   }
   */
   // Methode zum Aktualisieren des PC
-  update(period) {
-    this.puppeteer(period);
-    this.updateAtkBox();
+  update() {
+    this.puppeteer();
     this.ui();
     this.ticker();
     this.drawPC();
