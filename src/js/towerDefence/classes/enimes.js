@@ -1,12 +1,13 @@
 class EnemyTD {
-    constructor(maxHealth, speed, reward) {
+    constructor(maxHealth, speed, reward, Level) {
         this.position = {};
-        this.position.x = waypoints[0].x;
-        this.position.y = waypoints[0].y;
+        this.position.x = TDLevels[Level].map.waypoints[0].x;
+        this.position.y = TDLevels[Level].map.waypoints[0].y;
         this.maxHealth = maxHealth;
         this.currentHealth = maxHealth;
         this.speed = speed;
         this.waypointIndex = 0;
+        this.Level = Level;
         this.reward = reward;
         this.frame = 0;
         this.UpdateTime = 0;
@@ -22,13 +23,13 @@ class EnemyTD {
             UpdateFrame = true;
         }
 
-        if(this.waypointIndex < waypoints.length){
-            this.targetX = waypoints[this.waypointIndex].x;
-            this.targetY = waypoints[this.waypointIndex].y;
+        if(this.waypointIndex < TDLevels[this.Level].map.waypoints.length){
+            this.targetX = TDLevels[this.Level].map.waypoints[this.waypointIndex].x;
+            this.targetY = TDLevels[this.Level].map.waypoints[this.waypointIndex].y;
 
 
 
-            switch (waypoints[this.waypointIndex].to) {
+            switch (TDLevels[this.Level].map.waypoints[this.waypointIndex].to) {
                 case "right":
                     if(this.position.x < this.targetX){
                         this.position.x += this.speed;

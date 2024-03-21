@@ -9,7 +9,7 @@ body, html {
     padding: 0;
     overflow: hidden; /* Prevent scrolling */
     height: 100%;
-    background-image: url("/src/img/bg_egypt01.jpg");
+    background-image: url("/src/img/TD/bg_egypt01.jpg");
     background-size: cover;
     color: white;
 

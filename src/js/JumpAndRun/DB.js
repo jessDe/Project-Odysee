@@ -29,13 +29,13 @@ const sigil = {
         type: 'Sigil',
         size: {w: 261, h: 469, s: 0.3},
         effect: function () {
+            setScore(0,JumpAndRun.curlevel, (new Date().getTime()- JumpAndRun.StartTime.getTime())/1000);
             JumpAndRun.GameRunning = false;
+            MainMenuObj.MainMenuMode = 2;
             if(JumpAndRun.curlevel === 0){
-                Unlocks[0].unlocked = true;
-            } else if(JumpAndRun.curlevel === 1){
-                Unlocks[0].Unlock.Level2 = true;
-            }else if(JumpAndRun.curlevel === 2){
-                Unlocks[0].Unlock.Level3 = true;
+                UnlockLevel(0);
+            } else{
+                UnlockLevel(0,JumpAndRun.curlevel + 1);
             }
             GameMode = 0;
 

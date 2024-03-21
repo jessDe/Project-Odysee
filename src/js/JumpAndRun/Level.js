@@ -91,7 +91,11 @@ const LEVELS = [
             spawn: {
                 player: {x: 180, y: 160, oX: 0, oY: 0},
                 sigils: [
-                    {}
+                    {
+                        name: 'Portal',
+                        type: 'Sigil',
+                        pos: {x: 8448, y: 650, oX: 0, oY: 0}
+                    }
                 ],
                 enemies: [
                     {name: 'yamoma', type: 'Enemy', pos: {x: 8810, y: 840, oX: 0, oY: 0 }}
@@ -154,7 +158,7 @@ const LEVELS = [
                     {
                         name: 'Portal',
                         type: 'Sigil',
-                        pos: {x: 8448, y: 650, oX: 0, oY: 0}
+                        pos: {x: 8512, y: 350, oX: 0, oY: 0}
                     }
                 ],
                 enemies: [

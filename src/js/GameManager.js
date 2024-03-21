@@ -1,9 +1,24 @@
-let TD = new TowerDefence();
+let TD = new TowerDefence(0);
 let JumpAndRun = new JumpAndRunClass(1);
 let GameMode = 1;
 let World = 0;
 let selectingLevel = false;
 const debug = false;
+
+
+
+
+
+
+//Font
+const customFont = new FontFace('PixelFont', 'url(Minecraft.ttf)');
+let fontLoaded=false;
+customFont.load().then(function(font) {
+    document.fonts.add(font);
+    fontLoaded=true;
+}).catch(function(error) {
+    console.log('Font loading failed: ' + error);
+});
 
 let images = [
     {
@@ -20,14 +35,14 @@ let images = [
 
 let loadedImages = [
     {
-        Center: null,
-        Outer: null,
-        Gate: null
+        Center: new Image(),
+        Outer: new Image(),
+        Gate: new Image()
     },
     {
-        Center: null,
-        Outer: null,
-        Gate: null
+        Center: new Image(),
+        Outer: new Image(),
+        Gate: new Image()
     }
 
 ];
@@ -38,9 +53,12 @@ let Unlocks = [
         World: 1,
         Unlock: {
             Level2: false,
-            Level3: true
+            Level3: false
         },
-        unlocked: true
+        Highscore: [
+          NaN, NaN, NaN
+        ],
+        unlocked: false
     },
     {
         World: 2,
@@ -48,6 +66,9 @@ let Unlocks = [
             Level2: false,
             Level3: false
         },
+        Highscore: [
+            NaN, NaN, NaN
+        ],
         unlocked: false
     }
 ]
@@ -57,17 +78,6 @@ MenuButton.src = "src/img/MenuButton.png";
 
 let Title = new Image();
 Title.src = "src/img/Title.png";
-
-
-let GateImage = new Image();
-GateImage.src = "src/img/Gate.png";
-
-
-let EyeImage = new Image();
-EyeImage.src = "src/img/EyeCentered.png";
-
-let EyeImage2 = new Image();
-EyeImage2.src = "src/img/eye.png";
 
 let ArrowImage = new Image();
 ArrowImage.src = "src/img/Arrow.png";
@@ -176,6 +186,12 @@ class MainMenu{
                 ctx.fillStyle = "white";
                 ctx.fillText("Level 1", canvas.width/2-380, canvas.height/2 + 150);
 
+                if(Unlocks[World].Highscore[0] !== 0 && Unlocks[World].Highscore[0] !== null){
+                    ctx.fillStyle = "white";
+                    ctx.font = "20px PixelFont";
+                    ctx.fillText("Time: " + Unlocks[World].Highscore[0]+"s", canvas.width/2-380, canvas.height/2 + 200);
+                }
+
 
                 //Level 2
                 ctx.fillStyle = "#ff0000";
@@ -185,8 +201,15 @@ class MainMenu{
                 ctx.fillStyle = "white";
                 ctx.fillText("Level 2", canvas.width/2-80, canvas.height/2 + 150);
 
+                if(Unlocks[World].Highscore[1] !== 0 && Unlocks[World].Highscore[1] !== null){
+                    ctx.fillStyle = "white";
+                    ctx.font = "20px PixelFont";
+                    ctx.fillText("Time: " + Unlocks[World].Highscore[1]+"s", canvas.width/2-80, canvas.height/2 + 200);
+                }
                 if(!Unlocks[World].Unlock.Level2){
                     ctx.drawImage(lockImage, canvas.width/2-75, canvas.height/2 - 75, 150, 150);
+
+
                 }
 
                 //Level 3
@@ -197,8 +220,15 @@ class MainMenu{
                 ctx.fillStyle = "white";
                 ctx.fillText("Level 3", canvas.width/2+220, canvas.height/2 + 150);
 
+                if(Unlocks[World].Highscore[2] !== 0 && Unlocks[World].Highscore[2] !== null){
+                    ctx.fillStyle = "white";
+                    ctx.font = "20px PixelFont";
+                    ctx.fillText("Time: " + Unlocks[World].Highscore[2]+"s", canvas.width/2+220, canvas.height/2 + 200);
+                }
                 if(!Unlocks[World].Unlock.Level3){
                     ctx.drawImage(lockImage, canvas.width/2+225, canvas.height/2 - 75, 150, 150);
+
+
                 }
 
 
@@ -215,7 +245,12 @@ class MainMenu{
             if(MainMenuObj.MainMenuMode === 0){
                 if(MousePos.x >= 26 && MousePos.x <= 36){
                     if(MousePos.y >= 25 && MousePos.y <= 35){
-                        MainMenuObj.MainMenuMode = 2;
+                        if(Unlocks[0].unlocked){
+                            MainMenuObj.MainMenuMode = 2;
+                        }else{
+                            JumpAndRun = new JumpAndRunClass(0);
+                            GameMode = 1;
+                        }
                     }
                 }
             }else if(MainMenuObj.MainMenuMode === 2){
@@ -268,7 +303,7 @@ class MainMenu{
                         if(Unlocks[World].Unlock.Level3){
                             //Level 3
                             selectingLevel = false;
-                            TD = new TowerDefence();
+                            TD = new TowerDefence(0);
                             GameMode = 2;
                         }else{
                             console.log("Level 3 locked");
@@ -285,10 +320,10 @@ class MainMenu{
 }
 let MainMenuObj = new MainMenu();
 window.onload = function(){
+    if(checkIfCookieExists("Unlocks")){
+        Unlocks = JSON.parse(getCookie("Unlocks"));
+    }
     loadedImages.forEach(function(image){
-        image.Center = new Image();
-        image.Outer = new Image();
-        image.Gate = new Image();
         image.Center.src = images[loadedImages.indexOf(image)].Center;
         image.Outer.src = images[loadedImages.indexOf(image)].Outer;
         image.Gate.src = images[loadedImages.indexOf(image)].Gate;
@@ -300,10 +335,13 @@ window.onload = function(){
         document.getElementById("GameBox").style.width = "960px";
         document.getElementById("GameBox").style.height = "540px";
         document.getElementById("Shop").style.display = "none";
-        //document.getElementById("debugText").style.display = "none";
+        if(!debug){
+            document.getElementById("debugText").style.display = "none";
+        }
+
         document.getElementById("myCanvas").style.background = "#000000"
         JumpAndRun = new JumpAndRunClass(0);
-        TD = new TowerDefence();
+        TD = new TowerDefence(0);
     }else if(GameMode === 1){
         document.getElementById("GameBox").style.width = "960px";
         document.getElementById("GameBox").style.height = "540px";
@@ -314,7 +352,11 @@ window.onload = function(){
 
     }else if(GameMode === 2){
         document.body.style.backgroundImage = "url('src/img/bg_egypt01.png')";
-        document.getElementById("debugText").style.display = "block";
+        if(!debug){
+            document.getElementById("debugText").style.display = "none";
+        }else{
+            document.getElementById("debugText").style.display = "block";
+        }
         TD.StartGame();
     }
     Update();
@@ -356,7 +398,7 @@ function Update(){
 
         }else if(GameMode === 2){
 
-            document.body.style.backgroundImage = "url('src/img/bg_egypt01.jpg')";
+            document.body.style.backgroundImage = "url('src/img/TD/bg_egypt01.jpg')";
             document.getElementById("debugText").style.display = "block";
             document.getElementById("Shop").style.display = "block";
             document.getElementById("GameBox").style.width = "1100px";
@@ -373,7 +415,6 @@ function handleKeyPress(event) {
     var keyCode = event.keyCode || event.which;
 
     // Log the key code to the console (you can do something else based on the key code)
-    console.log('Key pressed - Key Code:', keyCode);
 
     if(GameMode === 0){
         if(keyCode === 27){
@@ -398,4 +439,13 @@ function UnlockLevel(World, Level){
     }else if(Level === 3){
         Unlocks[World].Unlock.Level3 = true;
     }
+    setCookie("Unlocks", JSON.stringify(Unlocks), 365*10);
+}
+
+function setScore(World, Level, Score){
+    if(Unlocks[World].Highscore[Level-1] > Score || isNaN(Unlocks[World].Highscore[Level-1]) || Unlocks[World].Highscore[Level-1] === null){
+        Unlocks[World].Highscore[Level-1] = Score;
+        setCookie("Unlocks", JSON.stringify(Unlocks), 365*10);
+    }
+
 }

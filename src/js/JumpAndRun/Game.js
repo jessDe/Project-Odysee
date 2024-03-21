@@ -32,19 +32,24 @@ class JumpAndRunClass {
         this.test.src = "./src/img/bgimg/vig.png";  // Vignette für Untergrundlevel
         this.tileset = new Image();
         this.tileset.src = this.lvlc.tileset;   // Ladet die Tileset wie in Level.js angegeben
+        this.StartTime = new Date();
         this.frame = 0; // Frame-Zähler; wird aktuell nicht verwendet???
         this.GameRunning = false;
         this.activeNMY = [];    // Array für aktive Gegner
         this.activeSGL = [];    // Array für aktive Sigils
+        this.startedbefore = false;
         world = {
             offsetX: 0,
             offsetY: 0
         }
-        mathIsAwesome = (TILESIZE * this.lvlc.map.pattern.length / canvas.height - 1);  // Korrektur-Faktor für vertikales Scrollen
-        this.populate(this.lvlc.map.spawn); // Füllt die Map mit Entitäten wie in Level.js angegeben
+        mathIsAwesome = (TILESIZE * this.lvlc.map.pattern.length / canvas.height - 1);  // Formel für Korrekturen zum Scrollen
     }
 
     Start(){
+        if(!this.startedbefore){
+            this.populate(this.lvlc.map.spawn);
+            this.startedbefore = true;
+        }
         lastTime = new Date();
         this.GameRunning = true;
         deathMSG = "You died.";
@@ -248,6 +253,9 @@ class JumpAndRunClass {
         }
         checkPhysical();
         JumpAndRun.gamepad();
+        ctx.fillStyle = 'white';
+        ctx.font = '30px PixelFont';
+        ctx.fillText('Timer: '+((new Date().getTime()- JumpAndRun.StartTime.getTime())/1000), canvas.width/2-100, 30);
         if(JumpAndRun.GameRunning){
             window.requestAnimationFrame( JumpAndRun.updateGame );
         }
@@ -272,6 +280,7 @@ function checkPhysical() {
         }
     }
 }
+
 // Kollision von zwei Rechtecken
 function rectCollision( rect1, rect2 ) {
     return( rect1.pos.x < rect2.pos.x + rect2.size.w &&
