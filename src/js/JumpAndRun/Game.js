@@ -19,6 +19,16 @@ let world = {
 let mathIsAwesome;
 let gamepads;
 let deathMSG;
+// Test für Doppelbelegungen: "S" und "Shift" zum Sliden
+let keymap = {
+    65: 65,
+    68: 68,
+    16: 16,
+    83: 16,
+    87: 87,
+    32: 87,
+    70: 70
+}
 
 // Klasse für Starten des Spiels, erstellt von LP - Ergänzungen von AZ
 class JumpAndRunClass {
@@ -109,6 +119,7 @@ class JumpAndRunClass {
             canvas.width*2,
             canvas.height*2);
     }
+    /*
     steuern(event) {
         if (event.defaultPrevented) {
             return; // Stopp, wenn das Event bereits bearbeitet wurde
@@ -145,10 +156,27 @@ class JumpAndRunClass {
         }
         event.preventDefault(); // Verhindert, dass das Event weitergeleitet wird
     }
+     */
+    // steuern aus dem Unterricht da die Leertaste mit 'key' nicht funktioniert
+    steuern( event ) {
+        switch( keymap[event.keyCode] ) {
+            case 65: steuerung.links = (event.type === 'keydown'); break;    // 65 = Taste "A"
+            case 68: steuerung.rechts = (event.type === 'keydown'); break;  // 68 = Taste "D"
+            case 16: steuerung.slide = (event.type === 'keydown'); break;   // 83 = Taste "S"
+            case 87: steuerung.springen = (event.type === 'keydown'); break;  // 87 = Taste "W"
+            case 70: steuerung.attack = (event.type === 'keydown'); break;  // 70 = Taste "F"
+            default: console.log("Taste '"+ event.code +"' wird nicht verwendet");
+        }
+    }
+
+
+
+
     // Juggler: Wechselt zwischen den Sprites von Spieler und Entitäten - v2, 110 Zeilen schlanker! -.-
     juggler( ntt, sprite ) {
         if (ntt.image !== ntt.sprites[sprite].image) {
-            ntt.frDur = ntt.sprites[sprite].frMax;
+            //ntt.frDur = ntt.sprites[sprite].frMax;
+            ntt.frame = 0;
             ntt.frMax = ntt.sprites[sprite].frMax;
             ntt.image = ntt.sprites[sprite].image;
         }

@@ -110,6 +110,7 @@ class Player {
         image: new Image(),
         frMax: 5
       },
+      /*  NYI
       specialL: {
         image: new Image(),
         frMax: 5
@@ -126,6 +127,7 @@ class Player {
         image: new Image(),
         frMax: 1
       },
+      */
       struckL: {
         image: new Image(),
         frMax: 2
@@ -169,10 +171,10 @@ class Player {
   blockade( posX, posY, map ) {
     let zeichenLO, zeichenLU, zeichenRO, zeichenRU;
     let b = {} ;
-    b.spalteLinks = Math.floor( (posX + 2) / TILESIZE ) ;
-    b.spalteRechts = Math.floor( ( posX + this.size.w - 2 ) / TILESIZE ) ;
-    b.zeileOben = Math.floor( (posY + 2) / TILESIZE ) ;
-    b.zeileUnten = Math.floor( ( posY + this.size.h - 1 ) / TILESIZE ) ;
+    b.spalteLinks = Math.floor( (posX) / TILESIZE ) ;
+    b.spalteRechts = Math.floor( ( posX + this.size.w ) / TILESIZE ) ;
+    b.zeileOben = Math.floor( (posY) / TILESIZE ) ;
+    b.zeileUnten = Math.floor( ( posY + this.size.h ) / TILESIZE ) ;
     zeichenLO = map.pattern[ b.zeileOben ].charAt( b.spalteLinks ) ;
     zeichenLU = map.pattern[ b.zeileUnten ].charAt( b.spalteLinks ) ;
     zeichenRO = map.pattern[ b.zeileOben ].charAt( b.spalteRechts ) ;
@@ -313,11 +315,21 @@ class Player {
   }
   // Alternative Methode für Frames und so, muss getestet werden
   ticker() {
+    /*
     this.frPast++;
     if (this.frPast % this.frDur === 0) {
       if (this.frame < this.frMax - 1) {
         this.frame++;
       } else {
+        this.frame = 0;
+      }
+    }
+    */
+    this.frPast++;
+    if (this.frPast >= this.frMax) {
+      this.frPast = 0;
+      this.frame++;
+      if (this.frame >= this.frMax) {
         this.frame = 0;
       }
     }
