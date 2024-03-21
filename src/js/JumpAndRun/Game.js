@@ -18,21 +18,21 @@ let world = {
 }
 let mathIsAwesome;
 let gamepads;
-let goodbye;
+let deathMSG;
 
 // Klasse für Starten des Spiels, erstellt von LP - Ergänzungen von AZ
 class JumpAndRunClass {
     constructor(level) {
         this.curlevel = level;  // Aktuelles Level
         this.lvlc = JSON.parse(JSON.stringify(LEVELS[this.curlevel]));  // JS-Magie, begesteuert von LP
-        this.myPlayer = new Player( this.lvlc.map, { w: 64, h: 64 }, { maxHP: 100, curHP: 100, atk: 40, atkCD: 150, def: 20, mag: 50, mgx: 20, speed: 4 } );
+        this.myPlayer = new Player( this.lvlc.map, { w: 64, h: 64 }, { maxHP: 100, curHP: 100, atk: 40, atkCD: 150, def: 20, mag: 50, mgx: 20, speed: 4, kbForce: 4 } );
         this.bgimg = new Image();
         this.bgimg.src = this.lvlc.bgimg;   // Ladet das Hintergrundbild wie in Level.js angegeben
         this.test = new Image();
         this.test.src = "./src/img/bgimg/vig.png";  // Vignette für Untergrundlevel
         this.tileset = new Image();
         this.tileset.src = this.lvlc.tileset;   // Ladet die Tileset wie in Level.js angegeben
-        this.frame = 0;
+        this.frame = 0; // Frame-Zähler; wird aktuell nicht verwendet???
         this.GameRunning = false;
         this.activeNMY = [];    // Array für aktive Gegner
         this.activeSGL = [];    // Array für aktive Sigils
@@ -40,14 +40,14 @@ class JumpAndRunClass {
             offsetX: 0,
             offsetY: 0
         }
-        mathIsAwesome = (TILESIZE * this.lvlc.map.pattern.length / canvas.height - 1);  // Formel für Korrekturen zum Scrollen
+        mathIsAwesome = (TILESIZE * this.lvlc.map.pattern.length / canvas.height - 1);  // Korrektur-Faktor für vertikales Scrollen
         this.populate(this.lvlc.map.spawn); // Füllt die Map mit Entitäten wie in Level.js angegeben
     }
 
     Start(){
         lastTime = new Date();
         this.GameRunning = true;
-        goodbye = "You died.";
+        deathMSG = "You died.";
         steuerung = {
             links: false,
             rechts: false,
@@ -80,7 +80,7 @@ class JumpAndRunClass {
         leinwand.width = TILESIZE * this.lvlc.map.pattern[0].length;
         leinwand.height = TILESIZE * this.lvlc.map.pattern.length;
         let pinsel = ctx;
-        pinsel.drawImage( this.bgimg, JumpAndRun.myPlayer.pos.x * (this.bgimg.width / (this.lvlc.map.pattern[0].length * TILESIZE)), 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+        pinsel.drawImage( this.bgimg, JumpAndRun.myPlayer.pos.x * ((this.bgimg.width - canvas.width) / (this.lvlc.map.pattern[0].length * TILESIZE)), 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
         for( let zeile = 0; zeile < this.lvlc.map.pattern.length ; zeile++ ) {
             for( let spalte = 0; spalte < this.lvlc.map.pattern[0].length; spalte++ ) {
                 let pos = this.lvlc.map.mask.indexOf( this.lvlc.map.pattern[zeile].charAt( spalte ) );
@@ -140,117 +140,12 @@ class JumpAndRunClass {
         }
         event.preventDefault(); // Verhindert, dass das Event weitergeleitet wird
     }
-    // Juggler: Wechselt zwischen den Sprites von Spieler und Entitäten
+    // Juggler: Wechselt zwischen den Sprites von Spieler und Entitäten - v2, 110 Zeilen schlanker! -.-
     juggler( ntt, sprite ) {
-        switch (sprite) {
-            case 'idle':
-                if (ntt.image !== ntt.sprites.idle.image) {
-                    ntt.frMax = ntt.sprites.idle.frMax;
-                    ntt.image = ntt.sprites.idle.image;
-                }
-                break;
-            case 'idleL':
-                if (ntt.image !== ntt.sprites.idleL.image) {
-                    ntt.frMax = ntt.sprites.idleL.frMax;
-                    ntt.image = ntt.sprites.idleL.image;
-                }
-                break;
-            case 'idleR':
-                if (ntt.image !== ntt.sprites.idleR.image) {
-                    ntt.frMax = ntt.sprites.idleR.frMax;
-                    ntt.image = ntt.sprites.idleR.image;
-                }
-                break;
-            case 'runLeft':
-                if (ntt.image !== ntt.sprites.runLeft.image) {
-                    ntt.frMax = ntt.sprites.runLeft.frMax;
-                    ntt.image = ntt.sprites.runLeft.image;
-                }
-                break;
-            case 'runRight':
-                if (ntt.image !== ntt.sprites.runRight.image) {
-                    ntt.frMax = ntt.sprites.runRight.frMax;
-                    ntt.image = ntt.sprites.runRight.image;
-                }
-                break;
-            case 'jumpL':
-                if (ntt.image !== ntt.sprites.jumpL.image) {
-                    ntt.frMax = ntt.sprites.jumpL.frMax;
-                    ntt.image = ntt.sprites.jumpL.image;
-                }
-                break;
-            case 'jumpR':
-                if (ntt.image !== ntt.sprites.jumpR.image) {
-                    ntt.frMax = ntt.sprites.jumpR.frMax;
-                    ntt.image = ntt.sprites.jumpR.image;
-                }
-                break;
-            case 'slideL':
-                if (ntt.image !== ntt.sprites.slideL.image) {
-                    ntt.frMax = ntt.sprites.slideL.frMax;
-                    ntt.image = ntt.sprites.slideL.image;
-                }
-                break;
-            case 'slideR':
-                if (ntt.image !== ntt.sprites.slideR.image) {
-                    ntt.frMax = ntt.sprites.slideR.frMax;
-                    ntt.image = ntt.sprites.slideR.image;
-                }
-                break;
-            case 'attackL':
-                if (ntt.image !== ntt.sprites.attackL.image) {
-                    ntt.frMax = ntt.sprites.attackL.frMax;
-                    ntt.image = ntt.sprites.attackL.image;
-                }
-                break;
-            case 'attackR':
-                if (ntt.image !== ntt.sprites.attackR.image) {
-                    ntt.frMax = ntt.sprites.attackR.frMax;
-                    ntt.image = ntt.sprites.attackR.image;
-                }
-                break;
-                case 'specialL':
-                if (ntt.image !== ntt.sprites.attackL.image) {
-                    ntt.frMax = ntt.sprites.attackL.frMax;
-                    ntt.image = ntt.sprites.attackL.image;
-                }
-                break;
-            case 'specialR':
-                if (ntt.image !== ntt.sprites.attackR.image) {
-                    ntt.frMax = ntt.sprites.attackR.frMax;
-                    ntt.image = ntt.sprites.attackR.image;
-                }
-                break;
-            case 'magicL':
-                if (ntt.image !== ntt.sprites.magicL.image) {
-                    ntt.frMax = ntt.sprites.magicL.frMax;
-                    ntt.image = ntt.sprites.magicL.image;
-                }
-                break;
-            case 'magicR':
-                if (ntt.image !== ntt.sprites.magicR.image) {
-                    ntt.frMax = ntt.sprites.magicR.frMax;
-                    ntt.image = ntt.sprites.magicR.image;
-                }
-                break;
-            case 'struckL':
-                if (ntt.image !== ntt.sprites.struckL.image) {
-                    ntt.frMax = ntt.sprites.struckL.frMax;
-                    ntt.image = ntt.sprites.struckL.image;
-                }
-                break;
-            case 'struckR':
-                if (ntt.image !== ntt.sprites.struckR.image) {
-                    ntt.frMax = ntt.sprites.struckR.frMax;
-                    ntt.image = ntt.sprites.struckR.image;
-                }
-                break;
-            case 'death':
-                if (ntt.image !== ntt.sprites.death.image) {
-                    ntt.frMax = ntt.sprites.death.frMax;
-                    ntt.image = ntt.sprites.death.image;
-                }
-                break;
+        if (ntt.image !== ntt.sprites[sprite].image) {
+            ntt.frDur = ntt.sprites[sprite].frMax;
+            ntt.frMax = ntt.sprites[sprite].frMax;
+            ntt.image = ntt.sprites[sprite].image;
         }
     }
 
@@ -260,23 +155,25 @@ class JumpAndRunClass {
         return aAtk * (1 - (tDef / (100 + tDef)));
     }
     // Methode zum Prüfen ob Einheiten getroffen wurden, mit Ergänzungen von LP - muss noch einwenig überarbeitet werden
-    struck( attacker, target ) {
-        if(target.damageCD < 1.5) return;   // damageCD stellt sicher, dass das Ziel nicht zu oft getroffen wird
-        if(!target.invulnerable || target.type !== 'Sigil'){
-            target.stats.curHP -= this.calcDamage(attacker, target);
+    struck(attacker, target) {
+        if (target.damageCD < 1.5) return;   // damageCD stellt sicher, dass das Ziel nicht zu oft getroffen wird
+        if (!target.invulnerable || target.type !== 'Sigil') {
+            target.stats.curHP -= (this.calcDamage(attacker, target) > target.stats.curHP) ? target.stats.curHP : this.calcDamage(attacker, target);
             if (target.stats.curHP <= 0) {
-                JumpAndRun.juggler(target,'death');
+                JumpAndRun.juggler(target, 'death');
                 target.alive = false;
+
                 JumpAndRun.activeNMY.splice(JumpAndRun.activeNMY.indexOf(target), 1);
-                if(attacker.name === 'Yamoma') goodbye = "Yamoma killed you.";
+                if (attacker.name === 'Yamoma') deathMSG = "Nichts stillt den Hunger von Yamoma...";
                 let drop = dropLoot(target);
                 if (drop !== null) {
                     JumpAndRun.activeSGL.push(drop);
                 }
-            } else if (target.direction === 1) JumpAndRun.juggler(target,'struckR');
-            else JumpAndRun.juggler(target,'struckL');
+            } else {
+                JumpAndRun.juggler(target, (target.direction === 1) ? 'struckR' : 'struckL');
+            }
+            target.damageCD = 0;
         }
-        target.damageCD = 0;
     }
     // Methode zum initialen Füllen der Map mit Entitäten, abhängig davon was in Level.js eingetragen wurde
     populate(spawn) {
@@ -344,7 +241,8 @@ class JumpAndRunClass {
         for (let sigil of JumpAndRun.activeSGL) {
             sigil.update();
         }
-        if(!JumpAndRun.myPlayer.alive){
+        //if(JumpAndRun.myPlayer.pos.y > ( (this.lvlc.map.pattern.length * TILESIZE) - (JumpAndRun.myPlayer.size.h * 2) )) JumpAndRun
+        if(!JumpAndRun.myPlayer.alive) { // || (JumpAndRun.myPlayer.pos.y > ( (this.lvlc.map.pattern.length * TILESIZE) - (JumpAndRun.myPlayer.size.h * 2) ))
             JumpAndRun.GameRunning = false;
             fade();
         }
@@ -355,6 +253,7 @@ class JumpAndRunClass {
         }
     }
 }
+
 
 // Funktion zum Überprüfen, ob der Spieler mit einem Gegner kollidiert oder umgekehrt
 function checkPhysical() {
@@ -373,15 +272,20 @@ function checkPhysical() {
         }
     }
 }
-
 // Kollision von zwei Rechtecken
 function rectCollision( rect1, rect2 ) {
     return( rect1.pos.x < rect2.pos.x + rect2.size.w &&
-            rect1.pos.x + rect1.size.w > rect2.pos.x &&
-            rect1.pos.y < rect2.pos.y + rect2.size.h &&
-            rect1.pos.y + rect1.size.h > rect2.pos.y );
+        rect1.pos.x + rect1.size.w > rect2.pos.x &&
+        rect1.pos.y < rect2.pos.y + rect2.size.h &&
+        rect1.pos.y + rect1.size.h > rect2.pos.y );
 }
 
+
+
+function rerun(){
+    JumpAndRun.GameRunning = false;
+    fade();
+}
 let fadeVar = 0;
 function fade(){
     if(fadeVar < 1){
@@ -390,7 +294,7 @@ function fade(){
         ctx.fillRect(0,0, canvas.width, canvas.height);
         ctx.fillStyle = 'rgba(255,255,255,'+fadeVar+')'
         ctx.font = 'bold 50px Arial';
-        ctx.fillText(goodbye, canvas.width/2 -100, canvas.height/2 -25)
+        ctx.fillText(deathMSG, canvas.width/2 - 100, canvas.height/2 - 25)
         setTimeout(fade, 30)
     }else{
         GameMode = 0;
@@ -408,7 +312,7 @@ function dropLoot( entity ) {
         let loot = entity.loot[ Math.floor( Math.random() * entity.loot.length ) ];
         let drop = new Sigil(sigil[loot], entity.pos);
         // Drop-Position soll die Position der toten Entität sein, aber versetzt und entgegengesetzt der Spielerposition
-        drop.pos.x = entity.pos.x + (entity.pos.x > JumpAndRun.myPlayer.pos.x ? 16 : -16);
+        drop.pos.x = entity.pos.x + (entity.pos.x > JumpAndRun.myPlayer.pos.x ? 64 : -64);
         drop.pos.y = entity.pos.y - 16;
         console.log(drop);
         JumpAndRun.activeSGL.push(drop);

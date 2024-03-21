@@ -64,7 +64,7 @@ class Enemy extends Entity {
         this.velocity = {
             x: 0,
             y: 0
-        }
+        };
         this.gravity = 0.5;
         this.damageCD = 0;  // Cooldown für Schaden
         // Distanz für patroullierende Gegner, kann umgebaut werden!
@@ -75,7 +75,7 @@ class Enemy extends Entity {
         this.loot = props.loot; // {name: '', effect: ''}
         this.aggroRange = 200;  // Reichweite für Aggro
         this.attacking = false; // Flag für aktiver Angriff
-        this.stats = props.stats; // {maxHP: 0, curHP: 0, atk: 0, atkCD: 0, def: 0, speed: 0}
+        this.stats = props.stats; // {maxHP: 0, curHP: 0, atk: 0, atkCD: 0, def: 0, speed: 0, kbForce: 1}
     }
     attack(pc) {
         if( rectCollision(this.atkBox, pc) ) {
@@ -89,7 +89,6 @@ class Enemy extends Entity {
     move() {
         this.pos.x += this.stats.speed * this.direction + this.velocity.x;
         this.pos.y += this.gravity * (this.pos.y < JumpAndRun.myPlayer.pos.y ? 1 : -1) * this.aiLevel;
-
 
     }
     // Update-Methode für Enemy-Entitäten, KI-Verhalten muss noch ausgebaut werden
@@ -115,6 +114,7 @@ class Enemy extends Entity {
             default:
                 break;
         }
+        this.velocity.y += this.gravity;
         super.draw();
         super.ticker();
         this.move();

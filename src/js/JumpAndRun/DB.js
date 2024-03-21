@@ -65,9 +65,9 @@ const enemy = {
         type: 'Enemy',
         size: {w: 128, h: 128, s: 1},
         stats: {
-            maxHP: 5,
-            curHP: 5,
-            atk: 5,
+            maxHP: 25,
+            curHP: 25,
+            atk: 35,
             atkCD: 500,
             def: 0,
             speed: 0

@@ -3,6 +3,7 @@
 // Hauptautor: AZ - Beiträge von anderen Teammitgliedern sind kommentiert
 class Player {
   constructor(map, size, stats) {
+    this.type = "Player";
     this.map = map; // Map-Objekt, beinhaltet PC-Position und Offset (siehe Zeile darunter)
     this.pos = map.spawn.player; // vier Werte, die letzten beiden sind für das Offset {x: 0, y: 0, oX: 0, oY: 0}
     this.size = size; // zwei Werte, die Größe des Spielersprites {w: 64, h: 64}
@@ -65,6 +66,7 @@ class Player {
     this.frame = 0;
     this.frPast = 0;
     this.frMax = 12;
+    this.frDur = 0;
     this.image = new Image();
     this.image.src = './src/img/pc/idleR.png';
     this.sprites = {
@@ -137,6 +139,10 @@ class Player {
         frMax: 1
       }
     };
+    for (let sprite in this.sprites) {
+      this.sprites[sprite].image.src = './src/img/pc/' + sprite + '.png';
+    }
+    /*
 
     this.sprites.idleL.image.src = './src/img/pc/idleL.png';
     this.sprites.idleR.image.src = './src/img/pc/idleR.png';
@@ -156,15 +162,17 @@ class Player {
     // this.sprites.magicR.image.src = './src/img/pc/magicR.png';
     // this.sprites.death.image.src = './src/img/pc/death.png';
 
+     */
+
   }
-  // Kollisionsmethode für Terrain, schamlos gestolen vom Unterrichtsmaterial
-  blockade( pixelX, pixelY, map ) {
+  // Kollisionsmethode für Terrain, schamlos gestohlen vom Unterrichtsmaterial
+  blockade( posX, posY, map ) {
     let zeichenLO, zeichenLU, zeichenRO, zeichenRU;
     let b = {} ;
-    b.spalteLinks = Math.floor( pixelX / TILESIZE ) ;
-    b.spalteRechts = Math.floor( ( pixelX + this.size.w ) / TILESIZE ) ;
-    b.zeileOben = Math.floor( pixelY / TILESIZE ) ;
-    b.zeileUnten = Math.floor( ( pixelY + this.size.h ) / TILESIZE ) ;
+    b.spalteLinks = Math.floor( (posX + 2) / TILESIZE ) ;
+    b.spalteRechts = Math.floor( ( posX + this.size.w - 2 ) / TILESIZE ) ;
+    b.zeileOben = Math.floor( (posY + 2) / TILESIZE ) ;
+    b.zeileUnten = Math.floor( ( posY + this.size.h - 1 ) / TILESIZE ) ;
     zeichenLO = map.pattern[ b.zeileOben ].charAt( b.spalteLinks ) ;
     zeichenLU = map.pattern[ b.zeileUnten ].charAt( b.spalteLinks ) ;
     zeichenRO = map.pattern[ b.zeileOben ].charAt( b.spalteRechts ) ;
@@ -226,7 +234,7 @@ class Player {
     }
     // Standard-Angriff, benötigt zusätzliche Änderungen
     if (steuerung.attack) {
-      this.attacking = true;
+      // this.attacking = true;
       if (this.direction === 1) JumpAndRun.juggler(JumpAndRun.myPlayer, 'attackR');
       else JumpAndRun.juggler(JumpAndRun.myPlayer, 'attackL');
       for (let enemy of JumpAndRun.activeNMY) {
@@ -242,8 +250,8 @@ class Player {
 
         });
       }
-      this.attacking = false;
-      console.log(JumpAndRun.activeNMY);
+      // this.attacking = false;
+      console.log(this.pos);
     }
     /*
     // Zweiter Angriff, NYI
@@ -306,7 +314,7 @@ class Player {
   // Alternative Methode für Frames und so, muss getestet werden
   ticker() {
     this.frPast++;
-    if (this.frPast % this.frMax === 0) {
+    if (this.frPast % this.frDur === 0) {
       if (this.frame < this.frMax - 1) {
         this.frame++;
       } else {
@@ -352,6 +360,8 @@ class Player {
       this.stats.curHP = this.stats.maxHP;
     }
   }
+
+
   // Fähigkeiten und Talente des PCs, NYI
   /*
   talents() {
