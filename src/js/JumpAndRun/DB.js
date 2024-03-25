@@ -30,6 +30,7 @@ const sigil = {
         size: {w: 261, h: 469, s: 0.3},
         effect: function () {
             setScore(0,JumpAndRun.curlevel, (new Date().getTime()- JumpAndRun.StartTime.getTime())/1000);
+
             JumpAndRun.GameRunning = false;
             MainMenuObj.MainMenuMode = 2;
             if(JumpAndRun.curlevel === 0){
@@ -37,7 +38,9 @@ const sigil = {
             } else{
                 UnlockLevel(0,JumpAndRun.curlevel + 1);
             }
-            GameMode = 0;
+            fade("Level Cleared!", function () {
+                GameMode = 0;
+            });
 
         },
         image: new Image(),

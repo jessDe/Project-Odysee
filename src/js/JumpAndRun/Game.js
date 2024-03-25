@@ -283,7 +283,9 @@ class JumpAndRunClass {
         //if(JumpAndRun.myPlayer.pos.y > ( (this.lvlc.map.pattern.length * TILESIZE) - (JumpAndRun.myPlayer.size.h * 2) )) JumpAndRun
         if(!JumpAndRun.myPlayer.alive) { // || (JumpAndRun.myPlayer.pos.y > ( (this.lvlc.map.pattern.length * TILESIZE) - (JumpAndRun.myPlayer.size.h * 2) ))
             JumpAndRun.GameRunning = false;
-            fade();
+            fade(deathMSG, function () {
+                GameMode = 0;
+            });
         }
         checkPhysical();
         JumpAndRun.gamepad();
@@ -330,17 +332,28 @@ function rerun(){
     fade();
 }
 let fadeVar = 0;
-function fade(){
+let fadeMSG = "";
+let fadeCallback = function(){};
+function fade(message, callback){
+    let msg = "";
+    if(message === undefined){
+        msg = fadeMSG;
+        callback = fadeCallback;
+    }else{
+        msg = message;
+        fadeMSG = message;
+        fadeCallback = callback;
+    }
     if(fadeVar < 1){
         fadeVar += 0.01;
         ctx.fillStyle = 'rgba(0,0,0,'+fadeVar+')';
         ctx.fillRect(0,0, canvas.width, canvas.height);
         ctx.fillStyle = 'rgba(255,255,255,'+fadeVar+')'
         ctx.font = 'bold 50px Arial';
-        ctx.fillText(deathMSG, canvas.width/2 - 100, canvas.height/2 - 25)
+        ctx.fillText(fadeMSG, canvas.width/2 - fadeMSG.length*10, canvas.height/2 - 25)
         setTimeout(fade, 30)
     }else{
-        GameMode = 0;
+        callback();
         fadeVar = 0;
     }
 }
