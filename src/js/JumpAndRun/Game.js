@@ -80,6 +80,9 @@ class JumpAndRunClass {
         window.addEventListener('gamepadconnected', this.gamepad);
         window.addEventListener('gamepaddisconnected', this.gamepad);
     }
+    drawBG(){
+        ctx.drawImage( this.bgimg, JumpAndRun.myPlayer.pos.x * ((this.bgimg.width - canvas.width) / (this.lvlc.map.pattern[0].length * TILESIZE)), 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+    }
     drawLevel(){
         let leinwand = {
             width: 0,
@@ -95,7 +98,6 @@ class JumpAndRunClass {
         leinwand.width = TILESIZE * this.lvlc.map.pattern[0].length;
         leinwand.height = TILESIZE * this.lvlc.map.pattern.length;
         let pinsel = ctx;
-        pinsel.drawImage( this.bgimg, JumpAndRun.myPlayer.pos.x * ((this.bgimg.width - canvas.width) / (this.lvlc.map.pattern[0].length * TILESIZE)), 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
         for( let zeile = 0; zeile < this.lvlc.map.pattern.length ; zeile++ ) {
             for( let spalte = 0; spalte < this.lvlc.map.pattern[0].length; spalte++ ) {
                 let pos = this.lvlc.map.mask.indexOf( this.lvlc.map.pattern[zeile].charAt( spalte ) );
@@ -264,8 +266,12 @@ class JumpAndRunClass {
         let now = new Date();
         let period = ( now.getTime() - lastTime.getTime() ) /1000 ;
         lastTime = now;
-        JumpAndRun.drawLevel();
+
+        JumpAndRun.drawBG();
         JumpAndRun.myPlayer.update();
+        JumpAndRun.drawLevel();
+        JumpAndRun.myPlayer.ui();
+
         JumpAndRun.myPlayer.damageCD += period;
         for (let enemy of JumpAndRun.activeNMY) {
             enemy.damageCD += period;

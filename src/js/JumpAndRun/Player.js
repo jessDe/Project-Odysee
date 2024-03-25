@@ -397,7 +397,6 @@ class Player {
   // Methode zum Aktualisieren des PC
   update() {
     this.puppeteer();
-    this.ui();
     this.ticker();
     this.drawPC();
   }
