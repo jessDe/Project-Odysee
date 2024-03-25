@@ -1,6 +1,7 @@
 // Spielkernel, Hauptautor: AZ - Beiträge von anderen Teammitgliedern sind kommentiert
 // Variablen
 const TILESIZE = 32;
+const GRAVITY = 0.981;
 let steuerung = {
     links: false,
     rechts: false,
@@ -16,7 +17,7 @@ let world = {
     offsetX: 0,
     offsetY: 0
 }
-let mathIsAwesome;
+let miaY;
 let gamepads;
 let deathMSG;
 // Test für Doppelbelegungen: "S" und "Shift" zum Sliden
@@ -29,13 +30,18 @@ let keymap = {
     32: 87,
     70: 70
 }
-
+let dummy = {
+    pos: { x: 0, y: 0 },
+    size: { w: 0, h: 0 }
+}
+let fadeVar;
+let fadeMSG
 // Klasse für Starten des Spiels, erstellt von LP - Ergänzungen von AZ
 class JumpAndRunClass {
     constructor(level) {
         this.curlevel = level;  // Aktuelles Level
         this.lvlc = JSON.parse(JSON.stringify(LEVELS[this.curlevel]));  // JS-Magie, begesteuert von LP
-        this.myPlayer = new Player( this.lvlc.map, { w: 64, h: 64 }, { maxHP: 100, curHP: 100, atk: 40, atkCD: 150, def: 20, mag: 50, mgx: 20, speed: 4, kbForce: 4 } );
+        this.myPlayer = new Player( this.lvlc.map, { w: 64, h: 64 }, { maxHP: 100, curHP: 100, atk: 40, atkCD: 50, def: 20, mag: 50, mgx: 20, speed: 4} );
         this.bgimg = new Image();
         this.bgimg.src = this.lvlc.bgimg;   // Ladet das Hintergrundbild wie in Level.js angegeben
         this.test = new Image();
@@ -43,16 +49,18 @@ class JumpAndRunClass {
         this.tileset = new Image();
         this.tileset.src = this.lvlc.tileset;   // Ladet die Tileset wie in Level.js angegeben
         this.StartTime = new Date();
-        this.frame = 0; // Frame-Zähler; wird aktuell nicht verwendet???
+        // this.frame = 0; // Frame-Zähler; wird aktuell nicht verwendet???
         this.GameRunning = false;
         this.activeNMY = [];    // Array für aktive Gegner
         this.activeSGL = [];    // Array für aktive Sigils
+        this.activePRJ = [];    // Array für aktive Projektile#
+        this.lumina = 20;       // Lumina für Untergrundlevel
         this.startedbefore = false;
         world = {
             offsetX: 0,
             offsetY: 0
         }
-        mathIsAwesome = (TILESIZE * this.lvlc.map.pattern.length / canvas.height - 1);  // Formel für Korrekturen zum Scrollen
+        miaY = (TILESIZE * this.lvlc.map.pattern.length / canvas.height - 1);  // Formel für Korrekturen zum Scrollen
     }
 
     Start(){
@@ -84,19 +92,19 @@ class JumpAndRunClass {
         ctx.drawImage( this.bgimg, JumpAndRun.myPlayer.pos.x * ((this.bgimg.width - canvas.width) / (this.lvlc.map.pattern[0].length * TILESIZE)), 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
     }
     drawLevel(){
-        let leinwand = {
+        let lvlmap = {
             width: 0,
             height: 0
         };
         let offset = {
-            x: (this.myPlayer.pos.x + this.myPlayer.size.w/2 )/TILESIZE - (canvas.width/TILESIZE)/2,
+            x: (this.myPlayer.pos.x + this.myPlayer.size.w / 2) / TILESIZE - (canvas.width / TILESIZE) / 2,
             y: world.offsetY,
         };
         world.offsetX = offset.x;
         world.offsetY = offset.y;
         // let PlayerPos = this.lvlc.map.spawn.player; // obsolet
-        leinwand.width = TILESIZE * this.lvlc.map.pattern[0].length;
-        leinwand.height = TILESIZE * this.lvlc.map.pattern.length;
+        lvlmap.width = TILESIZE * this.lvlc.map.pattern[0].length;
+        lvlmap.height = TILESIZE * this.lvlc.map.pattern.length;
         let pinsel = ctx;
         for( let zeile = 0; zeile < this.lvlc.map.pattern.length ; zeile++ ) {
             for( let spalte = 0; spalte < this.lvlc.map.pattern[0].length; spalte++ ) {
@@ -104,22 +112,26 @@ class JumpAndRunClass {
                 if( pos >= 0) {
                     pinsel.drawImage(this.tileset, TILESIZE * pos, 0, TILESIZE, TILESIZE, spalte*TILESIZE-offset.x*TILESIZE, zeile*TILESIZE-offset.y*TILESIZE, TILESIZE, TILESIZE);
                     //console.log('Zeile: '+ zeile +', Spalte: '+ spalte +', Pos: '+ pos);
-                }else{
+                } else {
                     //console.log("TileSet Error"+ this.lvlc.map.pattern[zeile].charAt( spalte ))
                 }
             }
         }
-        // Zeichnet Vignette für Untergrundlevel
-        if( this.lvlc.type === "underground" ) pinsel.drawImage(
-            this.test,
-            0,
-            0,
-            canvas.width*2,
-            canvas.height*2,
-            (JumpAndRun.myPlayer.pos.x + JumpAndRun.myPlayer.size.w/2) - canvas.width - offset.x*TILESIZE,
-            (JumpAndRun.myPlayer.pos.y + JumpAndRun.myPlayer.size.h/2) - canvas.height -offset.y*TILESIZE,
-            canvas.width*2,
-            canvas.height*2);
+        // Zeichnet Vignette für Untergrundlevel, inklusive Skalierung durch Lumina
+        if (this.lvlc.type === "underground") {
+            this.lumina = (this.lumina > 0) ? this.lumina - 0.01 : 0;
+            ctx.drawImage(
+                this.test,
+                ( (this.lumina - 50) * 6.4) + (Math.random() * 8),
+                ( (this.lumina - 50) * 3.6) + (Math.random() * 8),
+                canvas.width * (1.5 + ( 1 - (this.lumina / 100) ) ),
+                canvas.height * (1.5 + ( 1 - (this.lumina / 100) ) ),
+                ((JumpAndRun.myPlayer.pos.x + JumpAndRun.myPlayer.size.w / 2) - canvas.width - offset.x * TILESIZE),
+                ((JumpAndRun.myPlayer.pos.y + JumpAndRun.myPlayer.size.h / 2) - canvas.height - offset.y * TILESIZE),
+                canvas.width * 2,
+                canvas.height * 2
+            );
+        }
     }
     /*
     steuern(event) {
@@ -176,8 +188,9 @@ class JumpAndRunClass {
 
     // Juggler: Wechselt zwischen den Sprites von Spieler und Entitäten - v2, 110 Zeilen schlanker! -.-
     juggler( ntt, sprite ) {
+        if ((ntt.image.src.includes('attack')) && (ntt.frame < ntt.frMax - 1)) return; // Abbruch wenn Angriff ausgeführt wird
+        if ((ntt.image.src.includes('struck')) && (ntt.frame < ntt.frMax - 1)) return; // Abbruch wenn getroffen
         if (ntt.image !== ntt.sprites[sprite].image) {
-            //ntt.frDur = ntt.sprites[sprite].frMax;
             ntt.frame = 0;
             ntt.frMax = ntt.sprites[sprite].frMax;
             ntt.image = ntt.sprites[sprite].image;
@@ -195,17 +208,20 @@ class JumpAndRunClass {
         if (!target.invulnerable || target.type !== 'Sigil') {
             target.stats.curHP -= (this.calcDamage(attacker, target) > target.stats.curHP) ? target.stats.curHP : this.calcDamage(attacker, target);
             if (target.stats.curHP <= 0) {
-                JumpAndRun.juggler(target, 'death');
+                if (target.type === 'Player') {
+                    JumpAndRun.juggler(JumpAndRun.myPlayer, (JumpAndRun.myPlayer.direction === 1) ? 'deathR' : 'deathL');
+                } else JumpAndRun.juggler(target, 'death');
                 target.alive = false;
-
                 JumpAndRun.activeNMY.splice(JumpAndRun.activeNMY.indexOf(target), 1);
-                if (attacker.name === 'Yamoma') deathMSG = "Nichts stillt den Hunger von Yamoma...";
+                if (attacker.name === 'Yamoma') deathMSG = "Yamoma killed you.";
                 let drop = dropLoot(target);
                 if (drop !== null) {
                     JumpAndRun.activeSGL.push(drop);
                 }
             } else {
                 JumpAndRun.juggler(target, (target.direction === 1) ? 'struckR' : 'struckL');
+                target.pos.x += (target.direction === 1) ? -target.knocked/25 : target.knocked/25;
+                target.knocked = 25;
             }
             target.damageCD = 0;
         }
@@ -225,7 +241,6 @@ class JumpAndRunClass {
         switch(item.type) {
             case 'Enemy':
                 ntt = new Enemy(enemy[item.name], item.pos);
-                console.log(item.pos)
                 this.activeNMY.push(ntt);
                 break;
             case 'Sigil':
@@ -236,7 +251,7 @@ class JumpAndRunClass {
                 console.error('Invalid entity type:', item.type);
                 return null;
         }
-        console.log(ntt);
+        // console.log(ntt);
         return ntt;
     }
 
@@ -316,7 +331,6 @@ function checkPhysical() {
         }
     }
 }
-
 // Kollision von zwei Rechtecken
 function rectCollision( rect1, rect2 ) {
     return( rect1.pos.x < rect2.pos.x + rect2.size.w &&
@@ -324,16 +338,12 @@ function rectCollision( rect1, rect2 ) {
         rect1.pos.y < rect2.pos.y + rect2.size.h &&
         rect1.pos.y + rect1.size.h > rect2.pos.y );
 }
-
-
-
-function rerun(){
-    JumpAndRun.GameRunning = false;
-    fade();
+function fade() {
+    fadeVar = 0;
+    fadeMSG = "";
+    let fadeCallback = function () {
+    };
 }
-let fadeVar = 0;
-let fadeMSG = "";
-let fadeCallback = function(){};
 function fade(message, callback){
     let msg = "";
     if(message === undefined){
@@ -368,15 +378,32 @@ function dropLoot( entity ) {
         let loot = entity.loot[ Math.floor( Math.random() * entity.loot.length ) ];
         let drop = new Sigil(sigil[loot], entity.pos);
         // Drop-Position soll die Position der toten Entität sein, aber versetzt und entgegengesetzt der Spielerposition
-        drop.pos.x = entity.pos.x + (entity.pos.x > JumpAndRun.myPlayer.pos.x ? 64 : -64);
-        drop.pos.y = entity.pos.y - 16;
+        drop.pos.x = entity.pos.x + drop.size.w * JumpAndRun.myPlayer.direction;
+        drop.pos.y = entity.pos.y - drop.size.h;
+
         console.log(drop);
-        JumpAndRun.activeSGL.push(drop);
+        if (drop !== 'empty') JumpAndRun.activeSGL.push(drop);
         JumpAndRun.juggler( drop, 'idle');
         return drop;
     }
 }
 
-
-
-
+function blockade( ntt, map ) {
+    let zeichenLO, zeichenLU, zeichenRO, zeichenRU;
+    let b = {} ;
+    b.spalteLinks = Math.floor( ntt.pos.x / TILESIZE ) ;
+    b.spalteRechts = Math.floor( ( ntt.pos.x + ntt.size.w ) / TILESIZE ) ;
+    b.zeileOben = Math.floor( ntt.pos.y / TILESIZE ) ;
+    b.zeileUnten = Math.floor( ( ntt.pos.y + ntt.size.h ) / TILESIZE ) ;
+    // console.log(ntt.pos.x, ntt.pos.y, ntt.stats.speed, ntt.velocity.x, b);
+    zeichenLO = map.pattern[ b.zeileOben ].charAt( b.spalteLinks ) ;
+    zeichenLU = map.pattern[ b.zeileUnten ].charAt( b.spalteLinks ) ;
+    zeichenRO = map.pattern[ b.zeileOben ].charAt( b.spalteRechts ) ;
+    zeichenRU = map.pattern[ b.zeileUnten ].charAt( b.spalteRechts ) ;
+    // console.log(zeichenLU + " " +zeichenRU)
+    b.links = ( map.solid.indexOf( zeichenLO ) >= 0 || map.solid.indexOf( zeichenLU ) >= 0 ) ;
+    b.rechts = ( map.solid.indexOf( zeichenRO ) >= 0 || map.solid.indexOf( zeichenRU ) >= 0 ) ;
+    b.oben = ( map.solid.indexOf( zeichenLO ) >= 0 || map.solid.indexOf( zeichenRO ) >= 0 ) ;
+    b.unten = ( map.solid.indexOf( zeichenLU ) >= 0 || map.solid.indexOf( zeichenRU ) >= 0 ) ;
+    return b;
+}
