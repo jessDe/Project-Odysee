@@ -81,6 +81,7 @@ class JumpAndRunClass {
             magic: false,
             pause: false
         };
+        this.konami();
         this.drawLevel();
         this.updateGame();
         window.addEventListener('keydown', this.steuern);
@@ -235,6 +236,30 @@ class JumpAndRunClass {
             this.spawnNTT(nmy);
         }
     }
+    // Selbsterklärend :o)
+    konami() {
+        let konami = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+        let konamiPos = 0;
+        window.addEventListener('keydown', function (e) {
+            if (e.keyCode === konami[konamiPos]) {
+                konamiPos++;
+                if (konamiPos === konami.length) {
+                    JumpAndRun.myPlayer.stats.maxHP += 999;
+                    JumpAndRun.myPlayer.stats.curHP += 999;
+                    JumpAndRun.myPlayer.stats.atk += 999;
+                    JumpAndRun.myPlayer.stats.def += 999;
+                    JumpAndRun.myPlayer.stats.mag += 999;
+                    JumpAndRun.myPlayer.stats.mgx += 999;
+                    JumpAndRun.myPlayer.stats.speed += 9;
+                    JumpAndRun.myPlayer.airStairLimit += 999;
+                    JumpAndRun.myPlayer.slideHack = 0;
+                    konamiPos = 0;
+                }
+            } else {
+                konamiPos = 0;
+            }
+        });
+    }
 
     spawnNTT( item ) {
         let ntt = null;
@@ -360,7 +385,7 @@ function fade(message, callback){
         ctx.fillRect(0,0, canvas.width, canvas.height);
         ctx.fillStyle = 'rgba(255,255,255,'+fadeVar+')'
         ctx.font = 'bold 50px Arial';
-        ctx.fillText(fadeMSG, canvas.width/2 - fadeMSG.length*10, canvas.height/2 - 25)
+        ctx.fillText(fadeMSG, canvas.width/2 - fadeMSG.length*12, canvas.height/2 - 25)
         setTimeout(fade, 30)
     }else{
         callback();

@@ -35,6 +35,7 @@ class Player {
     this.hardboiled = false;  // Flag für Hardboiled-Talent, NYI
     this.attacking = false;
     this.slideCooldown = 0;
+    this.slideHack = 100;
     this.slideDuration = 0;
     this.isSliding = false;
     this.invulnerable = false;
@@ -247,7 +248,7 @@ class Player {
     if (steuerung.slide && this.slideCooldown === 0) {
       this.isSliding = true;
       this.invulnerable = true;
-      this.slideCooldown = 100;
+      this.slideCooldown = this.slideHack;
       this.slideDuration = 15;
       //this.sounds.Slide.load();
       this.sounds.Slide.currentTime = 0;
@@ -405,7 +406,6 @@ class Player {
       ctx.fillStyle = "rgba(127, 0, 255, 0.50)";
       ctx.fillRect(this.atkBox.pos.x, this.atkBox.pos.y, this.atkBox.size.w, this.atkBox.size.h);
     }
-
   }
   // Deckelt Spieler-HP
   healcap(value) {

@@ -173,12 +173,12 @@ const enemy = {
         size: {w: 64, h: 32, s: 1},
         velocity: {x: 0, y: 0},
         stats: {
-            maxHP: 30,
-            curHP: 30,
+            maxHP: 40,
+            curHP: 40,
             atk: 20,
-            atkCD: 250,
+            atkCD: 10,
             def: 15,
-            speed: 0.5
+            speed: 1
         },
         atkBox: { pos: {x: 0, y: 0, oX: 0, oY: 0}, size: {w: 32, h: 32, s: 0} },
         hasLoot: true,
@@ -320,11 +320,22 @@ const missile = {
         type: 'Missile',
         size: {w: 34, h: 28, s: 1},
         velocity: {x: 0, y: 0},
-        mSpeed: 2,
-        damage: 30,
-        life: 250,
+        stats: {
+            maxHP: 250,
+            curHP: 250,
+            atk: 30,
+            atkCD: 1,
+            def: 0,
+            speed: 1
+        },
         effect: function () {
-            JumpAndRun.myPlayer.stats.curHP -= this.damage;
+            JumpAndRun.struck(this, JumpAndRun.myPlayer);
+
+
+
+            //if ( JumpAndRun.myPlayer.stats.curHP < 0 || this.damage - JumpAndRun.myPlayer.stats.curHP > 0) {
+            //    JumpAndRun.myPlayer.stats.curHP -= JumpAndRun.myPlayer.stats.curHP;
+            //} else JumpAndRun.myPlayer.stats.curHP -= this.damage;
         },
         invulnerable: true,
         frMax: 5,

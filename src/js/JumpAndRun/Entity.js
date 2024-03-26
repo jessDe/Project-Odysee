@@ -119,6 +119,16 @@ class Enemy extends Entity {
         // console.log(this.activePRJ0);
         console.log(JumpAndRun.activePRJ);
     }
+    hp() {
+        // let hpOffset = this.pos.y * miaY - this.size.h / 2;  - world.offsetX*TILESIZE
+        let em = 0.40 + (0.60 * (1 - (this.stats.curHP / this.stats.maxHP)));
+        ctx.fillStyle = "rgba(255, 255, 255, 1)";
+        ctx.fillRect( (this.pos.x + this.size.w/2 - 50), this.pos.y + 94, 104, 11);
+        ctx.fillStyle = "rgba(255, 0, 0, " + em + ")";
+        ctx.fillRect( (this.pos.x + this.size.w/2 - 50), this.pos.y + 96, 100, 7);
+        ctx.fillStyle = "rgba(0, 223, 0, 0.85)";
+        ctx.fillRect( (this.pos.x + this.size.w/2 - 50), this.pos.y + 96, 100 * (this.stats.curHP / this.stats.maxHP), 7);
+    }
 
     move() {
         this.pos.x += this.stats.speed * this.direction + this.velocity.x;
@@ -142,8 +152,8 @@ class Enemy extends Entity {
                 this.move();
                 break;
             case 2:
-                this.velocity.x = 0;
-                this.direction = JumpAndRun.myPlayer.pos.x > this.pos.x ? 1 : -1;
+                // this.velocity.x = 0;
+                // this.direction = JumpAndRun.myPlayer.pos.x > this.pos.x ? 1 : -1;
                 if (Math.abs(JumpAndRun.myPlayer.pos.x - this.pos.x) < this.aggroRange) {
                     this.fireMissile(this.ammo, this.pos, JumpAndRun.myPlayer);
                 }
@@ -156,9 +166,12 @@ class Enemy extends Entity {
         for(let i = 0; i < JumpAndRun.activePRJ.length; i++) {
             JumpAndRun.activePRJ[i].update();
         }
+        // if (this.stats.curHP === this.stats.maxHP)
+
         super.draw();
         super.ticker();
         super.spacial();
+        this.hp();
     }
 
 }
@@ -177,13 +190,8 @@ class Missile extends Entity {
         super(props);
         this.pos = new transform(pos.x, pos.y);
         this.velocity = new transform(props.velocity.x, props.velocity.y);
-        this.prjVec = arrayCalc(this.pos, target);
-        // this.distance = 0;
-        // this.target = target;
-        //this.direction = direction;
-        this.mSpeed = props.mSpeed;
-        this.damage = props.damage;
-        this.life = props.life;
+        this.prjVec = vecCalc(this.pos, target);
+        this.stats = props.stats;
         this.effect = props.effect;
     }
     end() {
@@ -193,11 +201,11 @@ class Missile extends Entity {
         JumpAndRun.activePRJ.splice(JumpAndRun.activePRJ.indexOf(this), 1);
     }
     update() {
-        // Equivalent zur Movekomponente, mit Ergebnissen der Vektorrechnung aus arrayCalc()
-        this.pos.x += this.prjVec.x * this.mSpeed;
-        this.pos.y += this.prjVec.y * this.mSpeed;
-        this.life--;
-        if (this.life === 0) {
+        // Equivalent zur Movekomponente, mit Ergebnissen der Vektorrechnung aus vecCalc()
+        this.pos.x += this.prjVec.x * this.stats.speed;
+        this.pos.y += this.prjVec.y * this.stats.speed;
+        this.stats.curHP--;
+        if (this.stats.curHP === 0) {
             this.end();
         }
         if (rectCollision(this, JumpAndRun.myPlayer)) {
@@ -208,7 +216,7 @@ class Missile extends Entity {
         super.ticker();
     }
 }
-function arrayCalc(pos, target) {
+function vecCalc(pos, target) {
     this.prjVec = new transform(target.pos.x - pos.x, target.pos.y - pos.y);
     const norm = Math.sqrt(this.prjVec.x * this.prjVec.x + this.prjVec.y * this.prjVec.y);
     this.prjVec.x /= norm;
