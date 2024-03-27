@@ -5,7 +5,7 @@ const LEVELS = [
         realm: "void",
         tileset: "./src/img/tileset/ts_void00.png",
         bgimg: "./src/img/bgimg/bgimg_void00.jpg",
-        type: "openair",
+        type: "tutorial",
         map: {
             width: 200,
             height: 17,
@@ -37,12 +37,11 @@ const LEVELS = [
                 player: { x: 120, y: 140, oX: 0, oY: 0 },
                 sigils: [
                     { name: 'dewdropS', type: 'Sigil', pos: {x: 200, y: 260, oX: 0, oY: 0 }},
-                    { name: 'dewdropS', type: 'Sigil', pos: {x: 300, y: 250, oX: 0, oY: 0 }},
-                    { name: 'Portal', type: 'Sigil', pos: {x: 5200, y: 200, oX: 0, oY: 0 }}
+                    { name: 'dewdropS', type: 'Sigil', pos: {x: 2100, y: 288, oX: 0, oY: 0 }},
+                    { name: 'Portal', type: 'Sigil', pos: {x: 6200, y: 200, oX: 0, oY: 0 }}
                 ],
                 enemies: [
-                    { name: 'ichtophis', type: 'Enemy', pos: {x: 3232, y: 280, oX: 0, oY: 0 }},
-                    { name: 'dumbass', type: 'Enemy', pos: {x: 1500, y: 100, oX: 0, oY: 0 }}
+                    { name: 'ichtophis', type: 'Enemy', pos: {x: 3232, y: 280, oX: 0, oY: 0 }}
                 ]
             }
         }
@@ -93,10 +92,12 @@ const LEVELS = [
                 player: {x: 180, y: 160, oX: 0, oY: 0},
                 sigils: [
                     {name: 'rawlight', type: 'Sigil', pos: {x: 384, y: 100, oX: 0, oY: 0}},
+                    {name: 'rawlight', type: 'Sigil', pos: {x: 512, y: 68, oX: 0, oY: 0}},
+                    {name: 'rawlight', type: 'Sigil', pos: {x: 644, y: 36, oX: 0, oY: 0}},
                     {name: 'Portal', type: 'Sigil', pos: {x: 8448, y: 650, oX: 0, oY: 0}}
                 ],
                 enemies: [
-                    {name: 'yamoma', type: 'Enemy', pos: {x: 8810, y: 840, oX: 0, oY: 0 }}
+                    //{name: 'yamoma', type: 'Enemy', pos: {x: 8810, y: 840, oX: 0, oY: 0 }}
                 ]
             },
 
@@ -130,19 +131,19 @@ const LEVELS = [
                 'H             dc                                                                           anb               ab                                       wme                                                                                                                        ammb  H',
                 'H                                                                                          wme    anb        dc                                     ananbnb                                                                                                annnnnnnnnnnnnnnnnnnnnnnnnb H',
                 'H                                                                                        annnnnnnnnnnnnnnnnnnnnnnnb                                 dsdscsc                                                                                                wmmmmsssmmmmsssmmmmsssmmmme H',
-                'H      annb                                                                              wmmmmmmmmmmmmmmmmmmmmmmmme                                   wme        ab                                                                                annb    wmmme   wmmc   dmme   wmmme H',
-                'H      dssc                                                                            annnnnnnnnnnnnnnnnnnnnnnnnnnnb                                 wme        dc                                                                                dssc    dsmmmnnnmme     wmmnnnmmmsc H',
+                'H      annb                                                                              wmmmmmmmmmmmmmmmmmmmmmmmme                                   wme         ab                                                                               annb    wmmme   wmmc   dmme   wmmme H',
+                'H      dssc                                                                            annnnnnnnnnnnnnnnnnnnnnnnnnnnb                                 wme         dc                                                                               dssc    dsmmmnnnmme     wmmnnnmmmsc H',
                 'H                                                                                      wmmmmmmmmmmmmmmmmmmmmmmmmmmmme                                 wme                                                                                  annb              dssmmmmmmb   ammmmmmssc   H',
                 'H                                                                                    annnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnb  ab                         ananbnb                                                                                dssc                 dssssmmb ammssssc      H',
                 'H                                ANNNNNNNBB                                          wmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmme  dc                         dsdscsc                           ANNNNNNNNNNNNNNB                             annb                              dmmnmmc           H',
                 'H                             ANNMMMMMMMMMMNB                                      annnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnb                           wme                      ANNNNNNMMMMMMMMMMMMMMMMNNNNNB                       dssc                               dsssc            H',
                 'HNNNB                      ANNMMMMMMMMMMMMMMMNNB   ANB                             wmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmme                           wme                ANNNNNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNNNNB                                                                     H',
                 'HMMMMNB  NN             ANNMMMMMMMMMMMMMMMMMMMMMANBMMMANB                        annnnnnnnnnnnnnrrrrnnnnnnnnnnnnnnnnnnnnnnnnb                         wme           ANNNNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNNB                                                                 H',
-                'HMMMMMMNNNNNNNNNNNNNNNNNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNNNNNNB                wmmmmmmmmmmmmm       iimmmmmmmmmmmmmmmmmmmme             ANNNNNNNNNananbnbNNNNNNNNNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNB   annb                                                       H',
-                'HMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNB            annnnnnnnnnnnnnn           rnnnnnnnnnnnnnnnnnnrt  ab    ANNMMMMMMMMMMdsdscscMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNammmmb                                                      H',
-                'HMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNNNNNB     wmmmmmmmmmmmmmmm                   iiiiiiiiiiiio  dcANNNMMMMMMMMMMMMMMMwmeMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMammmmmmb                                                     H',
-                'HMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNNBannnnnnnnnnnnnnnnnnnn               rrrrrrrrrrrrrtANNMMMMMMMMMMMMMMMMMMMwmeMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMammannbmmb                            annnnb                  H',
-                'HMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMwmmmmmmmmmmmmmmmmmmmmmmmm           iiiiiiiiiiiiioMMMMMMMMMMMMMMMMMMMMMMwmeMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMammmwmmemmmb        ab      ab         dssssc                  H',
+                'HMMMMMMNNNNNNNNNNNNNNNNNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNNNNNNB                wmmmmmmmmmmmmmiiiiiiiiimmmmmmmmmmmmmmmmmmmme             ANNNNNNNNNananbnbNNNNNNNNNMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNB   annb                                                       H',
+                'HMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNB            annnnnnnnnnnnnnnrrrrrrrrrrrrnnnnnnnnnnnnnnnnnnrt  ab    ANNMMMMMMMMMMdsdscscMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNammmmb                                                      H',
+                'HMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNNNNNB     wmmmmmmmmmmmmmmmiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiio  dcANNNMMMMMMMMMMMMMMMwmeMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMammmmmmb                                                     H',
+                'HMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNNNBannnnnnnnnnnnnnnnnnnnrrrrrrrrrrrrrrrrrrrrrrrrrrrrtANNMMMMMMMMMMMMMMMMMMMwmeMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMammannbmmb                            annnnb                  H',
+                'HMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMwmmmmmmmmmmmmmmmmmmmmmmmmiiiiiiiiiiiiiiiiiiiiiiiioMMMMMMMMMMMMMMMMMMMMMMwmeMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMammmwmmemmmb        ab      ab         dssssc                  H',
                 'HMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMannnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnbMMMMMMMMMMMMMMMMMMMananbnbMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMwmanmmmmnbme        dc      dc                                 H',
                 'HMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMwmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmeMMMMMMMMMMMMMMMMMMMdsdscscMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMwmwmmmmmmeme                                                   H',
                 'HMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMwmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmeMMMMMMMMMMMMMMMMMMMMMmmmMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMwmwmmmmmmeme                                                   H',
@@ -153,14 +154,10 @@ const LEVELS = [
             spawn: {
                 player: {x: 180, y: 160, oX: 0, oY: 0},
                 sigils: [
-                    {
-                        name: 'Portal',
-                        type: 'Sigil',
-                        pos: {x: 8512, y: 350, oX: 0, oY: 0}
-                    }
+                    {name: 'Portal', type: 'Sigil', pos: {x: 8512, y: 350, oX: 0, oY: 0}}
                 ],
                 enemies: [
-                    {}
+                    {name: 'royalkitty', type: 'Enemy', pos: {x: 1150, y: 600, oX: 0, oY: 0 }}
                 ]
             },
 

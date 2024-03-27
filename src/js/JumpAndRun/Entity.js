@@ -42,6 +42,21 @@ class Entity{
             this.image.height * this.size.s
         )
     }
+    spacial() {
+        this.velocity.y += ( this.type !== 'Sigil' ) ? GRAVITY : 0;
+        if (this.pos.y < JumpAndRun.lvlc.map.height * TILESIZE - this.size.h) this.pos.y += ( this.type !== 'Sigil' ) ? this.velocity.y : Math.sin( 0.12 * this.frPast ) * 1 ;
+        let blockiert = blockade(this, JumpAndRun.lvlc.map);
+        // if( blockiert.links ) this.pos.x = TILESIZE * blockiert.spalteLinks + TILESIZE;
+        // if( blockiert.rechts ) this.pos.x = TILESIZE * blockiert.spalteRechts - this.size.w - 1;
+        if (this.velocity.y > 0 && blockiert.unten) {
+            this.pos.y = TILESIZE * blockiert.zeileUnten - this.size.h - 5;
+            this.velocity.y = 0;
+        }
+        if (this.velocity.y < 0 && blockiert.oben) {
+            this.pos.y = TILESIZE * blockiert.zeileOben + TILESIZE;
+            this.velocity.y = 0;
+        }
+    }
     ticker() {
         this.frPast++;
         if (this.frPast % this.frMax === 0) {
@@ -50,22 +65,6 @@ class Entity{
             } else {
                 this.frame = 0;
             }
-        }
-    }
-    spacial() {
-        // this.pos.x += this.stats.speed * this.direction + this.velocity.x;
-        this.velocity.y += ( this.type !== 'Sigil' ) ? GRAVITY : 0;
-        // console.log((Math.sin(1 * this.frPast)), this.velocity.y);
-        // console.log(Math.sin( 16 * this.frPast ) * 16);
-        if (this.pos.y < JumpAndRun.lvlc.map.height * TILESIZE - this.size.h) this.pos.y += ( this.type !== 'Sigil' ) ? this.velocity.y : Math.sin( 0.12 * this.frPast ) * 1 ;
-        let blockiert = blockade(this, JumpAndRun.lvlc.map ) ;
-        if (this.velocity.y > 0 && blockiert.unten ) {
-            this.pos.y = TILESIZE * blockiert.zeileUnten - this.size.h - 2;
-            this.velocity.y = 0;
-        }
-        if (this.velocity.y < 0 && blockiert.oben ) {
-            this.pos.y = TILESIZE * blockiert.zeileOben + TILESIZE;
-            this.velocity.y = 0;
         }
     }
     update() {
@@ -110,30 +109,48 @@ class Enemy extends Entity {
                 this.pos.x + this.size.w + this.atkBox.size.w > pc.pos.x);
     }
     fireMissile( ammo, pos, target ) {
-        if (this.fireCD === 0) {
-            let proj = new Missile(missile[ammo], pos, target);
-            // this.activePRJ0.push(proj);
+        //if (this.fireCD === 0) {
+            let proj = new Missile(MISSILE[ammo], pos, target);
             JumpAndRun.activePRJ.push(proj);
             this.fireCD = this.stats.atkCD;
-        }
-        // console.log(this.activePRJ0);
-        console.log(JumpAndRun.activePRJ);
+            //console.log(JumpAndRun.activePRJ);
+        //}
     }
-    hp() {
-        // let hpOffset = this.pos.y * miaY - this.size.h / 2;  - world.offsetX*TILESIZE
-        let em = 0.40 + (0.60 * (1 - (this.stats.curHP / this.stats.maxHP)));
-        ctx.fillStyle = "rgba(255, 255, 255, 1)";
-        ctx.fillRect( (this.pos.x + this.size.w/2 - 50), this.pos.y + 94, 104, 11);
-        ctx.fillStyle = "rgba(255, 0, 0, " + em + ")";
-        ctx.fillRect( (this.pos.x + this.size.w/2 - 50), this.pos.y + 96, 100, 7);
-        ctx.fillStyle = "rgba(0, 223, 0, 0.85)";
-        ctx.fillRect( (this.pos.x + this.size.w/2 - 50), this.pos.y + 96, 100 * (this.stats.curHP / this.stats.maxHP), 7);
-    }
-
     move() {
         this.pos.x += this.stats.speed * this.direction + this.velocity.x;
         // this.pos.y += GRAVITY * (this.pos.y < JumpAndRun.myPlayer.pos.y ? 1 : -1) * this.aiLevel;
     }
+    /*
+    spacial() {
+        this.velocity.y += (this.type !== 'Sigil') ? GRAVITY : 0;
+        if (this.pos.y < JumpAndRun.lvlc.map.height * TILESIZE - this.size.h) this.pos.y += (this.type !== 'Sigil') ? this.velocity.y : Math.sin(0.12 * this.frPast) * 1;
+        let blockiert = blockade(this, JumpAndRun.lvlc.map);
+        // if( blockiert.links ) this.pos.x = this.pos.x;
+        //if( blockiert.rechts ) this.pos.x = TILESIZE * blockiert.spalteRechts - this.size.w - 1;
+        if (blockiert.links || blockiert.rechts) {
+            this.velocity.x = 0;
+        } else {
+            dummy.pos.x = Math.floor(this.pos.x) + (TILESIZE * this.direction);
+            dummy.pos.y = Math.floor(this.pos.y);
+            dummy.size = this.size;
+            if (blockade(dummy, this.map).rechts && this.direction === 1) {
+                this.velocity.x = 0;
+            } else if (blockade(dummy, this.map).links && this.direction === -1) {
+                this.velocity.x = 0;
+            } else {
+                this.pos.x += this.velocity.x;
+            }
+        }
+        if (this.velocity.y > 0 && blockiert.unten) {
+            this.pos.y = TILESIZE * blockiert.zeileUnten - this.size.h - 2;
+            this.velocity.y = 0;
+        }
+        if (this.velocity.y < 0 && blockiert.oben) {
+            this.pos.y = TILESIZE * blockiert.zeileOben + TILESIZE;
+            this.velocity.y = 0;
+        }
+    }
+    */
     // Update-Methode für Enemy-Entitäten, KI-Verhalten muss noch ausgebaut werden
     update() {
         if (this.knocked > 0) {
@@ -154,8 +171,16 @@ class Enemy extends Entity {
             case 2:
                 // this.velocity.x = 0;
                 // this.direction = JumpAndRun.myPlayer.pos.x > this.pos.x ? 1 : -1;
-                if (Math.abs(JumpAndRun.myPlayer.pos.x - this.pos.x) < this.aggroRange) {
-                    this.fireMissile(this.ammo, this.pos, JumpAndRun.myPlayer);
+                if (this.fireCD === 0 && Math.abs(JumpAndRun.myPlayer.pos.x - this.pos.x) < this.aggroRange) {
+                    let projXY;
+                    if (this.pos.x < JumpAndRun.myPlayer.pos.x) {
+                        this.direction = 1;
+                        projXY = new transform(this.pos.x + this.size.w, this.pos.y);
+                    } else {
+                        this.direction = -1;
+                        projXY = new transform(this.pos.x - this.size.w / 2, this.pos.y);
+                    }
+                    this.fireMissile(this.ammo, projXY, JumpAndRun.myPlayer);
                 }
                 break;
             default:
@@ -163,15 +188,31 @@ class Enemy extends Entity {
         }
         this.velocity.y += GRAVITY;
         this.fireCD = Math.max(this.fireCD - 1, 0);
+        /*
         for(let i = 0; i < JumpAndRun.activePRJ.length; i++) {
             JumpAndRun.activePRJ[i].update();
         }
-        // if (this.stats.curHP === this.stats.maxHP)
-
+         */
+        let projClear = [];
+        for(let i = JumpAndRun.activePRJ.length - 1; i >= 0; i--) {
+            if (JumpAndRun.activePRJ[i]) { // Check if the projectile is defined
+                console.log(`Before update: Projectile ${i} is alive: ${JumpAndRun.activePRJ[i].alive}`);
+                console.log(JumpAndRun.activePRJ[i]);
+                JumpAndRun.activePRJ[i].update();
+                console.log(`After update: Projectile ${i} is alive: ${JumpAndRun.activePRJ[i].alive}`);
+                console.log(JumpAndRun.activePRJ[i]);
+                if (!JumpAndRun.activePRJ[i].alive) {
+                    projClear.push(i);
+                }
+            }
+        }
+        for(let i of projClear) {
+            console.log(`Removing projectile ${i}`);
+            JumpAndRun.activePRJ.splice(i, 1);
+        }
         super.draw();
         super.ticker();
         super.spacial();
-        this.hp();
     }
 
 }
@@ -198,14 +239,14 @@ class Missile extends Entity {
         this.invulnerable = false;
         this.alive = false;
         JumpAndRun.juggler(this, 'death');
-        JumpAndRun.activePRJ.splice(JumpAndRun.activePRJ.indexOf(this), 1);
+        //JumpAndRun.activePRJ.splice(JumpAndRun.activePRJ.indexOf(this), 1);
     }
     update() {
         // Equivalent zur Movekomponente, mit Ergebnissen der Vektorrechnung aus vecCalc()
         this.pos.x += this.prjVec.x * this.stats.speed;
         this.pos.y += this.prjVec.y * this.stats.speed;
         this.stats.curHP--;
-        if (this.stats.curHP === 0) {
+        if (this.stats.curHP <= 0) {
             this.end();
         }
         if (rectCollision(this, JumpAndRun.myPlayer)) {

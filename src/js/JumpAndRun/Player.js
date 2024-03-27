@@ -34,13 +34,13 @@ class Player {
     this.hasDeflect = false;  // Flag für Deflect-Talent, NYI
     this.hardboiled = false;  // Flag für Hardboiled-Talent, NYI
     this.attacking = false;
-    this.slideCooldown = 0;
+    this.slideCD = 0;
     this.slideHack = 100;
     this.slideDuration = 0;
     this.isSliding = false;
     this.invulnerable = false;
     this.damageCD = 0;
-    this.sglEff = {           // Counter für stapelbare Sigil-Effekte, NYI
+    this.sglEff = {           // Zähler für stapelbare Sigil-Effekte, NYI
       def: 0
     };
     this.sounds = {
@@ -89,11 +89,11 @@ class Player {
       },
       jumpL: {
         image: new Image(),
-        frMax: 2
+        frMax: 4
       },
       jumpR: {
         image: new Image(),
-        frMax: 2
+        frMax: 4
       },
       slideL: {
         image: new Image(),
@@ -230,25 +230,24 @@ class Player {
       this.direction = 1;
       if( this.airStair === 0 ) JumpAndRun.juggler( JumpAndRun.myPlayer, 'runRight');
       let blockiert = blockade(this, this.map ) ;
-      if( blockiert.rechts ) this.pos.x = TILESIZE * blockiert.spalteRechts - this.size.w - 1 ;
+      if( blockiert.rechts ) this.pos.x = TILESIZE * blockiert.spalteRechts - this.size.w - 1;
     }
     // PC springen lassen + Multi-Jump-Funktionalität ("Air-Stair")
     if (steuerung.springen && this.airStair < this.airStairLimit) {
       steuerung.springen = false;
       this.velocity.y = -this.jumpStrength;
       this.airStair++;
+      console.log(this.pos.x);
       //this.sounds.Jump.load();
       this.sounds.Jump.currentTime = 0;
       this.sounds.Jump.play().then(r => {});
-      //if( this.direction === 1 ) JumpAndRun.juggler( JumpAndRun.myPlayer, 'jumpR');
-      //else JumpAndRun.juggler( JumpAndRun.myPlayer, 'jumpL');
       JumpAndRun.juggler(JumpAndRun.myPlayer, (JumpAndRun.myPlayer.direction === 1) ? 'jumpR' : 'jumpL');
     }
     // PC rutschen lassen
-    if (steuerung.slide && this.slideCooldown === 0) {
+    if (steuerung.slide && this.slideCD === 0) {
       this.isSliding = true;
       this.invulnerable = true;
-      this.slideCooldown = this.slideHack;
+      this.slideCD = this.slideHack;
       this.slideDuration = 15;
       //this.sounds.Slide.load();
       this.sounds.Slide.currentTime = 0;
@@ -258,28 +257,19 @@ class Player {
       JumpAndRun.juggler(JumpAndRun.myPlayer, (JumpAndRun.myPlayer.direction === 1) ? 'slideR' : 'slideL');
     }
     // Standard-Angriff, benötigt zusätzliche Änderungen
-    if (steuerung.attack) {
-      // this.attacking = true;
-      // if (this.direction === 1) JumpAndRun.juggler(JumpAndRun.myPlayer, 'attackR');
-      // else JumpAndRun.juggler(JumpAndRun.myPlayer, 'attackL');
+    if (steuerung.attack && !this.attacking) {
+      this.attacking = true;
       JumpAndRun.juggler(JumpAndRun.myPlayer, (JumpAndRun.myPlayer.direction === 1) ? 'attackR' : 'attackL');
       for (let enemy of JumpAndRun.activeNMY) {
-        if (rectCollision(JumpAndRun.myPlayer.atkBox, enemy)) {
-          JumpAndRun.struck(JumpAndRun.myPlayer, enemy);
-
-        } else {
-
-        }
+        if (rectCollision(JumpAndRun.myPlayer.atkBox, enemy)) JumpAndRun.struck(JumpAndRun.myPlayer, enemy);
       }
       if(this.frame === 2){
         this.sounds.Attack.currentTime = 0;
         this.sounds.Attack.play().then(r => {
-
         });
       }
-      // this.attacking = false;
-      // console.log(this.pos);
     }
+    if(!steuerung.attack) this.attacking = false;
     /*
     // Zweiter Angriff, NYI
     if (steuerung.special) {
@@ -296,9 +286,9 @@ class Player {
     // PC Fallkontrolle
     this.velocity.y += GRAVITY;
     if (this.pos.y < this.map.height * TILESIZE - this.size.h) this.pos.y += this.velocity.y;
-    let blockiert = blockade(this, this.map ) ;
+    let blockiert = blockade(this, this.map);
     if (this.velocity.y > 0 && blockiert.unten ) {
-      this.pos.y = TILESIZE * blockiert.zeileUnten - this.size.h - 2;
+      this.pos.y = TILESIZE * blockiert.zeileUnten - this.size.h - 1;
       this.velocity.y = 0;
       this.airStair = 0;
     }
@@ -310,8 +300,7 @@ class Player {
     // geschrieben von: LP
     if(blockiert.links || blockiert.rechts){
       this.velocity.x = 0;
-    }
-    else{
+    } else {
       dummy.pos.x = Math.floor(this.pos.x) + (TILESIZE * this.direction);
       dummy.pos.y = Math.floor(this.pos.y);
       dummy.size = this.size;
@@ -353,22 +342,12 @@ class Player {
         this.image.height,
         (canvas.width / 2 - this.size.w / 2) - flipper,
         (this.pos.y - plyrOffsetY),
-        (this.image.width / this.frMax),
-        this.image.height
+        (this.image.width / this.frMax) * this.size.s,
+        this.image.height * this.size.s
     );
   }
   // Alternative Methode für Frames und so, muss getestet werden
   ticker() {
-    /*
-    this.frPast++;
-    if (this.frPast % this.frDur === 0) {
-      if (this.frame < this.frMax - 1) {
-        this.frame++;
-      } else {
-        this.frame = 0;
-      }
-    }
-    */
     this.frPast++;
     if (this.frPast >= this.frMax) {
       this.frPast = 0;
@@ -378,7 +357,7 @@ class Player {
       }
     }
     // Benötigt für Slide-Funktionalität, geschrieben von: LP
-    if(this.slideCooldown > 0) this.slideCooldown--;
+    if(this.slideCD > 0) this.slideCD--;
     if(this.isSliding){
       this.slideDuration--;
       if(this.slideDuration <= 0){
@@ -398,7 +377,7 @@ class Player {
     ctx.fillStyle = "rgba(0, 223, 0, 0.85)";
     ctx.fillRect( (canvas.width/2 - 50), this.pos.y + 96 - hpOffset, 100 * (this.stats.curHP / this.stats.maxHP), 10);
     ctx.fillStyle = "rgba(63, 0, 127, 0.75)";
-    ctx.fillRect( (canvas.width/2 - 50), this.pos.y + 106 - hpOffset, 100 - (this.slideCooldown), 5);
+    ctx.fillRect( (canvas.width/2 - 50), this.pos.y + 106 - hpOffset, 100 - (this.slideCD), 5);
     // atkBox für Debugging-Zwecke
     this.atkBox.pos.x = (this.direction === 1) ? (this.pos.x + this.size.w + this.atkBox.size.w) : this.pos.x - (this.size.w/2 + this.atkBox.size.w);
     this.atkBox.pos.y = this.pos.y; //  + this.size.h / 2 - this.pos.y * miaY

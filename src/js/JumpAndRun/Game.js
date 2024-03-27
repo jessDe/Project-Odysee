@@ -18,17 +18,18 @@ let world = {
     offsetY: 0
 }
 let miaY;
-let gamepads;
+// let gamepads;
 let deathMSG;
 // Test für Doppelbelegungen: "S" und "Shift" zum Sliden
 let keymap = {
-    65: 65,
-    68: 68,
-    16: 16,
-    83: 16,
-    87: 87,
-    32: 87,
-    70: 70
+    65: 65, // Links, 65 = "a"
+    68: 68, // Rechts, 68 = "d"
+    16: 16, // Slide, 16 = "Shift"
+    83: 16, // Slide-Alternative, 83 = "s"
+    87: 87, // Springen, 87 = "w"
+    32: 87, // Springen-Alternative, 32 = "Space"
+    74: 74, // Attack, 74 = "j"
+    70: 74  // Attack-Alternative, 70 = "f"
 }
 let dummy = {
     pos: { x: 0, y: 0 },
@@ -41,11 +42,13 @@ class JumpAndRunClass {
     constructor(level) {
         this.curlevel = level;  // Aktuelles Level
         this.lvlc = JSON.parse(JSON.stringify(LEVELS[this.curlevel]));  // JS-Magie, begesteuert von LP
-        this.myPlayer = new Player( this.lvlc.map, { w: 64, h: 64 }, { maxHP: 100, curHP: 100, atk: 40, atkCD: 50, def: 20, mag: 50, mgx: 20, speed: 4} );
+        this.myPlayer = new Player( this.lvlc.map, { w: 64, h: 64, s: 1 }, { maxHP: 100, curHP: 100, atk: 40, atkCD: 50, def: 20, mag: 50, mgx: 20, speed: 4} );
         this.bgimg = new Image();
         this.bgimg.src = this.lvlc.bgimg;   // Ladet das Hintergrundbild wie in Level.js angegeben
-        this.test = new Image();
-        this.test.src = "./src/img/bgimg/vig.png";  // Vignette für Untergrundlevel
+        this.dark = new Image();
+        this.dark.src = "./src/img/bgimg/vig4.png";  // Vignette für Untergrundlevel
+        this.tut = new Image();
+        this.tut.src = "./src/img/tut/ts01.png";
         this.tileset = new Image();
         this.tileset.src = this.lvlc.tileset;   // Ladet die Tileset wie in Level.js angegeben
         this.StartTime = new Date();
@@ -54,7 +57,7 @@ class JumpAndRunClass {
         this.activeNMY = [];    // Array für aktive Gegner
         this.activeSGL = [];    // Array für aktive Sigils
         this.activePRJ = [];    // Array für aktive Projektile#
-        this.lumina = 20;       // Lumina für Untergrundlevel
+        this.lumina = 0;       // Lumina für Untergrundlevel
         this.startedbefore = false;
         world = {
             offsetX: 0,
@@ -86,8 +89,8 @@ class JumpAndRunClass {
         this.updateGame();
         window.addEventListener('keydown', this.steuern);
         window.addEventListener('keyup', this.steuern);
-        window.addEventListener('gamepadconnected', this.gamepad);
-        window.addEventListener('gamepaddisconnected', this.gamepad);
+        //window.addEventListener('gamepadconnected', this.gamepad);
+        //window.addEventListener('gamepaddisconnected', this.gamepad);
     }
     drawBG(){
         ctx.drawImage( this.bgimg, JumpAndRun.myPlayer.pos.x * ((this.bgimg.width - canvas.width) / (this.lvlc.map.pattern[0].length * TILESIZE)), 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
@@ -122,11 +125,11 @@ class JumpAndRunClass {
         if (this.lvlc.type === "underground") {
             this.lumina = (this.lumina > 0) ? this.lumina - 0.01 : 0;
             ctx.drawImage(
-                this.test,
-                ( (this.lumina - 50) * 6.4) + (Math.random() * 8),
-                ( (this.lumina - 50) * 3.6) + (Math.random() * 8),
-                canvas.width * (1.5 + ( 1 - (this.lumina / 100) ) ),
-                canvas.height * (1.5 + ( 1 - (this.lumina / 100) ) ),
+                this.dark,
+                ( (Math.min(this.lumina, 100) ) * (6.4) ) + (Math.random() * 8), // vig.png: 6.4
+                ( (Math.min(this.lumina, 100) ) * (3.6) ) + (Math.random() * 8), // 3.6
+                canvas.width * (1 + ( 1 - ( Math.min(this.lumina, 100) / 100 ) ) ),
+                canvas.height * (1 + ( 1 - ( Math.min(this.lumina, 100) / 100 ) ) ),
                 ((JumpAndRun.myPlayer.pos.x + JumpAndRun.myPlayer.size.w / 2) - canvas.width - offset.x * TILESIZE),
                 ((JumpAndRun.myPlayer.pos.y + JumpAndRun.myPlayer.size.h / 2) - canvas.height - offset.y * TILESIZE),
                 canvas.width * 2,
@@ -134,52 +137,40 @@ class JumpAndRunClass {
             );
         }
     }
-    /*
-    steuern(event) {
-        if (event.defaultPrevented) {
-            return; // Stopp, wenn das Event bereits bearbeitet wurde
-        }
-        if(JumpAndRun.myPlayer.alive) {
-            switch (event.key) {
-                case "ArrowLeft":
-                    steuerung.links = (event.type === 'keydown');
+    // Tutorial-Methode
+    drawTut(){
+        if (JumpAndRun.lvlc.type === "tutorial") {
+            for (let track of TUTSHEETS) {
+                if (JumpAndRun.myPlayer.pos.x >= track.start && JumpAndRun.myPlayer.pos.x <= track.end) {
+                    JumpAndRun.tut.src = track.image;
+                    ctx.clearRect(240, 64, JumpAndRun.tut.width, JumpAndRun.tut.height);
+                    JumpAndRun.drawBG();
+
+                    ctx.drawImage(
+                        JumpAndRun.tut,
+                        240,
+                        64,
+                        JumpAndRun.tut.width,
+                        JumpAndRun.tut.height
+                    );
                     break;
-                case "ArrowRight":
-                    steuerung.rechts = (event.type === 'keydown');
-                    break;
-                case "ArrowDown":
-                    steuerung.slide = (event.type === 'keydown');
-                    break;
-                case "ArrowUp":
-                    steuerung.springen = (event.type === 'keydown');
-                    break;
-                case "Control":
-                    steuerung.attack = (event.type === 'keydown');
-                    break;
-                case "":
-                    steuerung.special = (event.type === 'keydown');
-                    break;
-                case "":
-                    steuerung.magic = (event.type === 'keydown');
-                    break;
-                case "Escape":
-                    steuerung.pause = (event.type === 'keydown');
-                    break;
-                default:
-                    return;
+                } else {
+                    ctx.clearRect(240, 64, JumpAndRun.tut.width, JumpAndRun.tut.height);
+                    JumpAndRun.drawBG();
+                    JumpAndRun.tut.src = "";
+                }
             }
         }
-        event.preventDefault(); // Verhindert, dass das Event weitergeleitet wird
     }
-     */
-    // steuern aus dem Unterricht da die Leertaste mit 'key' nicht funktioniert
+
+    // steuern(), keyCode-Variante
     steuern( event ) {
         switch( keymap[event.keyCode] ) {
             case 65: steuerung.links = (event.type === 'keydown'); break;    // 65 = Taste "A"
             case 68: steuerung.rechts = (event.type === 'keydown'); break;  // 68 = Taste "D"
             case 16: steuerung.slide = (event.type === 'keydown'); break;   // 83 = Taste "S"
             case 87: steuerung.springen = (event.type === 'keydown'); break;  // 87 = Taste "W"
-            case 70: steuerung.attack = (event.type === 'keydown'); break;  // 70 = Taste "F"
+            case 74: steuerung.attack = (event.type === 'keydown'); break;  // 74 = Taste "J"
             default: console.log("Taste '"+ event.code +"' wird nicht verwendet");
         }
     }
@@ -191,6 +182,7 @@ class JumpAndRunClass {
     juggler( ntt, sprite ) {
         if ((ntt.image.src.includes('attack')) && (ntt.frame < ntt.frMax - 1)) return; // Abbruch wenn Angriff ausgeführt wird
         if ((ntt.image.src.includes('struck')) && (ntt.frame < ntt.frMax - 1)) return; // Abbruch wenn getroffen
+        if ((ntt.image.src.includes('slide')) && (ntt.frame < ntt.frMax - 1)) return;
         if (ntt.image !== ntt.sprites[sprite].image) {
             ntt.frame = 0;
             ntt.frMax = ntt.sprites[sprite].frMax;
@@ -205,7 +197,7 @@ class JumpAndRunClass {
     }
     // Methode zum Prüfen ob Einheiten getroffen wurden, mit Ergänzungen von LP - muss noch einwenig überarbeitet werden
     struck(attacker, target) {
-        if (target.damageCD < 1.5) return;   // damageCD stellt sicher, dass das Ziel nicht zu oft getroffen wird
+        if (target.damageCD < 1) return;   // damageCD stellt sicher, dass das Ziel nicht zu oft getroffen wird
         if (!target.invulnerable || target.type !== 'Sigil') {
             target.stats.curHP -= (this.calcDamage(attacker, target) > target.stats.curHP) ? target.stats.curHP : this.calcDamage(attacker, target);
             if (target.stats.curHP <= 0) {
@@ -214,7 +206,7 @@ class JumpAndRunClass {
                 } else JumpAndRun.juggler(target, 'death');
                 target.alive = false;
                 JumpAndRun.activeNMY.splice(JumpAndRun.activeNMY.indexOf(target), 1);
-                if (attacker.name === 'Yamoma') deathMSG = "Yamoma killed you.";
+                // if (attacker.name === 'Yamoma') deathMSG = "Yamoma killed you.";
                 let drop = dropLoot(target);
                 if (drop !== null) {
                     JumpAndRun.activeSGL.push(drop);
@@ -265,11 +257,11 @@ class JumpAndRunClass {
         let ntt = null;
         switch(item.type) {
             case 'Enemy':
-                ntt = new Enemy(enemy[item.name], item.pos);
+                ntt = new Enemy(ENEMY[item.name], item.pos);
                 this.activeNMY.push(ntt);
                 break;
             case 'Sigil':
-                ntt = new Sigil(sigil[item.name], item.pos);
+                ntt = new Sigil(SIGIL[item.name], item.pos);
                 this.activeSGL.push(ntt);
                 break;
             default:
@@ -280,8 +272,8 @@ class JumpAndRunClass {
         return ntt;
     }
 
-
-    // Methode für Gamepad-Management, noch buggy
+    /*
+    // Methode für Gamepad-Management, funktioniert solala
     gamepad( ) {
         gamepads = navigator.getGamepads();
         if(gamepads[0] === undefined) return;
@@ -301,17 +293,21 @@ class JumpAndRunClass {
         }
     }
 
+     */
+
 
     updateGame() {
         let now = new Date();
         let period = ( now.getTime() - lastTime.getTime() ) /1000 ;
         lastTime = now;
 
-        JumpAndRun.drawBG();
+        if (JumpAndRun.lvlc.type === "tutorial") {
+            JumpAndRun.drawTut();
+        } else JumpAndRun.drawBG();
+
         JumpAndRun.myPlayer.update();
         JumpAndRun.drawLevel();
         JumpAndRun.myPlayer.ui();
-
         JumpAndRun.myPlayer.damageCD += period;
         for (let enemy of JumpAndRun.activeNMY) {
             enemy.damageCD += period;
@@ -321,14 +317,14 @@ class JumpAndRunClass {
             sigil.update();
         }
         //if(JumpAndRun.myPlayer.pos.y > ( (this.lvlc.map.pattern.length * TILESIZE) - (JumpAndRun.myPlayer.size.h * 2) )) JumpAndRun
-        if(!JumpAndRun.myPlayer.alive) { // || (JumpAndRun.myPlayer.pos.y > ( (this.lvlc.map.pattern.length * TILESIZE) - (JumpAndRun.myPlayer.size.h * 2) ))
+        if(!JumpAndRun.myPlayer.alive || (JumpAndRun.myPlayer.pos.y > ( (JumpAndRun.lvlc.map.pattern.length * TILESIZE) - (JumpAndRun.myPlayer.size.h * 2) ))) { // || (JumpAndRun.myPlayer.pos.y > ( (this.lvlc.map.pattern.length * TILESIZE) - (JumpAndRun.myPlayer.size.h * 2) ))
             JumpAndRun.GameRunning = false;
             fade(deathMSG, function () {
                 GameMode = 0;
             });
         }
         checkPhysical();
-        JumpAndRun.gamepad();
+        // JumpAndRun.gamepad();
         ctx.fillStyle = 'white';
         ctx.font = '30px PixelFont';
         ctx.fillText('Timer: '+((new Date().getTime()- JumpAndRun.StartTime.getTime())/1000), canvas.width/2-100, 30);
@@ -363,12 +359,15 @@ function rectCollision( rect1, rect2 ) {
         rect1.pos.y < rect2.pos.y + rect2.size.h &&
         rect1.pos.y + rect1.size.h > rect2.pos.y );
 }
+/*
 function fade() {
     fadeVar = 0;
     fadeMSG = "";
     let fadeCallback = function () {
     };
 }
+*/
+// Fade-Funktion, geschrieben von LP
 function fade(message, callback){
     let msg = "";
     if(message === undefined){
@@ -401,7 +400,7 @@ function dropLoot( entity ) {
     }
     if ( entity.hasLoot ) {
         let loot = entity.loot[ Math.floor( Math.random() * entity.loot.length ) ];
-        let drop = new Sigil(sigil[loot], entity.pos);
+        let drop = new Sigil(SIGIL[loot], entity.pos);
         // Drop-Position soll die Position der toten Entität sein, aber versetzt und entgegengesetzt der Spielerposition
         drop.pos.x = entity.pos.x + drop.size.w * JumpAndRun.myPlayer.direction;
         drop.pos.y = entity.pos.y - drop.size.h;

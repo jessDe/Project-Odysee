@@ -1,9 +1,9 @@
 // Datenbank für Entitäten (mit Ausnahme des Spielers) - geschrieben von AZ
-const sigil = {
+const SIGIL = {
     dewdropS: {
         name: 'Kleiner Tautropfen',
         type: 'Sigil',
-        size: {w: 18, h: 19, s: 1},
+        size: {w: 32, h: 32, s: 1},
         velocity: {x: 5, y: 5},
         effect: function () {
             JumpAndRun.myPlayer.healcap(15);
@@ -20,7 +20,7 @@ const sigil = {
             death: {
                 fraMax: 4,
                 image: new Image(),
-                imageSrc: './src/img/ntt/sgl/dewdropS_death.png',
+                imageSrc: './src/img/ntt/sgl/dewdropS_idle.png',
             }
         }
     },
@@ -110,7 +110,7 @@ const sigil = {
     },
 }
 
-const enemy = {
+const ENEMY = {
     dumbass: {
         name: 'Riesentrottel',
         type: 'Enemy',
@@ -175,15 +175,15 @@ const enemy = {
         stats: {
             maxHP: 40,
             curHP: 40,
-            atk: 20,
-            atkCD: 10,
+            atk: 5,
+            atkCD: 50,
             def: 15,
             speed: 1
         },
         atkBox: { pos: {x: 0, y: 0, oX: 0, oY: 0}, size: {w: 32, h: 32, s: 0} },
         hasLoot: true,
         aiLevel: 2,
-        aggroRange: 300,
+        aggroRange: 500,
         rLength: 10,
         loot: ['dewdropS', 'empty', 'empty', 'empty'],
         frMax: 4,
@@ -205,6 +205,16 @@ const enemy = {
                 image: new Image(),
                 imageSrc: './src/img/ntt/nmy/chim-snake_runRight.png',
             },
+            runLeft: {
+                fraMax: 4,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/chim-snake_runLeft.png',
+            },
+            runRight: {
+                fraMax: 4,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/chim-snake_runRight.png',
+            },
             struckL: {
                 fraMax: 4,
                 image: new Image(),
@@ -219,6 +229,136 @@ const enemy = {
                 fraMax: 4,
                 image: new Image(),
                 imageSrc: './src/img/ntt/nmy/chim-snake_runLeft.png',
+            }
+        }
+    },
+    regalmummy: {
+        name: 'Königsmumie',
+        type: 'Enemy',
+        size: {w: 64, h: 64, s: 1},
+        velocity: {x: 0, y: 0},
+        stats: {
+            maxHP: 40,
+            curHP: 40,
+            atk: 10,
+            atkCD: 100,
+            def: 30,
+            speed: 3
+        },
+        atkBox: { pos: {x: 0, y: 0, oX: 0, oY: 0}, size: {w: 32, h: 32, s: 0} },
+        hasLoot: true,
+        aiLevel: 1,
+        aggroRange: 200,
+        rLength: 10,
+        loot: ['dewdropS', 'dewdropS', 'empty', 'empty'],
+        frMax: 8,
+        image: new Image(),
+        imageSrc: './src/img/ntt/nmy/mummy_idleL.png',
+        sprites: {
+            idle: {
+                fraMax: 8,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/mummy_idleL.png',
+            },
+            attackL: {
+                fraMax: 8,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/mummy_attackL.png',
+            },
+            attackR: {
+                fraMax: 8,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/mummy_attackR.png',
+            },
+            runLeft: {
+                fraMax: 8,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/mummy_runL.png',
+            },
+            runRight: {
+                fraMax: 8,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/mummy_runR.png',
+            },
+            struckL: {
+                fraMax: 8,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/royalkitty_runLeft.png',
+            },
+            struckR: {
+                fraMax: 8,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/royalkitty_runRight.png',
+            },
+            death: {
+                fraMax: 8,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/mummy_idleL.png',
+            }
+        }
+    },
+    royalkitty: {
+        name: 'Königsflausch',
+        type: 'Enemy',
+        size: {w: 96, h: 48, s: 1},
+        velocity: {x: 0, y: 0},
+        stats: {
+            maxHP: 60,
+            curHP: 60,
+            atk: 20,
+            atkCD: 100,
+            def: 10,
+            speed: 3
+        },
+        atkBox: { pos: {x: 0, y: 0, oX: 0, oY: 0}, size: {w: 32, h: 32, s: 0} },
+        hasLoot: true,
+        aiLevel: 1,
+        aggroRange: 200,
+        rLength: 10,
+        loot: ['dewdropS', 'empty', 'empty', 'empty'],
+        frMax: 8,
+        image: new Image(),
+        imageSrc: './src/img/ntt/nmy/royalkitty_runLeft.png',
+        sprites: {
+            idle: {
+                fraMax: 8,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/royalkitty_runLeft.png',
+            },
+            attackL: {
+                fraMax: 8,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/royalkitty_runLeft.png',
+            },
+            attackR: {
+                fraMax: 8,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/royalkitty_runRight.png',
+            },
+            runLeft: {
+                fraMax: 8,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/royalkitty_runLeft.png',
+            },
+            runRight: {
+                fraMax: 8,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/royalkitty_runRight.png',
+            },
+            struckL: {
+                fraMax: 8,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/royalkitty_runLeft.png',
+            },
+            struckR: {
+                fraMax: 8,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/royalkitty_runRight.png',
+            },
+            death: {
+                fraMax: 8,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/royalkitty_runLeft.png',
             }
         }
     },
@@ -314,28 +454,22 @@ const enemy = {
 }
 
 // Projektile
-const missile = {
+const MISSILE = {
     venomshot: {
         name: 'Giftschuss',
         type: 'Missile',
         size: {w: 34, h: 28, s: 1},
         velocity: {x: 0, y: 0},
         stats: {
-            maxHP: 250,
-            curHP: 250,
-            atk: 30,
-            atkCD: 1,
+            maxHP: 150,
+            curHP: 150,
+            atk: 10,
+            atkCD: 100,
             def: 0,
             speed: 1
         },
         effect: function () {
             JumpAndRun.struck(this, JumpAndRun.myPlayer);
-
-
-
-            //if ( JumpAndRun.myPlayer.stats.curHP < 0 || this.damage - JumpAndRun.myPlayer.stats.curHP > 0) {
-            //    JumpAndRun.myPlayer.stats.curHP -= JumpAndRun.myPlayer.stats.curHP;
-            //} else JumpAndRun.myPlayer.stats.curHP -= this.damage;
         },
         invulnerable: true,
         frMax: 5,
@@ -382,6 +516,16 @@ const missile = {
         }
     }
     */
-
-
 }
+
+const TUTSHEETS = [
+    {start: 32, end: 300, image: './src/img/tut/ts01.png'}, // Bewegen links/rechts
+    {start: 700, end: 950, image: './src/img/tut/ts02.png'}, // Springen
+    {start: 1300, end: 1650, image: './src/img/tut/ts03p.png'}, //Angreifen
+    {start: 1900, end: 2100, image: './src/img/tut/ts04.png'}, // Einsammeln/Tautropfen
+    {start: 2300, end: 2475, image: './src/img/tut/ts05.png'}, // Double Jump
+    {start: 2600, end: 3000, image: './src/img/tut/ts06.png'}, // Fernkampfgegner
+    {start: 3700, end: 3950, image: './src/img/tut/ts07.png'}, // Slide/Dash
+    {start: 4550, end: 5000, image: './src/img/tut/ts08p.png'}, // "Bosskampf"
+    {start: 5800, end: 6100, image: './src/img/tut/ts09.png'} // Portal
+]
