@@ -7,8 +7,7 @@ let TD = new TowerDefence(0);
 //JumpAndRun Instance
 let JumpAndRun = new JumpAndRunClass(1);
 
-//Main Menu Instance
-let MainMenuObj = new MainMenu();
+
 
 //Current Gamemode 0 = MainMenu, 1 = JumpAndRun, 2 = TowerDefence
 let GameMode = 0;
@@ -476,3 +475,6 @@ function setScore(World, Level, Score){
     }
 
 }
+
+//Main Menu Instance
+let MainMenuObj = new MainMenu();
