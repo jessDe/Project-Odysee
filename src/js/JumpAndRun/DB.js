@@ -177,7 +177,7 @@ const ENEMY = {
             maxHP: 40,
             curHP: 40,
             atk: 5,
-            atkCD: 50,
+            atkCD: 250,
             def: 15,
             speed: 1
         },
@@ -241,8 +241,8 @@ const ENEMY = {
         size: {w: 64, h: 64, s: 1},
         velocity: {x: 0, y: 0},
         stats: {
-            maxHP: 40,
-            curHP: 40,
+            maxHP: 50,
+            curHP: 50,
             atk: 10,
             atkCD: 100,
             def: 30,
@@ -252,8 +252,8 @@ const ENEMY = {
         hasLoot: true,
         aiLevel: 1,
         aggroRange: 200,
-        rLength: 10,
-        loot: ['dewdropS', 'empty'],
+        rLength: 50,
+        loot: ['dewdropS', 'empty', 'empty'],
         frMax: 8,
         image: new Image(),
         imageSrc: './src/img/ntt/nmy/mummy_idleL.png',
@@ -362,37 +362,6 @@ const ENEMY = {
                 fraMax: 8,
                 image: new Image(),
                 imageSrc: './src/img/ntt/nmy/royalkitty_runLeft.png',
-            }
-        }
-    },
-    yamoma: {
-        name: 'Yamoma',
-        honorific: 'Vertilger von Hoffnung, Unbesehenes Auge, Abgesandter der Verdammnis, Inkarnation der Entropie',
-        type: 'Enemy',
-        size: {w: 64, h: 64, s: 1},
-        velocity: {x: 0, y: 0},
-        stats: {
-            maxHP: 99999,
-            curHP: 99999,
-            atk: 99999,
-            atkCD: 1,
-            def: 99999,
-            speed: 0
-        },
-        atkBox: { pos: {x: 1, y: 1, oX: 1, oY: 1}, size: {w: 1, h: 1, s: 1} },
-        hasLoot: false,
-        aiLevel: 0,
-        aggroRange: 0,
-        rLength: 0,
-        loot: [],
-        frMax: 1,
-        image: new Image(),
-        imageSrc: './src/img/ntt/nmy/yamoma_idle.png',
-        sprites: {
-            idle: {
-                fraMax: 1,
-                image: new Image(),
-                imageSrc: './src/img/ntt/nmy/yamoma_idle.png',
             }
         }
     }

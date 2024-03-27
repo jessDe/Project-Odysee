@@ -186,7 +186,6 @@ class Enemy extends Entity {
                         this.direction = -1;
                         projXY = new transform(this.pos.x - this.size.w / 2, this.pos.y);
                     }
-                    console.log("new Missile")
                     this.fireMissile(this.ammo, projXY, JumpAndRun.myPlayer);
                     this.fireCD = this.stats.atkCD;
                 }
@@ -206,6 +205,23 @@ class Enemy extends Entity {
             prj.update();
         });
 
+        let projClear = [];
+        for(let i = JumpAndRun.activePRJ.length - 1; i >= 0; i--) {
+            if (JumpAndRun.activePRJ[i]) { // Check if the projectile is defined
+                console.log(`Before update: Projectile ${i} is alive: ${JumpAndRun.activePRJ[i].alive}`);
+                console.log(JumpAndRun.activePRJ[i]);
+                JumpAndRun.activePRJ[i].update();
+                console.log(`After update: Projectile ${i} is alive: ${JumpAndRun.activePRJ[i].alive}`);
+                console.log(JumpAndRun.activePRJ[i]);
+                if (!JumpAndRun.activePRJ[i].alive) {
+                    projClear.push(i);
+                }
+            }
+        }
+        for(let i of projClear) {
+            console.log(`Removing projectile ${i}`);
+            JumpAndRun.activePRJ.splice(i, 1);
+        }
 
 
         super.draw();
@@ -232,7 +248,6 @@ class Missile extends Entity {
         this.prjVec = vecCalc(this.pos, target);
         this.stats = props.stats;
         this.effect = props.effect;
-        this.stats.curHP = 150;
     }
     end() {
         console.log(JumpAndRun.activePRJ.length)
@@ -241,7 +256,6 @@ class Missile extends Entity {
 
     }
     update() {
-
         // Equivalent zur Movekomponente, mit Ergebnissen der Vektorrechnung aus vecCalc()
         this.pos.x += this.prjVec.x * this.stats.speed;
         this.pos.y += this.prjVec.y * this.stats.speed;
