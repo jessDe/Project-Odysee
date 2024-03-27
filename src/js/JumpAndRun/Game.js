@@ -35,8 +35,8 @@ let dummy = {
     pos: { x: 0, y: 0 },
     size: { w: 0, h: 0 }
 }
-let fadeVar;
-let fadeMSG
+let fadeVar = 0;
+let fadeMSG = "";
 // Klasse für Starten des Spiels, erstellt von LP - Ergänzungen von AZ
 class JumpAndRunClass {
     constructor(level) {
