@@ -35,12 +35,11 @@ let keymap = {
 // "Spielerdummy", erlaubt Manipulation von Position&Co bevor
 // sie weitergegeben werden. Verwendet in Player.js für blockade()
 let dummy = {
-    pos: { x: 0, y: 0, oX: 0, oY: 0 },
-    size: { w: 0, h: 0, s: 1 }
+    pos: { x: 0, y: 0 },
+    size: { w: 0, h: 0 }
 }
-// Variablen für Fade-Funktion
-let fadeVar;
-let fadeMSG
+let fadeVar = 0;
+let fadeMSG = "";
 // Klasse für Starten des Spiels, erstellt von LP - Ergänzungen von AZ
 class JumpAndRunClass {
     constructor(level) {
@@ -119,6 +118,7 @@ class JumpAndRunClass {
                 let pos = this.lvlc.map.mask.indexOf( this.lvlc.map.pattern[zeile].charAt( spalte ) );
                 if( pos >= 0) {
                     pinsel.drawImage(this.tileset, TILESIZE * pos, 0, TILESIZE, TILESIZE, spalte*TILESIZE-offset.x*TILESIZE, zeile*TILESIZE-offset.y*TILESIZE, TILESIZE, TILESIZE);
+                    //console.log('Zeile: '+ zeile +', Spalte: '+ spalte +', Pos: '+ pos);
                 } else {
                     //console.log("TileSet Error"+ this.lvlc.map.pattern[zeile].charAt( spalte ))
                 }
