@@ -209,9 +209,11 @@ class Player {
       steuerung.springen = false;
       this.velocity.y = -this.jumpStrength;
       this.airStair++;
-      //this.sounds.Jump.load();
+      /*
+      this.sounds.Jump.load();
       this.sounds.Jump.currentTime = 0;
       this.sounds.Jump.play().then(r => {});
+      */
       JumpAndRun.juggler(JumpAndRun.myPlayer, (JumpAndRun.myPlayer.direction === 1) ? 'jumpR' : 'jumpL');
     }
     // PC rutschen lassen
@@ -220,12 +222,14 @@ class Player {
       this.invulnerable = true;
       this.slideCD = this.slideHack;
       this.slideDuration = 15;
+      JumpAndRun.juggler(JumpAndRun.myPlayer, (JumpAndRun.myPlayer.direction === 1) ? 'slideR' : 'slideL');
+      /*
       //this.sounds.Slide.load();
       this.sounds.Slide.currentTime = 0;
       this.sounds.Slide.play().then(r => {});
+      */
       //if( this.direction === 1 ) JumpAndRun.juggler( JumpAndRun.myPlayer, 'slideR');
       //else JumpAndRun.juggler( JumpAndRun.myPlayer, 'slideL');
-      JumpAndRun.juggler(JumpAndRun.myPlayer, (JumpAndRun.myPlayer.direction === 1) ? 'slideR' : 'slideL');
     }
     // Standard-Angriff, benötigt zusätzliche Änderungen
     if (steuerung.attack && !this.attacking) {
@@ -234,11 +238,13 @@ class Player {
       for (let enemy of JumpAndRun.activeNMY) {
         if (rectCollision(JumpAndRun.myPlayer.atkBox, enemy)) JumpAndRun.struck(JumpAndRun.myPlayer, enemy);
       }
+      /*
       if(this.frame === 2){
         this.sounds.Attack.currentTime = 0;
         this.sounds.Attack.play().then(r => {
         });
       }
+      */
     }
     if(!steuerung.attack) this.attacking = false;
     /*
@@ -332,6 +338,7 @@ class Player {
     if(this.isSliding){
       this.slideDuration--;
       if(this.slideDuration <= 0){
+        steuerung.slide = false;
         this.isSliding = false;
         this.invulnerable = false;
       }
