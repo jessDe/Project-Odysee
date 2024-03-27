@@ -68,7 +68,7 @@ const SIGIL = {
         size: {w: 37, h: 52, s: 1},
         velocity: {x: 0, y: 0},
         effect: function () {
-            JumpAndRun.lumina += 50;
+            JumpAndRun.lumina += 60;
         },
         frMax: 8,
         image: new Image(),
@@ -246,7 +246,7 @@ const ENEMY = {
             atk: 10,
             atkCD: 100,
             def: 30,
-            speed: 3
+            speed: 1
         },
         atkBox: { pos: {x: 0, y: 0, oX: 0, oY: 0}, size: {w: 32, h: 32, s: 0} },
         hasLoot: true,
@@ -311,13 +311,13 @@ const ENEMY = {
             atk: 20,
             atkCD: 100,
             def: 10,
-            speed: 3
+            speed: 2
         },
         atkBox: { pos: {x: 0, y: 0, oX: 0, oY: 0}, size: {w: 32, h: 32, s: 0} },
         hasLoot: true,
         aiLevel: 1,
         aggroRange: 200,
-        rLength: 50,
+        rLength: 120,
         loot: ['dewdropS', 'empty', 'empty'],
         frMax: 8,
         image: new Image(),

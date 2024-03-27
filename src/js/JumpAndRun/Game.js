@@ -124,21 +124,20 @@ class JumpAndRunClass {
                 }
             }
         }
-        // Zeichnet Vignette für Untergrundlevel, inklusive Skalierung durch Lumina
-        if (this.lvlc.type === "underground") {
-            this.lumina = (this.lumina > 0) ? this.lumina - 0.01 : 0;
-            ctx.drawImage(
-                this.dark,
-                ( (Math.min(this.lumina, 100) ) * (6.4) ) + (Math.random() * 8),
-                ( (Math.min(this.lumina, 100) ) * (3.6) ) + (Math.random() * 8),
-                canvas.width * (1 + ( 1 - ( Math.min(this.lumina, 100) / 100 ) ) ),
-                canvas.height * (1 + ( 1 - ( Math.min(this.lumina, 100) / 100 ) ) ),
-                ((JumpAndRun.myPlayer.pos.x + JumpAndRun.myPlayer.size.w / 2) - canvas.width - offset.x * TILESIZE),
-                ((JumpAndRun.myPlayer.pos.y + JumpAndRun.myPlayer.size.h / 2) - canvas.height - offset.y * TILESIZE),
-                canvas.width * 2,
-                canvas.height * 2
-            );
-        }
+    }
+    drawDark() {
+        this.lumina = (this.lumina > 0) ? this.lumina - 0.01 : 0;
+        ctx.drawImage(
+            this.dark,
+            ( (Math.min(this.lumina, 100) ) * (6.4) ) + (Math.random() * 8),
+            ( (Math.min(this.lumina, 100) ) * (3.6) ) + (Math.random() * 8),
+            canvas.width * (1 + ( 1 - ( Math.min(this.lumina, 100) / 100 ) ) ),
+            canvas.height * (1 + ( 1 - ( Math.min(this.lumina, 100) / 100 ) ) ),
+            ((JumpAndRun.myPlayer.pos.x + JumpAndRun.myPlayer.size.w / 2) - canvas.width - world.offsetX * TILESIZE),
+            ((JumpAndRun.myPlayer.pos.y + JumpAndRun.myPlayer.size.h / 2) - canvas.height - world.offsetY * TILESIZE),
+            canvas.width * 2,
+            canvas.height * 2
+        );
     }
     // Tutorial-Methode zum Zeichnen der Hinweisbilder
     drawTut(){
@@ -319,6 +318,8 @@ class JumpAndRunClass {
         for (let sigil of JumpAndRun.activeSGL) {
             sigil.update();
         }
+        // Zeichnet Vignette für Untergrundlevel, inklusive Skalierung durch Lumina
+        if (JumpAndRun.lvlc.type === "underground") JumpAndRun.drawDark();
         if(!JumpAndRun.myPlayer.alive || (JumpAndRun.myPlayer.pos.y > ( (JumpAndRun.lvlc.map.pattern.length * TILESIZE) - (JumpAndRun.myPlayer.size.h * 2) ))) { // || (JumpAndRun.myPlayer.pos.y > ( (this.lvlc.map.pattern.length * TILESIZE) - (JumpAndRun.myPlayer.size.h * 2) ))
             JumpAndRun.GameRunning = false;
             fade(deathMSG, function () {

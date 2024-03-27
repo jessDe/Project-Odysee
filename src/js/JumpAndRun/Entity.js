@@ -204,6 +204,7 @@ class Enemy extends Entity {
         JumpAndRun.activePRJ.forEach( prj => {
             prj.update();
         });
+        /*
 
         let projClear = [];
         for(let i = JumpAndRun.activePRJ.length - 1; i >= 0; i--) {
@@ -218,10 +219,14 @@ class Enemy extends Entity {
                 }
             }
         }
+
+
         for(let i of projClear) {
             console.log(`Removing projectile ${i}`);
             JumpAndRun.activePRJ.splice(i, 1);
         }
+
+         */
 
 
         super.draw();

@@ -176,19 +176,22 @@ const LEVELS = [
                 player: {x: 180, y: 160, oX: 0, oY: 0},
                 sigils: [
                     {name: 'dewdropS', type: 'Sigil', pos: {x: 2056, y: 150, oX: 0, oY: 0}},
-                    {name: 'dewdropS', type: 'Sigil', pos: {x: 2200, y: 190, oX: 0, oY: 0}},
+                    {name: 'dewdropS', type: 'Sigil', pos: {x: 2200, y: 150, oX: 0, oY: 0}},
                     {name: 'dewdropS', type: 'Sigil', pos: {x: 8280, y: 800, oX: 0, oY: 0}},
                     {name: 'dewdropS', type: 'Sigil', pos: {x: 8160, y: 800, oX: 0, oY: 0}},
-                    {name: 'Portal', type: 'Sigil', pos: {x: 8600, y: 340, oX: 0, oY: 0}}
+                    {name: 'Portal', type: 'Sigil', pos: {x: 8650, y: 340, oX: 0, oY: 0}}
                 ],
                 enemies: [
-                    {name: 'royalkitty', type: 'Enemy', pos: {x: 627, y: 703, oX: 0, oY: 0 }},
+                    {name: 'royalkitty', type: 'Enemy', pos: {x: 640, y: 703, oX: 0, oY: 0 }},
                     {name: 'royalkitty', type: 'Enemy', pos: {x: 2000, y: 767, oX: 0, oY: 0 }},
                     {name: 'royalkitty', type: 'Enemy', pos: {x: 3400, y: 479, oX: 0, oY: 0 }},
                     {name: 'royalkitty', type: 'Enemy', pos: {x: 4590, y: 767, oX: 0, oY: 0 }},
                     {name: 'royalkitty', type: 'Enemy', pos: {x: 5743, y: 670, oX: 0, oY: 0 }},
                     {name: 'royalkitty', type: 'Enemy', pos: {x: 6120, y: 639, oX: 0, oY: 0 }},
                     {name: 'royalkitty', type: 'Enemy', pos: {x: 6650, y: 702, oX: 0, oY: 0 }},
+                    {name: 'royalkitty', type: 'Enemy', pos: {x: 8100, y: 447, oX: 0, oY: 0 }},
+                    {name: 'royalkitty', type: 'Enemy', pos: {x: 8300, y: 447, oX: 0, oY: 0 }},
+                    {name: 'royalkitty', type: 'Enemy', pos: {x: 8500, y: 447, oX: 0, oY: 0 }},
                     {name: 'ichtophis', type: 'Enemy', pos: {x: 5190, y: 510, oX: 0, oY: 0 }},
                     {name: 'ichtophis', type: 'Enemy', pos: {x: 7070, y: 767, oX: 0, oY: 0 }}
                 ]
