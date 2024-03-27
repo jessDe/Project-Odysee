@@ -1,5 +1,5 @@
 
-
+//Mouse Position calculation
 function getMousePos(canvas, event) {
     const rect = canvas.getBoundingClientRect(); // Get canvas position
     const scaleX = canvas.width / rect.width;    // Get scaling factor

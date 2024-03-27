@@ -1,3 +1,4 @@
+// Enemies
 class EnemyTD {
     constructor(maxHealth, speed, reward, Level) {
         this.position = {};

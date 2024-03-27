@@ -1,3 +1,5 @@
+
+//Sets Cookie Data
 function setCookie(cname, cValue, exDays) {
     let d = new Date();
     d.setTime(d.getTime() + (exDays*24*60*60*1000));
@@ -5,6 +7,7 @@ function setCookie(cname, cValue, exDays) {
     document.cookie = cname + "=" + cValue + ";" + expires + ";path=/";
 }
 
+//Gets Cookie Data
 function getCookie(cname) {
     let name = cname + "=";
     let decodedCookie = decodeURIComponent(document.cookie);
@@ -21,6 +24,7 @@ function getCookie(cname) {
     return "";
 }
 
+//Checks if Cookie Exists
 function checkIfCookieExists(cname){
     let name = cname + "=";
     let decodedCookie = decodeURIComponent(document.cookie);

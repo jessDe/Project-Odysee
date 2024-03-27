@@ -4,6 +4,7 @@ class transform {
         this.y = y;
     }
 }
+//Tower Defense Levels JSON Data
 const TDLevels = [
     {
         name: "Level 1",

@@ -1,3 +1,4 @@
+//Enemy class
 class RoundEnemy {
     constructor(enemy, delay){
         this.enemy = enemy;
@@ -5,6 +6,7 @@ class RoundEnemy {
     }
 }
 
+//Round class
 class Round {
     constructor(enemies, endReward){
         this.enemies = enemies;
