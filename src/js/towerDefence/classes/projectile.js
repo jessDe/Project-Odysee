@@ -1,3 +1,5 @@
+
+// Klasse für die Projektile
 class projectile {
     constructor(x, y, damage, speed) {
         this.position = new transform(x,y)

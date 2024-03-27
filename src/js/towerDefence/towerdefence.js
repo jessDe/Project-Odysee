@@ -1,12 +1,12 @@
 
-// Load tower1
+// Load Images
 const tower1Image = new Image();
 tower1Image.src = "./src/img/TD/Tower1.png";
 
 const SunImage = new Image();
 SunImage.src = "./src/img/TD/Sun_365x329.png";
 
-//Load Projectile1
+
 const projectile1Image = new Image();
 projectile1Image.src = "./src/img/TD/projectile1.png";
 
@@ -17,29 +17,36 @@ Enemy1Image.src = "./src/img/TD/greif_run.png";
 const AnimatedLakeImage = new Image();
 AnimatedLakeImage.src = "./src/img/TD/new_dessert_lake.png";
 
+
+
+//Global Variables
 const HTMLShop = document.getElementById("Shop");
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 canvas.style.imageRendering = "pixelated";
 
+
+//Mouse Position Update Event
 canvas.addEventListener('mousemove', function(event) {
     const mousePos = getMousePos(canvas, event);
     calculateMouseGridCord(mousePos.x, mousePos.y);
 });
 
 
-
+//Tower Defence Shop
 const TDShop = [
     new ShopTower("Sabu Tower", 50, tower1Image),
     new ShopTower("Sinal Tower", 100, tower1Image),
 ];
 
-
+//Mouse Pos Variable
 let MousePos = {
     x: 0,
     y: 0
 };
+
+//Mouse Mode (What the mouse currently does in TD)
 let MouseMode = "none";
 
 //Debug Texts
@@ -49,6 +56,7 @@ let checkbox = document.getElementById("gridToggle");
 
 
 
+//Calculate Mouse Grid Cords
 function calculateMouseGridCord(x, y){
     let gridX = Math.floor(x/20);
     let gridY = Math.floor(y/20);
@@ -57,6 +65,8 @@ function calculateMouseGridCord(x, y){
     gridCordsText.innerHTML = "Grid X: " + gridX + " Grid Y: " + gridY;
 }
 
+
+//Tower Defence Game
 class TowerDefence{
     constructor(Level){
         this.Level = Level;
@@ -84,6 +94,7 @@ class TowerDefence{
         TDLevels[this.Level].mapImage.src = TDLevels[this.Level].mapImageSrc;
     }
 
+    //Load Block Cords from Level
     LoadBlockCords(){
         for (let i = 0; i < 65; i++) {
             this.BlockGrid[i] = [];
@@ -96,15 +107,17 @@ class TowerDefence{
         });
     }
 
+    //Key Event
     clickevent(key){
         if(key === 66 && debug){
+            //B - Only when Debug mode is enabled
             if(MouseMode === "blocking"){
                 MouseMode = "none";
             }else{
                 MouseMode = "blocking";
             }
         }else if(key === 27){
-
+            //ESC Toggles Pause Menu
             if(TD.GameRunning === true){
                 TD.GameRunning = false;
 
@@ -125,18 +138,22 @@ class TowerDefence{
 
         }
     }
-
+    //Draw Map
     drawMap(){
         ctx.drawImage(TDLevels[TD.Level].mapImage, 0, 0, 1280, 720);
     }
+
+    //All Game Logic
     animate() {
         let SunFrame = false;
 
+        //Time Delta
         if (new Date().getTime() - TD.timeDelta > 1000) {
             TD.time++;
             TD.timeDelta = new Date().getTime();
         }
 
+        //Sun Frame
         if (new Date().getTime() - TD.SunFrameTime > 120) {
             SunFrame = true;
             TD.SunFrameTime = new Date().getTime();
@@ -200,10 +217,13 @@ class TowerDefence{
 
 
         let j = 0;
+
+        //Tower Logic
         TD.towers.forEach(tower => {
             tower.draw(ctx);
             let everyProjectileHasTarget = true;
             tower.projectiles.forEach((projectile, index) => {
+                //Projectile Logic
 
                 projectile.update();
                 if (projectile.target !== null) {
@@ -225,9 +245,8 @@ class TowerDefence{
             tower.timeSinceLastShot++;
             j++;
         });
-        //draw Blocked
 
-
+        //Placing Tower
         if (MouseMode === "placing") {
             //check if Tower is in the way
             let image = TDShop[TD.CurrentPlacingTowerID].image;
@@ -260,6 +279,7 @@ class TowerDefence{
         let SunRow = 0;
         let SunCol = 0;
 
+        //Update Sun Row and Col
         if(TD.SunTimer > 30){
             SunRow = 5;
         }else if(TD.SunTimer > 24){
@@ -291,7 +311,7 @@ class TowerDefence{
         ctx.fillText("Lives: " + TD.Lives, 110, ctx.canvas.height-10);
         ctx.fillText("Round: " + (TD.CurrentRound+1), 10, ctx.canvas.height-10);
 
-
+        //Check if Game Ended Or Running
         if(TD.GameRunning){
             requestAnimationFrame(TD.animate);
         }else if(TD.GameEnded){
@@ -303,7 +323,7 @@ class TowerDefence{
             //press esc to continue
             ctx.fillText("Press ESC to return to Level Select", canvas.width/2-200, canvas.height/2+50);
         }
-
+        //Draw Blocking Cords
         if(MouseMode === "blocking"){
             TDLevels[TD.Level].map.blockCords.forEach(cord => {
                 ctx.fillStyle = "rgba(0,0,0,0.5)";
@@ -313,6 +333,8 @@ class TowerDefence{
 
 
     }
+
+    //Checks if Tower is colliding with another Tower or Blockcords
     checkTowerCollision(){
         let isColliding = false;
 
@@ -341,16 +363,25 @@ class TowerDefence{
         }
         return isColliding;
     }
+
+    //Adds Tower to Tower Array
     placeTower(){
 
         if(this.checkTowerCollision() === false){
-            this.towers.push(new tower(MousePos.x, MousePos.y-3));
-            this.towers.sort((a, b) => a.position.y - b.position.y);
-            MouseMode = "none";
+            if(this.money >= TDShop[this.CurrentPlacingTowerID].price){
+                this.money -= TDShop[this.CurrentPlacingTowerID].price;
+                this.towers.push(new tower(MousePos.x, MousePos.y-3));
+                this.towers.sort((a, b) => a.position.y - b.position.y);
+                MouseMode = "none";
+            }else{
+                console.log("Not enough money");
+                MouseMode = "none";
+            }
         }
     }
 
 
+    //Draws Grid
     drawGrid() {
         ctx.beginPath();
         for (let x = 0; x <= this.width; x += this.gridSize) {
@@ -364,14 +395,15 @@ class TowerDefence{
         ctx.strokeStyle = 'lightgray';
         ctx.stroke();
     }
+
+    //Select Tower for placing
     buyTower(id){
-        if(this.money >= TDShop[id].price){
-            this.money -= TDShop[id].price;
-            this.CurrentPlacingTowerID = id;
-            MouseMode = "placing";
-        }
+        this.CurrentPlacingTowerID = id;
+        MouseMode = "placing";
+
     }
 
+    //Register Events
     registerEvents(){
 
 
@@ -395,6 +427,7 @@ class TowerDefence{
                 TD.pausescreen = true;
             }
         });
+        //Grid Toggle
         checkbox.addEventListener("change", function() {
             if (this.checked) {
                 TD.showGrid = true;
@@ -402,7 +435,7 @@ class TowerDefence{
                 TD.showGrid = false;
             }
         });
-
+        //Mouse Click Event
         canvas.addEventListener('click', function() {
             if(TD.GameRunning){
                 if(MouseMode === "placing"){
@@ -420,6 +453,8 @@ class TowerDefence{
 
         });
     }
+
+    //Starts the Game
     StartGame(){
         if(TD.GameRunning === false){
 
@@ -433,7 +468,7 @@ class TowerDefence{
         }
     }
 
-
+    //Generates Rounds Enemies
     generateRoundEnemies(roundNumber) {
         let enemies = [];
         let numEnemies = 10*roundNumber; // Increase number of enemies with each round
@@ -445,6 +480,8 @@ class TowerDefence{
         }
         return enemies;
     }
+
+    //Generates Rounds (100 Rounds in total)
     GenerateRounds(){
         let rounds = [];
         for (let i = 0; i < 100; i++) {
