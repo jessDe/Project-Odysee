@@ -74,8 +74,6 @@ class TowerDefence{
         this.CurrentPlacingTowerID = 0;
         this.LoadBlockCords();
         this.timeDelta = new Date().getTime();
-
-
         this.GameRunning = false;
         this.SunTimer = 0;
         this.SunFrameTime = 0;
@@ -442,7 +440,7 @@ class TowerDefence{
         for (let i = 0; i < numEnemies; i++) {
             let health = 150 + roundNumber * 50 + 10*i; // Increase health with each round
             let speed = 3 + roundNumber * 0.1; // Increase speed with each round
-            let delay = i * 2 - roundNumber*0.1; // Delay of 2 seconds between each enemy
+            let delay = i * 2 - roundNumber*0.1; // Delay of 2 seconds between each ENEMY
             enemies.push(new RoundEnemy(new EnemyTD(health, speed, 5*roundNumber, 0), delay));
         }
         return enemies;

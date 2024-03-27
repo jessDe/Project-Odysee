@@ -231,11 +231,11 @@ class JumpAndRunClass {
     // Selbsterklärend :o)
     konami() {
         let konami = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
-        let konamiPos = 0;
+        let konamiUnlock = 0;
         window.addEventListener('keydown', function (e) {
-            if (e.keyCode === konami[konamiPos]) {
-                konamiPos++;
-                if (konamiPos === konami.length) {
+            if (e.keyCode === konami[konamiUnlock]) {
+                konamiUnlock++;
+                if (konamiUnlock === konami.length) {
                     JumpAndRun.myPlayer.stats.maxHP += 999;
                     JumpAndRun.myPlayer.stats.curHP += 999;
                     JumpAndRun.myPlayer.stats.atk += 999;
@@ -245,10 +245,10 @@ class JumpAndRunClass {
                     JumpAndRun.myPlayer.stats.speed += 9;
                     JumpAndRun.myPlayer.airStairLimit += 999;
                     JumpAndRun.myPlayer.slideHack = 0;
-                    konamiPos = 0;
+                    konamiUnlock = 0;
                 }
             } else {
-                konamiPos = 0;
+                konamiUnlock = 0;
             }
         });
     }
@@ -414,20 +414,18 @@ function dropLoot( entity ) {
 
 function blockade( ntt, map ) {
     let zeichenLO, zeichenLU, zeichenRO, zeichenRU;
-    let b = {} ;
-    b.spalteLinks = Math.floor( ntt.pos.x / TILESIZE ) ;
-    b.spalteRechts = Math.floor( ( ntt.pos.x + ntt.size.w ) / TILESIZE ) ;
-    b.zeileOben = Math.floor( ntt.pos.y / TILESIZE ) ;
-    b.zeileUnten = Math.floor( ( ntt.pos.y + ntt.size.h ) / TILESIZE ) ;
-    // console.log(ntt.pos.x, ntt.pos.y, ntt.stats.speed, ntt.velocity.x, b);
-    zeichenLO = map.pattern[ b.zeileOben ].charAt( b.spalteLinks ) ;
-    zeichenLU = map.pattern[ b.zeileUnten ].charAt( b.spalteLinks ) ;
-    zeichenRO = map.pattern[ b.zeileOben ].charAt( b.spalteRechts ) ;
-    zeichenRU = map.pattern[ b.zeileUnten ].charAt( b.spalteRechts ) ;
-    // console.log(zeichenLU + " " +zeichenRU)
-    b.links = ( map.solid.indexOf( zeichenLO ) >= 0 || map.solid.indexOf( zeichenLU ) >= 0 ) ;
-    b.rechts = ( map.solid.indexOf( zeichenRO ) >= 0 || map.solid.indexOf( zeichenRU ) >= 0 ) ;
-    b.oben = ( map.solid.indexOf( zeichenLO ) >= 0 || map.solid.indexOf( zeichenRO ) >= 0 ) ;
-    b.unten = ( map.solid.indexOf( zeichenLU ) >= 0 || map.solid.indexOf( zeichenRU ) >= 0 ) ;
+    let b = {};
+    b.spalteLinks = Math.floor( ntt.pos.x / TILESIZE );
+    b.spalteRechts = Math.floor( ( ntt.pos.x + ntt.size.w ) / TILESIZE );
+    b.zeileOben = Math.floor( ntt.pos.y / TILESIZE );
+    b.zeileUnten = Math.floor( ( ntt.pos.y + ntt.size.h ) / TILESIZE );
+    zeichenLO = map.pattern[ b.zeileOben ].charAt( b.spalteLinks );
+    zeichenLU = map.pattern[ b.zeileUnten ].charAt( b.spalteLinks );
+    zeichenRO = map.pattern[ b.zeileOben ].charAt( b.spalteRechts );
+    zeichenRU = map.pattern[ b.zeileUnten ].charAt( b.spalteRechts );
+    b.links = ( map.solid.indexOf( zeichenLO ) >= 0 || map.solid.indexOf( zeichenLU ) >= 0 );
+    b.rechts = ( map.solid.indexOf( zeichenRO ) >= 0 || map.solid.indexOf( zeichenRU ) >= 0 );
+    b.oben = ( map.solid.indexOf( zeichenLO ) >= 0 || map.solid.indexOf( zeichenRO ) >= 0 );
+    b.unten = ( map.solid.indexOf( zeichenLU ) >= 0 || map.solid.indexOf( zeichenRU ) >= 0 );
     return b;
 }

@@ -273,22 +273,22 @@ const ENEMY = {
             runLeft: {
                 fraMax: 8,
                 image: new Image(),
-                imageSrc: './src/img/ntt/nmy/mummy_runL.png',
+                imageSrc: './src/img/ntt/nmy/mummy_runLeft.png',
             },
             runRight: {
                 fraMax: 8,
                 image: new Image(),
-                imageSrc: './src/img/ntt/nmy/mummy_runR.png',
+                imageSrc: './src/img/ntt/nmy/mummy_runRight.png',
             },
             struckL: {
                 fraMax: 8,
                 image: new Image(),
-                imageSrc: './src/img/ntt/nmy/royalkitty_runLeft.png',
+                imageSrc: './src/img/ntt/nmy/mummy_struckL.png',
             },
             struckR: {
                 fraMax: 8,
                 image: new Image(),
-                imageSrc: './src/img/ntt/nmy/royalkitty_runRight.png',
+                imageSrc: './src/img/ntt/nmy/mummy_struckR.png',
             },
             death: {
                 fraMax: 8,

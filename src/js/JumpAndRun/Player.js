@@ -234,10 +234,10 @@ class Player {
     }
     // PC springen lassen + Multi-Jump-Funktionalität ("Air-Stair")
     if (steuerung.springen && this.airStair < this.airStairLimit) {
+      console.log(this.pos);
       steuerung.springen = false;
       this.velocity.y = -this.jumpStrength;
       this.airStair++;
-      console.log(this.pos.x);
       //this.sounds.Jump.load();
       this.sounds.Jump.currentTime = 0;
       this.sounds.Jump.play().then(r => {});
