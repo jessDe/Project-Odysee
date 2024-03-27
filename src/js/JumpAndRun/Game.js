@@ -13,14 +13,15 @@ let steuerung = {
     pause: false
 };
 let lastTime;
+// Offsets für Canvas-Manipulation
 let world = {
     offsetX: 0,
     offsetY: 0
 }
 let miaY;
-// let gamepads;
-let deathMSG;
-// Test für Doppelbelegungen: "S" und "Shift" zum Sliden
+// let gamepads; // inaktiv da Gamepad-Steuerung nicht vollständig implementiert wurde
+let deathMSG; // Nachricht, die beim Tod des Spielers angezeigt wird
+// Doppelbelegungen für Tastatureingaben
 let keymap = {
     65: 65, // Links, 65 = "a"
     68: 68, // Rechts, 68 = "d"
@@ -31,10 +32,13 @@ let keymap = {
     74: 74, // Attack, 74 = "j"
     70: 74  // Attack-Alternative, 70 = "f"
 }
+// "Spielerdummy", erlaubt Manipulation von Position&Co bevor
+// sie weitergegeben werden. Verwendet in Player.js für blockade()
 let dummy = {
-    pos: { x: 0, y: 0 },
-    size: { w: 0, h: 0 }
+    pos: { x: 0, y: 0, oX: 0, oY: 0 },
+    size: { w: 0, h: 0, s: 1 }
 }
+// Variablen für Fade-Funktion
 let fadeVar;
 let fadeMSG
 // Klasse für Starten des Spiels, erstellt von LP - Ergänzungen von AZ
@@ -42,23 +46,22 @@ class JumpAndRunClass {
     constructor(level) {
         this.curlevel = level;  // Aktuelles Level
         this.lvlc = JSON.parse(JSON.stringify(LEVELS[this.curlevel]));  // JS-Magie, begesteuert von LP
-        this.myPlayer = new Player( this.lvlc.map, { w: 64, h: 64, s: 1 }, { maxHP: 100, curHP: 100, atk: 40, atkCD: 50, def: 20, mag: 50, mgx: 20, speed: 4} );
+        this.myPlayer = new Player( this.lvlc.map, { w: 64, h: 64, s: 1 }, { maxHP: 100, curHP: 100, atk: 40, atkCD: 50, def: 30, mag: 50, mgx: 20, speed: 4} );
         this.bgimg = new Image();
         this.bgimg.src = this.lvlc.bgimg;   // Ladet das Hintergrundbild wie in Level.js angegeben
         this.dark = new Image();
-        this.dark.src = "./src/img/bgimg/vig4.png";  // Vignette für Untergrundlevel
+        this.dark.src = "./src/img/bgimg/vig4.png";  // Helligkeitsvignette für Untergrundlevel
         this.tut = new Image();
-        this.tut.src = "./src/img/tut/ts01.png";
+        this.tut.src = "./src/img/tut/ts01.png";    // Tutorial-Bilder, Nummer 1
         this.tileset = new Image();
-        this.tileset.src = this.lvlc.tileset;   // Ladet die Tileset wie in Level.js angegeben
+        this.tileset.src = this.lvlc.tileset;   // Ladet das Tileset wie in Level.js angegeben
         this.StartTime = new Date();
-        // this.frame = 0; // Frame-Zähler; wird aktuell nicht verwendet???
-        this.GameRunning = false;
+        this.GameRunning = false;   // Flag für Spielstatus
         this.activeNMY = [];    // Array für aktive Gegner
         this.activeSGL = [];    // Array für aktive Sigils
-        this.activePRJ = [];    // Array für aktive Projektile#
-        this.lumina = 0;       // Lumina für Untergrundlevel
-        this.startedbefore = false;
+        this.activePRJ = [];    // Array für aktive Projektile
+        this.lumina = 0;       // Lumina für Untergrundlevel, steuert Größe der Helligkeitsvignette
+        this.startedbefore = false; // Flag zum Überprüfen, ob das Spiel schon einmal gestartet wurde
         world = {
             offsetX: 0,
             offsetY: 0
@@ -92,6 +95,7 @@ class JumpAndRunClass {
         //window.addEventListener('gamepadconnected', this.gamepad);
         //window.addEventListener('gamepaddisconnected', this.gamepad);
     }
+    // Methode zum Zeichnen des Hintergrundbildes, separiert von drawLevel() für das Tutorial und die Geheimgänge
     drawBG(){
         ctx.drawImage( this.bgimg, JumpAndRun.myPlayer.pos.x * ((this.bgimg.width - canvas.width) / (this.lvlc.map.pattern[0].length * TILESIZE)), 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
     }
@@ -115,7 +119,6 @@ class JumpAndRunClass {
                 let pos = this.lvlc.map.mask.indexOf( this.lvlc.map.pattern[zeile].charAt( spalte ) );
                 if( pos >= 0) {
                     pinsel.drawImage(this.tileset, TILESIZE * pos, 0, TILESIZE, TILESIZE, spalte*TILESIZE-offset.x*TILESIZE, zeile*TILESIZE-offset.y*TILESIZE, TILESIZE, TILESIZE);
-                    //console.log('Zeile: '+ zeile +', Spalte: '+ spalte +', Pos: '+ pos);
                 } else {
                     //console.log("TileSet Error"+ this.lvlc.map.pattern[zeile].charAt( spalte ))
                 }
@@ -126,8 +129,8 @@ class JumpAndRunClass {
             this.lumina = (this.lumina > 0) ? this.lumina - 0.01 : 0;
             ctx.drawImage(
                 this.dark,
-                ( (Math.min(this.lumina, 100) ) * (6.4) ) + (Math.random() * 8), // vig.png: 6.4
-                ( (Math.min(this.lumina, 100) ) * (3.6) ) + (Math.random() * 8), // 3.6
+                ( (Math.min(this.lumina, 100) ) * (6.4) ) + (Math.random() * 8),
+                ( (Math.min(this.lumina, 100) ) * (3.6) ) + (Math.random() * 8),
                 canvas.width * (1 + ( 1 - ( Math.min(this.lumina, 100) / 100 ) ) ),
                 canvas.height * (1 + ( 1 - ( Math.min(this.lumina, 100) / 100 ) ) ),
                 ((JumpAndRun.myPlayer.pos.x + JumpAndRun.myPlayer.size.w / 2) - canvas.width - offset.x * TILESIZE),
@@ -137,15 +140,19 @@ class JumpAndRunClass {
             );
         }
     }
-    // Tutorial-Methode
+    // Tutorial-Methode zum Zeichnen der Hinweisbilder
     drawTut(){
         if (JumpAndRun.lvlc.type === "tutorial") {
             for (let track of TUTSHEETS) {
+                // Befindet sich der Spielercharakter zwischen den Start- und Endpunkten eines Tracks...
                 if (JumpAndRun.myPlayer.pos.x >= track.start && JumpAndRun.myPlayer.pos.x <= track.end) {
+                    // ...wird das entsprechende Bild geladen...
                     JumpAndRun.tut.src = track.image;
+                    // ...Rückstände eines alten Bildes werden hier entfernt...
                     ctx.clearRect(240, 64, JumpAndRun.tut.width, JumpAndRun.tut.height);
+                    // ...Hintergrund überzeichnet "Löcher" die von clearRect zurückgelassen wurden...
                     JumpAndRun.drawBG();
-
+                    // ...zeichnet das zuvor geladene Bild...
                     ctx.drawImage(
                         JumpAndRun.tut,
                         240,
@@ -153,11 +160,13 @@ class JumpAndRunClass {
                         JumpAndRun.tut.width,
                         JumpAndRun.tut.height
                     );
-                    break;
+                    break; // ...und bricht das Tracken des Tracks ab. Nötig weil sonst nur das Bild des letzten Tracks angezeigt wird
                 } else {
+                    // Befindet sich der Spielercharakter auf keinem der vordefinierten Tracks, wird die
+                    // clearRect-drawBG-Kombination erneut ausgeführt, um das letzte Bild zu entfernen.
                     ctx.clearRect(240, 64, JumpAndRun.tut.width, JumpAndRun.tut.height);
                     JumpAndRun.drawBG();
-                    JumpAndRun.tut.src = "";
+                    JumpAndRun.tut.src = ""; // (Kosmetisch) Notwendig, da es zu kurzen Nachbildern beim Bildwechsel kommen kann
                 }
             }
         }
