@@ -1,12 +1,11 @@
 // Klasse für den Spieler (Jump'n'Run)
-// geschrieben von:
 // Hauptautor: AZ - Beiträge von anderen Teammitgliedern sind kommentiert
 class Player {
   constructor(map, size, stats) {
     this.type = "Player";
     this.map = map; // Map-Objekt, beinhaltet PC-Position und Offset (siehe Zeile darunter)
     this.pos = map.spawn.player; // vier Werte, die letzten beiden sind für das Offset {x: 0, y: 0, oX: 0, oY: 0}
-    this.size = size; // zwei Werte, die Größe des Spielersprites {w: 64, h: 64}
+    this.size = size; // zwei Werte, die Größe des Spielersprites {w: 64, h: 64, s: 1}
     // this.eastward = true; // Blickrichtung des PC, alte Variante
     this.direction = 1; // Blickrichtung des PC, neue Variante - DARF NUR 1 ODER -1 SEIN
     // Bewegungsgeschwindigkeit, Sprungkraft, Schwerkraft und Air-Stair
@@ -18,21 +17,9 @@ class Player {
     this.airStair = 0;
     this.airStairLimit = 2;
     // Kampfwerte des Spielers
-    this.stats = stats;
-    /*
-    this.maxHP = 100;
-    this.curHP = 100;
-    this.atk = 40;
-    this.atkCD = 250;
-    this.def = 20;
-    this.mag = 50;
-    this.mgx = 20;
-    this.speed = 5;
-    */
+    this.stats = stats; // {maxHP: 100, curHP: 100 atk: 40, atkCD: 50, def: 30, this.mag = 50, this.mgx = 20, speed: 4}
     this.alive = true;
-    this.knocked = 0;
-    this.hasDeflect = false;  // Flag für Deflect-Talent, NYI
-    this.hardboiled = false;  // Flag für Hardboiled-Talent, NYI
+    this.knocked = 0; // Variable für Knockback-Stun
     this.attacking = false;
     this.slideCD = 0;
     this.slideHack = 100;
@@ -40,6 +27,9 @@ class Player {
     this.isSliding = false;
     this.invulnerable = false;
     this.damageCD = 0;
+    /*
+    this.hasDeflect = false;  // Flag für Deflect-Talent, NYI
+    this.hardboiled = false;  // Flag für Hardboiled-Talent, NYI
     this.sglEff = {           // Zähler für stapelbare Sigil-Effekte, NYI
       def: 0
     };
@@ -49,7 +39,8 @@ class Player {
       Attack: this.loadSound('./src/sounds/HitEnemy.mp3'),
       Hurt: this.loadSound('./src/sounds/Hit.mp3'),
       Pickup: this.loadSound('./src/sounds/pickup.mp3')
-    }
+    };
+    */
     this.atkBox = {
       pos: {
         x: canvas.width / 2 + this.size.w / 2,
@@ -67,7 +58,6 @@ class Player {
     this.frame = 0;
     this.frPast = 0;
     this.frMax = 12;
-    this.frDur = 0;
     this.image = new Image();
     this.image.src = './src/img/pc/idleR.png';
     this.sprites = {
@@ -128,7 +118,7 @@ class Player {
         image: new Image(),
         frMax: 1
       },
-      */
+       */
       struckL: {
         image: new Image(),
         frMax: 4
@@ -149,29 +139,9 @@ class Player {
     for (let sprite in this.sprites) {
       this.sprites[sprite].image.src = './src/img/pc/' + sprite + '.png';
     }
-    /*
 
-    this.sprites.idleL.image.src = './src/img/pc/idleL.png';
-    this.sprites.idleR.image.src = './src/img/pc/idleR.png';
-    this.sprites.runLeft.image.src = './src/img/pc/runLeft.png';
-    this.sprites.runRight.image.src = './src/img/pc/runRight.png';
-    this.sprites.jumpL.image.src = './src/img/pc/jumpL.png';
-    this.sprites.jumpR.image.src = './src/img/pc/jumpR.png';
-    this.sprites.slideL.image.src = './src/img/pc/slideL.png';
-    this.sprites.slideR.image.src = './src/img/pc/slideR.png';
-    this.sprites.struckL.image.src = './src/img/pc/struckL.png';
-    this.sprites.struckR.image.src = './src/img/pc/struckR.png';
-    this.sprites.attackL.image.src = './src/img/pc/attackL.png';
-    this.sprites.attackR.image.src = './src/img/pc/attackR.png';
-    // this.sprites.specialL.image.src = './src/img/pc/specialL.png';
-    // this.sprites.specialR.image.src = './src/img/pc/specialR.png';
-    // this.sprites.magicL.image.src = './src/img/pc/magicL.png';
-    // this.sprites.magicR.image.src = './src/img/pc/magicR.png';
-    // this.sprites.death.image.src = './src/img/pc/death.png';
-
-     */
-
-  }/*
+  }
+  /*
   // Kollisionsmethode für Terrain, schamlos gestohlen vom Unterrichtsmaterial
   blockade( posX, posY, map ) {
     let zeichenLO, zeichenLU, zeichenRO, zeichenRU;
@@ -192,16 +162,17 @@ class Player {
     return b;
   }
   */
-
+  /*
   loadSound(src) {
     let sound = new Audio(src);
     sound.preload = 'auto';
     sound.load();
     return sound;
   }
+  */
 
 
-  // Puppeteer: PC-Bewegung und Animationen
+  // Puppeteer: PC-Bewegung und Animationen, erweiterte Version des Unterrichtsmaterials
   puppeteer(){
     if (this.knocked > 0) {
       this.knocked--;
@@ -393,8 +364,6 @@ class Player {
       this.stats.curHP = this.stats.maxHP;
     }
   }
-
-
   // Fähigkeiten und Talente des PCs, NYI
   /*
   talents() {
@@ -415,7 +384,6 @@ class Player {
     }
   }
   */
-  // Methode zum Aktualisieren des PC
   update() {
     this.puppeteer();
     this.ticker();

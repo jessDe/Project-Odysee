@@ -1,6 +1,8 @@
-// Datenbank für Entitäten (mit Ausnahme des Spielers) - geschrieben von AZ
+// Datenbank für Entitäten (mit Ausnahme des Spielers)
+// Hauptautor: AZ - Beiträge von anderen Teammitgliedern sind kommentiert
+// Sigillen und ihre Eigenschaften
 const SIGIL = {
-    dewdropS: {
+    dewdropS: {         // Regeneriert eine kleine Menge an HP
         name: 'Kleiner Tautropfen',
         type: 'Sigil',
         size: {w: 32, h: 32, s: 1},
@@ -18,14 +20,13 @@ const SIGIL = {
                 imageSrc: './src/img/ntt/sgl/dewdropS_idle.png',
             },
             death: {
-                fraMax: 4,
+                fraMax: 5,
                 image: new Image(),
                 imageSrc: './src/img/ntt/sgl/dewdropS_idle.png',
             }
         }
     },
-    // Portal, ergänzt von LP
-    Portal: {
+    Portal: {           // Portal zum Betreten des nächsten Levels, geschrieben von LP
         name: 'Portal',
         type: 'Sigil',
         size: {w: 71, h: 128, s: 1},
@@ -61,7 +62,7 @@ const SIGIL = {
             }
         }
     },
-    rawlight: {
+    rawlight: {         // Erhöht die Lumina in Untergrundleveln
         name: 'Lichttropfen',
         type: 'Sigil',
         size: {w: 37, h: 52, s: 1},
@@ -85,7 +86,7 @@ const SIGIL = {
             }
         }
     },
-    empty: {
+    empty: {            // Provisorisches Dummy-Objekt mit Null-Funktion für leere Slots in Loot-Tabellen
         name: 'Leereintrag',
         type: 'Sigil',
         size: {w: 0, h: 0, s: 1},
@@ -109,17 +110,17 @@ const SIGIL = {
         }
     },
 }
-
+// Gegner und deren Eigenschaften
 const ENEMY = {
-    dumbass: {
+    dumbass: {          // Provisorisches Irgendwas
         name: 'Riesentrottel',
         type: 'Enemy',
         size: {w: 128, h: 128, s: 1},
         velocity: {x: 0, y: 0},
         stats: {
-            maxHP: 25,
-            curHP: 25,
-            atk: 35,
+            maxHP: 200,
+            curHP: 200,
+            atk: 5,
             atkCD: 500,
             def: 0,
             speed: 1
@@ -166,7 +167,7 @@ const ENEMY = {
             }
         }
     },
-    ichtophis: {
+    ichtophis: {            // Fisch-Schlangen-Chimäre, Fernkämpfer
         name: 'Ichtophis',
         type: 'Enemy',
         ammo: 'venomshot',
@@ -183,7 +184,7 @@ const ENEMY = {
         atkBox: { pos: {x: 0, y: 0, oX: 0, oY: 0}, size: {w: 32, h: 32, s: 0} },
         hasLoot: true,
         aiLevel: 2,
-        aggroRange: 500,
+        aggroRange: 400,
         rLength: 10,
         loot: ['dewdropS', 'empty', 'empty', 'empty'],
         frMax: 4,
@@ -195,6 +196,7 @@ const ENEMY = {
                 image: new Image(),
                 imageSrc: './src/img/ntt/nmy/chim-snake_runLeft.png',
             },
+            /*
             attackL: {
                 fraMax: 4,
                 image: new Image(),
@@ -205,6 +207,7 @@ const ENEMY = {
                 image: new Image(),
                 imageSrc: './src/img/ntt/nmy/chim-snake_runRight.png',
             },
+            */
             runLeft: {
                 fraMax: 4,
                 image: new Image(),
@@ -232,7 +235,7 @@ const ENEMY = {
             }
         }
     },
-    regalmummy: {
+    regalmummy: {           // Mumie eines hoheitlichen Wesens
         name: 'Königsmumie',
         type: 'Enemy',
         size: {w: 64, h: 64, s: 1},
@@ -250,7 +253,7 @@ const ENEMY = {
         aiLevel: 1,
         aggroRange: 200,
         rLength: 10,
-        loot: ['dewdropS', 'dewdropS', 'empty', 'empty'],
+        loot: ['dewdropS', 'empty'],
         frMax: 8,
         image: new Image(),
         imageSrc: './src/img/ntt/nmy/mummy_idleL.png',
@@ -297,7 +300,7 @@ const ENEMY = {
             }
         }
     },
-    royalkitty: {
+    royalkitty: {           // Eine der vielen persönliche Schmusekatzen der Göttin Bastet
         name: 'Königsflausch',
         type: 'Enemy',
         size: {w: 96, h: 48, s: 1},
@@ -314,8 +317,8 @@ const ENEMY = {
         hasLoot: true,
         aiLevel: 1,
         aggroRange: 200,
-        rLength: 10,
-        loot: ['dewdropS', 'empty', 'empty', 'empty'],
+        rLength: 50,
+        loot: ['dewdropS', 'empty', 'empty'],
         frMax: 8,
         image: new Image(),
         imageSrc: './src/img/ntt/nmy/royalkitty_runLeft.png',
@@ -324,16 +327,6 @@ const ENEMY = {
                 fraMax: 8,
                 image: new Image(),
                 imageSrc: './src/img/ntt/nmy/royalkitty_runLeft.png',
-            },
-            attackL: {
-                fraMax: 8,
-                image: new Image(),
-                imageSrc: './src/img/ntt/nmy/royalkitty_runLeft.png',
-            },
-            attackR: {
-                fraMax: 8,
-                image: new Image(),
-                imageSrc: './src/img/ntt/nmy/royalkitty_runRight.png',
             },
             runLeft: {
                 fraMax: 8,
@@ -345,13 +338,23 @@ const ENEMY = {
                 image: new Image(),
                 imageSrc: './src/img/ntt/nmy/royalkitty_runRight.png',
             },
-            struckL: {
+            attackL: {
                 fraMax: 8,
                 image: new Image(),
                 imageSrc: './src/img/ntt/nmy/royalkitty_runLeft.png',
             },
-            struckR: {
+            attackR: {
                 fraMax: 8,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/royalkitty_runRight.png',
+            },
+            struckL: {
+                fraMax: 4,
+                image: new Image(),
+                imageSrc: './src/img/ntt/nmy/royalkitty_runLeft.png',
+            },
+            struckR: {
+                fraMax: 4,
                 image: new Image(),
                 imageSrc: './src/img/ntt/nmy/royalkitty_runRight.png',
             },
@@ -364,7 +367,7 @@ const ENEMY = {
     },
     yamoma: {
         name: 'Yamoma',
-        honorific: 'Vertilger von Hoffnung, Unbesehenes Auge, Abgesandter der Verdammis, Inkarnation der Entropie',
+        honorific: 'Vertilger von Hoffnung, Unbesehenes Auge, Abgesandter der Verdammnis, Inkarnation der Entropie',
         type: 'Enemy',
         size: {w: 64, h: 64, s: 1},
         velocity: {x: 0, y: 0},
@@ -517,7 +520,8 @@ const MISSILE = {
     }
     */
 }
-
+// Array für Tutorial-Tafeln. Befindet sich der PC zwischen zwei Punkten,
+// wird die entsprechende Tafel geladen.
 const TUTSHEETS = [
     {start: 32, end: 300, image: './src/img/tut/ts01.png'}, // Bewegen links/rechts
     {start: 700, end: 950, image: './src/img/tut/ts02.png'}, // Springen

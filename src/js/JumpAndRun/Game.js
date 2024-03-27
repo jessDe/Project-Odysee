@@ -183,22 +183,19 @@ class JumpAndRunClass {
             default: console.log("Taste '"+ event.code +"' wird nicht verwendet");
         }
     }
-
-
-
-
     // Juggler: Wechselt zwischen den Sprites von Spieler und Entitäten - v2, 110 Zeilen schlanker! -.-
     juggler( ntt, sprite ) {
         if ((ntt.image.src.includes('attack')) && (ntt.frame < ntt.frMax - 1)) return; // Abbruch wenn Angriff ausgeführt wird
         if ((ntt.image.src.includes('struck')) && (ntt.frame < ntt.frMax - 1)) return; // Abbruch wenn getroffen
-        if ((ntt.image.src.includes('slide')) && (ntt.frame < ntt.frMax - 1)) return;
+        if ((ntt.image.src.includes('slide')) && (ntt.frame < ntt.frMax - 1)) return; // Abbruch wenn PC slided/dashed
+        // Ladet das Sprite (z.B. idle, attack, run, usw) der angegebenen Entität abhängig davon welche Sprites hinterlegt sind
         if (ntt.image !== ntt.sprites[sprite].image) {
             ntt.frame = 0;
             ntt.frMax = ntt.sprites[sprite].frMax;
             ntt.image = ntt.sprites[sprite].image;
         }
     }
-
+    // Schadensberechnung, separiert von struck() für bessere Funktionalität
     calcDamage( attacker, target ) {
         let tDef = target.stats.def;
         let aAtk = attacker.stats.atk;
@@ -208,6 +205,8 @@ class JumpAndRunClass {
     struck(attacker, target) {
         if (target.damageCD < 1) return;   // damageCD stellt sicher, dass das Ziel nicht zu oft getroffen wird
         if (!target.invulnerable || target.type !== 'Sigil') {
+            // Verhindert dass die HP des Ziels unter 0 sinken können.
+            // Dient primär dazu dass der PC HP-Balken nicht im negativen Bereich weitergezeichnet wird
             target.stats.curHP -= (this.calcDamage(attacker, target) > target.stats.curHP) ? target.stats.curHP : this.calcDamage(attacker, target);
             if (target.stats.curHP <= 0) {
                 if (target.type === 'Player') {
@@ -215,14 +214,15 @@ class JumpAndRunClass {
                 } else JumpAndRun.juggler(target, 'death');
                 target.alive = false;
                 JumpAndRun.activeNMY.splice(JumpAndRun.activeNMY.indexOf(target), 1);
-                // if (attacker.name === 'Yamoma') deathMSG = "Yamoma killed you.";
                 let drop = dropLoot(target);
                 if (drop !== null) {
                     JumpAndRun.activeSGL.push(drop);
                 }
             } else {
                 JumpAndRun.juggler(target, (target.direction === 1) ? 'struckR' : 'struckL');
+                // Knockback-Effekt, abhängig von der Richtung des Angreifers...funktioniert aber irgend nicht so wie gewollt...
                 target.pos.x += (target.direction === 1) ? -target.knocked/25 : target.knocked/25;
+                // Benötigt für einen kurzen Stun-Effekt, als optisches Feedback auf einen Treffer
                 target.knocked = 25;
             }
             target.damageCD = 0;
@@ -261,7 +261,7 @@ class JumpAndRunClass {
             }
         });
     }
-
+    // Methode zum Ausspucken von Entitäten
     spawnNTT( item ) {
         let ntt = null;
         switch(item.type) {
@@ -277,10 +277,8 @@ class JumpAndRunClass {
                 console.error('Invalid entity type:', item.type);
                 return null;
         }
-        // console.log(ntt);
         return ntt;
     }
-
     /*
     // Methode für Gamepad-Management, funktioniert solala
     gamepad( ) {
@@ -301,19 +299,15 @@ class JumpAndRunClass {
             steuerung.rechts = gamepads[0].axes[0] > 0.5;
         }
     }
-
      */
-
-
     updateGame() {
         let now = new Date();
         let period = ( now.getTime() - lastTime.getTime() ) /1000 ;
         lastTime = now;
-
+        // Damit keine unnötigen drawBG() ausgeführt werden
         if (JumpAndRun.lvlc.type === "tutorial") {
             JumpAndRun.drawTut();
         } else JumpAndRun.drawBG();
-
         JumpAndRun.myPlayer.update();
         JumpAndRun.drawLevel();
         JumpAndRun.myPlayer.ui();
@@ -325,7 +319,6 @@ class JumpAndRunClass {
         for (let sigil of JumpAndRun.activeSGL) {
             sigil.update();
         }
-        //if(JumpAndRun.myPlayer.pos.y > ( (this.lvlc.map.pattern.length * TILESIZE) - (JumpAndRun.myPlayer.size.h * 2) )) JumpAndRun
         if(!JumpAndRun.myPlayer.alive || (JumpAndRun.myPlayer.pos.y > ( (JumpAndRun.lvlc.map.pattern.length * TILESIZE) - (JumpAndRun.myPlayer.size.h * 2) ))) { // || (JumpAndRun.myPlayer.pos.y > ( (this.lvlc.map.pattern.length * TILESIZE) - (JumpAndRun.myPlayer.size.h * 2) ))
             JumpAndRun.GameRunning = false;
             fade(deathMSG, function () {
@@ -344,13 +337,15 @@ class JumpAndRunClass {
 }
 
 
-// Funktion zum Überprüfen, ob der Spieler mit einem Gegner kollidiert oder umgekehrt
+// Funktion zum Überprüfen, ob der PC mit einer Entität kollidiert
 function checkPhysical() {
+    // Kollision mit aktiven Gegnern, resultiert in Schaden für den PC
     for (let enemy of JumpAndRun.activeNMY) {
         if (rectCollision(JumpAndRun.myPlayer, enemy)) {
             JumpAndRun.struck(enemy, JumpAndRun.myPlayer);
         }
     }
+    // Kollision mit Sigillen. PC profitiert vom hinterlegten Effekt der Sigille, welche dann aus dem Spiel entfernt wird
     for (let sigil of JumpAndRun.activeSGL) {
         if (rectCollision(JumpAndRun.myPlayer, sigil)) {
             sigil.effect();
@@ -368,6 +363,7 @@ function rectCollision( rect1, rect2 ) {
         rect1.pos.y < rect2.pos.y + rect2.size.h &&
         rect1.pos.y + rect1.size.h > rect2.pos.y );
 }
+// Alte Fade-Funktion, die wohl nicht mehr gebraucht wird? Muss getesten werden
 /*
 function fade() {
     fadeVar = 0;
@@ -401,26 +397,26 @@ function fade(message, callback){
     }
 }
 
-
 // Jedes Mal, wenn eine Entität stirbt, soll geprüft werden, ob sie etwas aus ihrem Loot-Array droppt
 function dropLoot( entity ) {
     if (!entity.loot) {
         return null;
     }
-    if ( entity.hasLoot ) {
+    if ( entity.loot ) {
+        // Würfelt einen zufälligen Gegenstand aus der Loot-Tabelle der Entität, Droprate pro Gegnertyp
+        // kann durch Dummy-Einträge in der Tabelle manipuliert werden
         let loot = entity.loot[ Math.floor( Math.random() * entity.loot.length ) ];
         let drop = new Sigil(SIGIL[loot], entity.pos);
-        // Drop-Position soll die Position der toten Entität sein, aber versetzt und entgegengesetzt der Spielerposition
+        // Drop-Position soll die Position der toten Entität sein, aber versetzt und
+        // entgegengesetzt der Spielerposition - nicht ausreichend getestet/durchdacht, aber niedrige Priorität
         drop.pos.x = entity.pos.x + drop.size.w * JumpAndRun.myPlayer.direction;
         drop.pos.y = entity.pos.y - drop.size.h;
-
-        console.log(drop);
         if (drop !== 'empty') JumpAndRun.activeSGL.push(drop);
         JumpAndRun.juggler( drop, 'idle');
         return drop;
     }
 }
-
+// blockade-Funktion, schamlos gestohlen aus dem Unterrichtsmaterial
 function blockade( ntt, map ) {
     let zeichenLO, zeichenLU, zeichenRO, zeichenRU;
     let b = {};
